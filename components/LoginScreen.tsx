@@ -74,13 +74,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     />
                     
                     {/* Floating Widget on Phone */}
-                    <div className="absolute bottom-6 md:bottom-6 left-2 right-2 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-2 md:p-3 rounded-xl md:rounded-2xl border border-white/20 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
+                    <div className="absolute bottom-2 md:bottom-6 left-1.5 right-1.5 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-1.5 md:p-3 rounded-lg md:rounded-2xl border border-white/20 shadow-lg transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-[8px] md:text-xs text-gray-300">Flight to</p>
-                          <p className="text-xs md:text-lg font-bold">Tokyo, JPN</p>
+                          <p className="text-[6px] md:text-xs text-gray-300 leading-tight">Flight to</p>
+                          <p className="text-[9px] md:text-lg font-bold leading-tight">Tokyo, JPN</p>
                         </div>
-                        <div className="text-sm md:text-xl font-bold text-orange-400">$897</div>
+                        <div className="text-[10px] md:text-xl font-bold text-orange-400 leading-tight">$897</div>
                       </div>
                     </div>
                 </div>
