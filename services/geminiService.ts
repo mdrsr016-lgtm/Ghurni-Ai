@@ -3,8 +3,7 @@ import { Message } from '../types';
 
 // Initialize Gemini Client
 // Note: process.env.API_KEY is injected by the environment.
-const apiKey = process.env.API_KEY || ''; 
-const ai = new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const MODEL_NAME = 'gemini-2.5-flash';
 
