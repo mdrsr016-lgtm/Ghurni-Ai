@@ -245,13 +245,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     relative 
                     w-28 h-48 
                     sm:w-40 sm:h-64 
-                    md:w-48 md:h-[19rem] 
-                    lg:w-60 lg:h-[24rem] 
-                    xl:w-72 xl:h-[28rem]
+                    md:w-56 md:h-[22rem] 
+                    lg:w-72 lg:h-[28rem] 
+                    xl:w-80 xl:h-[32rem]
+                    2xl:w-96 2xl:h-[38rem]
                     bg-gray-800 rounded-[1.25rem] md:rounded-[2.5rem] border-[3px] md:border-4 border-gray-700 
                     shadow-2xl 
                     transform -rotate-6 md:-rotate-6 hover:rotate-0 
-                    md:self-start
                     transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                     overflow-hidden group
                     [backface-visibility:hidden] [transform:translateZ(0)] will-change-transform
