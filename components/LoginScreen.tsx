@@ -36,11 +36,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               </p>
            </div>
 
-           {/* Main Heading & Mockup - Flex Row on Mobile, Column on Desktop */}
-           <div className="relative z-10 flex flex-row md:flex-col md:justify-center items-center md:items-start gap-6 sm:gap-8 w-full">
+           {/* Main Heading & Mockup - Flex Row on Mobile, Column on Desktop - LEFT ALIGNED ON DESKTOP */}
+           <div className="relative z-10 flex flex-row md:flex-col md:justify-center items-center md:items-start gap-6 sm:gap-8 md:gap-10 lg:gap-14 w-full">
               
-              {/* Text Section */}
-              <div className="flex-1 text-left md:w-full z-20">
+              {/* Text Section - Left aligned on Desktop */}
+              <div className="flex-1 text-left md:text-left md:w-full z-20">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] md:leading-[1.1] tracking-tighter transition-all duration-300">
                     <span key={isSignUp ? 'start' : 'discover'} className="inline-block animate-fade-in-up">
                         {isSignUp ? 'Start' : 'Discover'}
@@ -54,7 +54,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               
               {/* Phone Mockup visual */}
               {/* Wrapper handles the entrance animation (Slide Up/Fade In) */}
-              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-end md:self-auto">
+              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-end md:self-center">
                 {/* Inner Div handles the Rotation and Hover transform */}
                 <div className="
                     relative 
@@ -65,7 +65,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     xl:w-72 xl:h-[28rem]
                     bg-gray-800 rounded-[1.25rem] md:rounded-[2.5rem] border-[3px] md:border-4 border-gray-700 
                     shadow-2xl 
-                    transform -rotate-6 md:-rotate-12 hover:rotate-0 
+                    transform -rotate-6 md:-rotate-6 hover:rotate-0 
                     transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                     overflow-hidden group
                     [backface-visibility:hidden] [transform:translateZ(0)] will-change-transform
@@ -260,16 +260,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                {/* Footer */}
                <div 
-                 className="flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400 mt-8 gap-4 animate-fade-in w-full max-w-2xl mx-auto"
+                 className="flex justify-center items-center text-xs text-gray-400 mt-8 animate-fade-in w-full max-w-2xl mx-auto"
                  style={{ animationDelay: '700ms', animationFillMode: 'backwards' }}
                >
-                  <p className="text-center sm:text-left transition-colors hover:text-gray-600">© 2005-2025 Ghurni Ai Inc.</p>
-                  <div className="flex gap-6">
-                     <a href="#" className="hover:text-gray-600 transition-colors">Contact Us</a>
-                     <button className="flex items-center gap-1 hover:text-gray-600 transition-colors">
-                        English <span className="text-[10px]">▼</span>
-                     </button>
-                  </div>
+                  <p className="text-center transition-colors hover:text-gray-600">© 2005-2025 Ghurni Ai Inc.</p>
                </div>
            </div>
         </div>
