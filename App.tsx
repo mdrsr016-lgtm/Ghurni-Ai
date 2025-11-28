@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import LoginScreen from './components/LoginScreen';
 import ChatInterface from './components/ChatInterface';
 import Sidebar from './components/Sidebar';

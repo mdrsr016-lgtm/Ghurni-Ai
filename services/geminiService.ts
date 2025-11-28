@@ -22,7 +22,7 @@ export const streamChatResponse = async (
 
     const chat: Chat = ai.chats.create({
       model: MODEL_NAME,
-      messages: historyForGemini,
+      history: historyForGemini,
       config: {
         systemInstruction: "You are an expert travel assistant named Ghurni Ai. Your goal is to help users plan amazing trips, find flights, hotels, and activities. Be concise, friendly, and helpful. Format your responses with clear headings and bullet points where appropriate.",
       },

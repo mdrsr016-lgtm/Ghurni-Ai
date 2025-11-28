@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   RefreshCcw, 
-  Paperclip, 
   Image as ImageIcon, 
   ArrowUp, 
   Globe, 
@@ -16,9 +15,7 @@ import {
   Sparkles,
   Plus,
   Mic,
-  Headphones,
-  User as UserIcon,
-  AudioWaveform
+  User as UserIcon
 } from 'lucide-react';
 import { Message, Suggestion } from '../types';
 import { streamChatResponse } from '../services/geminiService';
