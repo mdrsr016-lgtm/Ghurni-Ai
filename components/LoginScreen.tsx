@@ -145,9 +145,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     [-webkit-mask-image:-webkit-radial-gradient(white,black)]
                 ">
                     <img 
-                      src="https://picsum.photos/400/800?grayscale" 
+                      src="https://picsum.photos/400/800" 
                       alt="App Screen" 
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 z-10 relative"
+                      className="w-full h-full object-cover opacity-100 transition-opacity duration-500 z-10 relative"
                     />
                     
                     {/* Floating Widget on Phone */}
@@ -157,7 +157,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                           <p className="text-[6px] md:text-[10px] text-gray-300 leading-tight">{t.flightTo}</p>
                           <p className="text-[9px] md:text-sm font-bold leading-tight">{t.tokyo}</p>
                         </div>
-                        <div className="text-[10px] md:text-base font-bold text-orange-400 leading-tight">$897</div>
+                        <div className="text-[10px] md:text-base font-bold text-black leading-tight">$897</div>
                       </div>
                     </div>
                 </div>
@@ -188,14 +188,20 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 onClick={() => handleLangSelect('English')}
                                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${currentLang === 'English' ? 'bg-gray-700 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}
                             >
-                                <span className="flex items-center gap-2">🇺🇸 English</span>
+                                <span className="flex items-center gap-2">
+                                    <img src="https://flagcdn.com/w40/us.png" alt="US" className="w-5 rounded-sm shadow-sm" />
+                                    English
+                                </span>
                                 {currentLang === 'English' && <Check size={14} className="text-green-500" />}
                             </button>
                             <button 
                                 onClick={() => handleLangSelect('Bangla')}
                                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${currentLang === 'Bangla' ? 'bg-gray-700 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}
                             >
-                                <span className="flex items-center gap-2">🇧🇩 Bangla</span>
+                                <span className="flex items-center gap-2">
+                                    <img src="https://flagcdn.com/w40/bd.png" alt="BD" className="w-5 rounded-sm shadow-sm" />
+                                    Bangla
+                                </span>
                                 {currentLang === 'Bangla' && <Check size={14} className="text-green-500" />}
                             </button>
                         </div>
