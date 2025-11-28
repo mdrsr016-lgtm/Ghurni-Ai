@@ -1,0 +1,8 @@
+{
+  "name": "Ghurni Ai",
+  "description": "An intelligent travel companion UI combining a sleek login experience with a powerful AI chat interface for trip planning.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
