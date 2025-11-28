@@ -131,10 +131,10 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 bg-black md:bg-[#F5F5F7] h-full overflow-hidden flex flex-col relative transition-colors duration-300">
+    <div className="flex-1 bg-black md:bg-[#F5F5F7] h-[100dvh] overflow-hidden flex flex-col relative transition-colors duration-300">
       
       {/* Mobile Top Header (Hidden on Desktop) */}
-      <div className="flex md:hidden justify-between items-center px-4 py-4 text-white z-10 animate-fade-in-up">
+      <div className="flex md:hidden justify-between items-center px-4 py-4 text-white z-10 animate-fade-in-up shrink-0">
            <div className="flex items-center gap-3">
               <button className="p-2 bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors">
                  <Menu size={20} className="text-gray-300" />
@@ -219,17 +219,32 @@ const ChatInterface: React.FC = () => {
             </div>
           )}
 
-          {/* Suggestions Grid (Hidden on Mobile to match screenshot clean look, Visible on Desktop) */}
+          {/* Suggestions Grid (Responsive: Horizontal Scroll on Mobile, Grid on Desktop) */}
           {messages.length === 0 && (
-            <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in-up animation-delay-500 px-2">
+            <div className="
+                flex md:grid 
+                overflow-x-auto md:overflow-visible 
+                gap-4 
+                mb-8 pb-4 md:pb-0 
+                snap-x md:snap-none 
+                px-4 md:px-2 -mx-4 md:mx-0 
+                scrollbar-hide 
+                animate-fade-in-up animation-delay-500
+                md:grid-cols-2 lg:grid-cols-4
+            ">
               {SUGGESTIONS.map((suggestion) => (
                 <button
                   key={suggestion.id}
                   onClick={() => handleSuggestionClick(suggestion.prompt)}
-                  className="bg-white p-5 rounded-2xl text-left transition-all duration-300 border border-gray-100 hover:border-purple-100 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 group h-44 flex flex-col justify-between relative overflow-hidden"
+                  className="
+                    min-w-[280px] md:min-w-0 snap-center
+                    bg-white md:bg-white 
+                    p-5 rounded-2xl text-left transition-all duration-300 border border-gray-100 hover:border-purple-100 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 group h-44 flex flex-col justify-between relative overflow-hidden
+                    md:dark:bg-white dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-zinc-700
+                  "
                 >
                   <div className="flex justify-between items-start w-full">
-                     <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-pink-500 transition-all duration-500 text-gray-400 group-hover:text-white shadow-sm">
+                     <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-pink-500 transition-all duration-500 text-gray-400 group-hover:text-white shadow-sm dark:bg-zinc-800 dark:text-gray-500">
                         {suggestion.icon === 'map' && <Map size={22} />}
                         {suggestion.icon === 'compass' && <Compass size={22} />}
                         {suggestion.icon === 'dollar' && <DollarSign size={22} />}
@@ -244,10 +259,10 @@ const ChatInterface: React.FC = () => {
                   </div>
                   
                   <div>
-                    <p className="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-pink-600 transition-all duration-300">
+                    <p className="font-bold text-gray-900 dark:text-gray-100 text-lg leading-tight mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-pink-600 transition-all duration-300">
                         {suggestion.title}
                     </p>
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed group-hover:text-gray-600">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed group-hover:text-gray-600 dark:group-hover:text-gray-300">
                       {suggestion.prompt}
                     </p>
                   </div>

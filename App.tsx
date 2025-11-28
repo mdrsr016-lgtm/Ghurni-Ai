@@ -16,7 +16,7 @@ function App() {
   };
 
   return (
-    <div className={`w-full font-sans text-gray-900 bg-white ${view === ViewState.DASHBOARD ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+    <div className={`w-full font-sans text-gray-900 bg-white ${view === ViewState.DASHBOARD ? 'h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
       {view === ViewState.LOGIN ? (
         <LoginScreen onLogin={handleLogin} />
       ) : (
