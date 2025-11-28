@@ -1,13 +1,80 @@
 import React, { useState } from 'react';
-import { EyeOff, Eye, Globe, ArrowRight, UserPlus, LogIn } from 'lucide-react';
+import { EyeOff, Eye, Globe, ArrowRight, UserPlus, LogIn, Check } from 'lucide-react';
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
+const translations = {
+  English: {
+    tagline: "Global travel made simple – your personal AI guide.",
+    start: "Start",
+    discover: "Discover",
+    yourNext: "your next",
+    adventure: "adventure",
+    flightTo: "Flight to",
+    tokyo: "Tokyo, JPN",
+    createAccount: "Create Account",
+    signIn: "Sign In",
+    fillDetails: "Fill in your details to start planning your trip.",
+    welcomeBack: "Welcome back! Please enter your details.",
+    fullName: "Full Name",
+    emailPlaceholderSignUp: "Email Address",
+    emailPlaceholderSignIn: "Email or Username",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    forgotPassword: "Forgot password?",
+    signUpBtn: "Sign Up",
+    signInBtn: "Sign In",
+    orContinue: "Or continue with",
+    google: "Google",
+    facebook: "Facebook",
+    haveAccount: "Already have an account? Sign In",
+    newHere: "New here? Sign Up",
+    signInShort: "Sign In",
+    signUpShort: "Sign Up",
+    copyright: "© 2005-2025 Ghurni Ai Inc."
+  },
+  Bangla: {
+    tagline: "বিশ্ব ভ্রমণ এখন সহজ – আপনার ব্যক্তিগত এআই গাইড।",
+    start: "শুরু করুন",
+    discover: "আবিষ্কার করুন",
+    yourNext: "আপনার পরবর্তী",
+    adventure: "অ্যাডভেঞ্চার",
+    flightTo: "ফ্লাইট",
+    tokyo: "টোকিও, জাপান",
+    createAccount: "অ্যাকাউন্ট খুলুন",
+    signIn: "সাইন ইন",
+    fillDetails: "ভ্রমণ পরিকল্পনা শুরু করতে আপনার বিবরণ দিন।",
+    welcomeBack: "স্বাগতম! অনুগ্রহ করে আপনার বিবরণ দিন।",
+    fullName: "পুরো নাম",
+    emailPlaceholderSignUp: "ইমেল ঠিকানা",
+    emailPlaceholderSignIn: "ইমেল বা ইউজারনেম",
+    password: "পাসওয়ার্ড",
+    confirmPassword: "পাসওয়ার্ড নিশ্চিত করুন",
+    forgotPassword: "পাসওয়ার্ড ভুলে গেছেন?",
+    signUpBtn: "সাইন আপ",
+    signInBtn: "সাইন ইন",
+    orContinue: "অথবা চালিয়ে যান",
+    google: "গুগল",
+    facebook: "ফেসবুক",
+    haveAccount: "অ্যাকাউন্ট আছে? সাইন ইন",
+    newHere: "নতুন এখানে? সাইন আপ",
+    signInShort: "সাইন ইন",
+    signUpShort: "সাইন আপ",
+    copyright: "© ২০০৫-২০২৫ ঘূর্ণি এআই ইংক."
+  }
+};
+
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Language Selection State
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState<'English' | 'Bangla'>('English');
+
+  const t = translations[currentLang];
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
@@ -16,6 +83,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onLogin();
+  };
+
+  const handleLangSelect = (lang: 'English' | 'Bangla') => {
+    setCurrentLang(lang);
+    setIsLangMenuOpen(false);
   };
 
   return (
@@ -32,7 +104,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
            {/* Header / Tagline - Absolute on Desktop to stay top */}
            <div className="md:absolute md:top-12 md:left-12 lg:left-16 relative z-10 animate-fade-in-up text-left">
               <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">
-                Global travel made simple – your personal AI guide.
+                {t.tagline}
               </p>
            </div>
 
@@ -43,12 +115,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <div className="flex-1 text-left md:text-left md:w-full z-20">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] md:leading-[1.1] tracking-tighter transition-all duration-300">
                     <span key={isSignUp ? 'start' : 'discover'} className="inline-block animate-fade-in-up">
-                        {isSignUp ? 'Start' : 'Discover'}
+                        {isSignUp ? t.start : t.discover}
                     </span>
                     <br />
-                    <span className="animate-fade-in-up animation-delay-100 inline-block">your next</span>
+                    <span className="animate-fade-in-up animation-delay-100 inline-block">{t.yourNext}</span>
                     <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 animate-fade-in-up animation-delay-200 inline-block">adventure</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 animate-fade-in-up animation-delay-200 inline-block">{t.adventure}</span>
                   </h1>
               </div>
               
@@ -66,6 +138,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     bg-gray-800 rounded-[1.25rem] md:rounded-[2.5rem] border-[3px] md:border-4 border-gray-700 
                     shadow-2xl 
                     transform -rotate-6 md:-rotate-6 hover:rotate-0 
+                    md:self-center
                     transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                     overflow-hidden group
                     [backface-visibility:hidden] [transform:translateZ(0)] will-change-transform
@@ -81,8 +154,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     <div className="absolute bottom-2 md:bottom-6 left-1.5 right-1.5 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-1.5 md:p-3 rounded-lg md:rounded-xl border border-white/20 shadow-lg transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-[6px] md:text-[10px] text-gray-300 leading-tight">Flight to</p>
-                          <p className="text-[9px] md:text-sm font-bold leading-tight">Tokyo, JPN</p>
+                          <p className="text-[6px] md:text-[10px] text-gray-300 leading-tight">{t.flightTo}</p>
+                          <p className="text-[9px] md:text-sm font-bold leading-tight">{t.tokyo}</p>
                         </div>
                         <div className="text-[10px] md:text-base font-bold text-orange-400 leading-tight">$897</div>
                       </div>
@@ -93,10 +166,45 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
            {/* Footer Icons (Desktop Only) - Absolute to stay bottom */}
            <div className="relative md:absolute md:bottom-12 md:left-12 lg:left-16 z-10 hidden md:flex gap-4 animate-fade-in animation-delay-500">
-              <div className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center hover:bg-gray-800 hover:border-gray-500 hover:scale-110 transition-all duration-300 cursor-pointer">
-                 <Globe size={18} />
+              
+              {/* Language Selector */}
+              <div className="relative">
+                  <button 
+                     onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                     className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 ${isLangMenuOpen ? 'bg-gray-800 border-gray-500 scale-110 text-white' : 'border-gray-700 text-gray-400 hover:bg-gray-800 hover:border-gray-500 hover:scale-110 hover:text-white'}`}
+                     title="Select Language"
+                  >
+                     <Globe size={18} />
+                  </button>
+                  
+                  {isLangMenuOpen && (
+                      <>
+                        {/* Click backdrop to close */}
+                        <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsLangMenuOpen(false)}></div>
+                        
+                        {/* Menu */}
+                        <div className="absolute bottom-full left-0 mb-3 w-40 bg-[#252525] border border-gray-700 rounded-xl shadow-2xl p-1.5 flex flex-col gap-1 animate-scale-in origin-bottom-left z-50">
+                            <button 
+                                onClick={() => handleLangSelect('English')}
+                                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${currentLang === 'English' ? 'bg-gray-700 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}
+                            >
+                                <span className="flex items-center gap-2">🇺🇸 English</span>
+                                {currentLang === 'English' && <Check size={14} className="text-green-500" />}
+                            </button>
+                            <button 
+                                onClick={() => handleLangSelect('Bangla')}
+                                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${currentLang === 'Bangla' ? 'bg-gray-700 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}
+                            >
+                                <span className="flex items-center gap-2">🇧🇩 Bangla</span>
+                                {currentLang === 'Bangla' && <Check size={14} className="text-green-500" />}
+                            </button>
+                        </div>
+                      </>
+                  )}
               </div>
-              <div className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center hover:bg-gray-800 hover:border-gray-500 hover:scale-110 transition-all duration-300 cursor-pointer">
+
+              {/* AI Button */}
+              <div className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center hover:bg-gray-800 hover:border-gray-500 hover:scale-110 transition-all duration-300 cursor-pointer text-gray-400 hover:text-white">
                  <span className="font-bold text-xs">AI</span>
               </div>
            </div>
@@ -120,13 +228,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                   >
                      {isSignUp ? (
                        <>
-                         <LogIn size={16} /> <span className="hidden sm:inline">Already have an account? Sign In</span>
-                         <span className="sm:hidden">Sign In</span>
+                         <LogIn size={16} /> <span className="hidden sm:inline">{t.haveAccount}</span>
+                         <span className="sm:hidden">{t.signInShort}</span>
                        </>
                      ) : (
                        <>
-                         <UserPlus size={16} /> <span className="hidden sm:inline">New here? Sign Up</span>
-                         <span className="sm:hidden">Sign Up</span>
+                         <UserPlus size={16} /> <span className="hidden sm:inline">{t.newHere}</span>
+                         <span className="sm:hidden">{t.signUpShort}</span>
                        </>
                      )}
                   </button>
@@ -139,15 +247,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                >
                   <div className="animate-fade-in-up">
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gray-900 mb-2 md:mb-4">
-                      {isSignUp ? 'Create Account' : 'Sign In'}
+                      {isSignUp ? t.createAccount : t.signIn}
                     </h2>
                   </div>
 
                   <div className="animate-fade-in-up animation-delay-75">
                     <p className="text-gray-500 mb-8 md:mb-10 text-sm md:text-base">
                       {isSignUp 
-                        ? 'Fill in your details to start planning your trip.' 
-                        : 'Welcome back! Please enter your details.'}
+                        ? t.fillDetails 
+                        : t.welcomeBack}
                     </p>
                   </div>
                   
@@ -158,7 +266,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                        <div className="animate-fade-in-up animation-delay-150">
                           <input 
                             type="text" 
-                            placeholder="Full Name" 
+                            placeholder={t.fullName}
                             className="w-full px-6 py-4 rounded-full border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all duration-300 text-gray-700 placeholder-gray-400 bg-white shadow-sm hover:shadow-md hover:border-orange-300"
                             required
                           />
@@ -169,7 +277,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      <div className={`animate-fade-in-up ${isSignUp ? 'animation-delay-200' : 'animation-delay-150'}`}>
                         <input 
                           type="text" 
-                          placeholder={isSignUp ? "Email Address" : "Email or Username"}
+                          placeholder={isSignUp ? t.emailPlaceholderSignUp : t.emailPlaceholderSignIn}
                           className="w-full px-6 py-4 rounded-full border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all duration-300 text-gray-700 placeholder-gray-400 bg-white shadow-sm hover:shadow-md hover:border-orange-300"
                           required
                         />
@@ -179,7 +287,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      <div className={`relative animate-fade-in-up ${isSignUp ? 'animation-delay-300' : 'animation-delay-200'}`}>
                         <input 
                           type={showPassword ? "text" : "password"}
-                          placeholder="Password" 
+                          placeholder={t.password}
                           className="w-full px-6 py-4 rounded-full border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all duration-300 text-gray-700 placeholder-gray-400 bg-white shadow-sm hover:shadow-md hover:border-orange-300"
                           required
                         />
@@ -197,7 +305,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                        <div className="relative animate-fade-in-up animation-delay-400">
                           <input 
                             type="password"
-                            placeholder="Confirm Password" 
+                            placeholder={t.confirmPassword}
                             className="w-full px-6 py-4 rounded-full border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all duration-300 text-gray-700 placeholder-gray-400 bg-white shadow-sm hover:shadow-md hover:border-orange-300"
                             required
                           />
@@ -207,7 +315,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      {/* Forgot Password (Sign In Only) */}
                      {!isSignUp && (
                        <div className="flex justify-end items-center mt-1 animate-fade-in animation-delay-300">
-                         <a href="#" className="text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors underline-offset-4 hover:underline">Forgot password?</a>
+                         <a href="#" className="text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors underline-offset-4 hover:underline">{t.forgotPassword}</a>
                        </div>
                      )}
 
@@ -216,7 +324,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                        className={`mt-4 md:mt-6 w-full py-4 rounded-full text-white font-medium text-lg gradient-btn shadow-lg hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98] animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-400'}`}
                      >
                        <span className="relative">
-                         {isSignUp ? 'Sign Up' : 'Sign In'}
+                         {isSignUp ? t.signUpBtn : t.signInBtn}
                        </span>
                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
                      </button>
@@ -225,7 +333,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                   {/* Divider */}
                   <div className={`relative flex py-6 items-center animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-500'}`}>
                     <div className="flex-grow border-t border-gray-100"></div>
-                    <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">Or continue with</span>
+                    <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">{t.orContinue}</span>
                     <div className="flex-grow border-t border-gray-100"></div>
                   </div>
 
@@ -242,7 +350,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                         </svg>
-                        <span>Google</span>
+                        <span>{t.google}</span>
                     </button>
 
                     <button 
@@ -253,7 +361,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         <svg className="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                         </svg>
-                        <span>Facebook</span>
+                        <span>{t.facebook}</span>
                     </button>
                   </div>
                </div>
@@ -263,7 +371,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                  className="flex justify-center items-center text-xs text-gray-400 mt-8 animate-fade-in w-full max-w-2xl mx-auto"
                  style={{ animationDelay: '700ms', animationFillMode: 'backwards' }}
                >
-                  <p className="text-center transition-colors hover:text-gray-600">© 2005-2025 Ghurni Ai Inc.</p>
+                  <p className="text-center transition-colors hover:text-gray-600">{t.copyright}</p>
                </div>
            </div>
         </div>
