@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EyeOff, Eye, Globe, ArrowRight, UserPlus, LogIn, Check } from 'lucide-react';
+import { EyeOff, Eye, Globe, ArrowRight, UserPlus, LogIn, Check, Mail, X, Send } from 'lucide-react';
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -73,6 +73,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   // Language Selection State
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState<'English' | 'Bangla'>('English');
+  
+  // Contact Modal State
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const t = translations[currentLang];
 
@@ -90,9 +95,117 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     setIsLangMenuOpen(false);
   };
 
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSending(true);
+    // Simulate API call
+    setTimeout(() => {
+        setIsSending(false);
+        setShowSuccess(true);
+        setTimeout(() => {
+            setShowSuccess(false);
+            setIsContactOpen(false);
+        }, 2500);
+    }, 1500);
+  };
+
   return (
-    <div className="w-full min-h-screen bg-[#1C1C1E] flex flex-col md:flex-row overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#1C1C1E] flex flex-col md:flex-row overflow-x-hidden relative">
         
+        {/* Contact Modal */}
+        {isContactOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+                <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-in relative">
+                    {/* Close Button */}
+                    <button 
+                        onClick={() => setIsContactOpen(false)}
+                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors p-2 rounded-full hover:bg-gray-100 z-10"
+                    >
+                        <X size={20} />
+                    </button>
+
+                    {/* Success State */}
+                    {showSuccess ? (
+                        <div className="flex flex-col items-center justify-center p-12 text-center h-[420px]">
+                            <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6 animate-scale-in">
+                                <Check size={32} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h3>
+                            <p className="text-gray-500 mb-6">We'll get back to you as soon as possible.</p>
+                            <button 
+                                onClick={() => setIsContactOpen(false)}
+                                className="px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    ) : (
+                        /* Form State */
+                        <div className="flex flex-col h-full">
+                            <div className="bg-gray-50 p-6 border-b border-gray-100">
+                                <h3 className="text-xl font-bold text-gray-900">Contact Us</h3>
+                                <p className="text-sm text-gray-500 mt-1">Have questions? Drop us a line.</p>
+                            </div>
+                            <form onSubmit={handleContactSubmit} className="p-6 flex flex-col gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        required 
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all text-gray-700 bg-white focus:bg-white placeholder-gray-400" 
+                                        placeholder="you@example.com" 
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
+                                    <textarea 
+                                        required 
+                                        rows={4} 
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all text-gray-700 bg-white focus:bg-white resize-none placeholder-gray-400" 
+                                        placeholder="How can we help you?"
+                                    ></textarea>
+                                </div>
+                                <button 
+                                    type="submit" 
+                                    disabled={isSending}
+                                    className="mt-2 w-full py-3.5 rounded-xl bg-gray-900 text-white font-medium hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-gray-900/20"
+                                >
+                                    {isSending ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <>
+                                            Send Message <Send size={16} />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                            
+                            {/* Social Media Links */}
+                            <div className="px-6 pb-6 -mt-2">
+                                <div className="relative flex py-3 items-center">
+                                    <div className="flex-grow border-t border-gray-100"></div>
+                                    <span className="flex-shrink-0 mx-3 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Instant Support</span>
+                                    <div className="flex-grow border-t border-gray-100"></div>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button type="button" className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-green-50 hover:border-green-200 transition-all group active:scale-95">
+                                        <svg className="w-5 h-5 fill-[#25D366]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                        <span className="text-sm font-semibold text-gray-700 group-hover:text-green-600">WhatsApp</span>
+                                    </button>
+
+                                    <button type="button" className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-200 transition-all group active:scale-95">
+                                        <svg className="w-5 h-5 fill-[#1877F2]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                                        <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-600">Facebook</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        )}
+
         {/* Left Side (Dark) - Branding & Visuals */}
         <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[35%] bg-[#1C1C1E] relative p-6 sm:p-8 md:p-12 lg:px-10 lg:py-12 xl:p-16 flex flex-col justify-center text-white shrink-0 min-h-[40vh] md:min-h-screen transition-all duration-500 z-0 gap-6 md:gap-12">
            {/* Background Decoration */}
@@ -126,7 +239,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               
               {/* Phone Mockup visual */}
               {/* Wrapper handles the entrance animation (Slide Up/Fade In) */}
-              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-end md:self-center -mb-16 md:mb-0">
+              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-end md:self-center -mb-16 md:mb-0 lg:-mb-32">
                 {/* Inner Div handles the Rotation and Hover transform */}
                 <div className="
                     relative 
@@ -209,10 +322,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                   )}
               </div>
 
-              {/* AI Button */}
-              <div className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center hover:bg-gray-800 hover:border-gray-500 hover:scale-110 transition-all duration-300 cursor-pointer text-gray-400 hover:text-white">
-                 <span className="font-bold text-xs">AI</span>
-              </div>
+              {/* Contact Us Button */}
+              <button 
+                  onClick={() => setIsContactOpen(true)}
+                  className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center hover:bg-gray-800 hover:border-gray-500 hover:scale-110 transition-all duration-300 cursor-pointer text-gray-400 hover:text-white"
+                  title="Contact Us"
+              >
+                 <Mail size={18} />
+              </button>
            </div>
         </div>
 
