@@ -117,6 +117,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     <h2 className="text-3xl md:text-4xl font-normal text-gray-900 mb-2 md:mb-4">
                       {isSignUp ? 'Create Account' : 'Sign In'}
                     </h2>
+                  </div>
+
+                  <div className="animate-fade-in-up animation-delay-75">
                     <p className="text-gray-500 mb-8 md:mb-10 text-sm">
                       {isSignUp 
                         ? 'Fill in your details to start planning your trip.' 
@@ -128,7 +131,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      
                      {/* Full Name (Sign Up Only) */}
                      {isSignUp && (
-                       <div className="animate-fade-in-up animation-delay-75">
+                       <div className="animate-fade-in-up animation-delay-150">
                           <input 
                             type="text" 
                             placeholder="Full Name" 
@@ -139,7 +142,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      )}
 
                      {/* Email/Username */}
-                     <div className={`animate-fade-in-up ${isSignUp ? 'animation-delay-150' : 'animation-delay-75'}`}>
+                     <div className={`animate-fade-in-up ${isSignUp ? 'animation-delay-200' : 'animation-delay-150'}`}>
                         <input 
                           type="text" 
                           placeholder={isSignUp ? "Email Address" : "Email or Username"}
@@ -149,7 +152,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      </div>
 
                      {/* Password */}
-                     <div className={`relative animate-fade-in-up ${isSignUp ? 'animation-delay-200' : 'animation-delay-150'}`}>
+                     <div className={`relative animate-fade-in-up ${isSignUp ? 'animation-delay-300' : 'animation-delay-200'}`}>
                         <input 
                           type={showPassword ? "text" : "password"}
                           placeholder="Password" 
@@ -167,7 +170,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                      {/* Confirm Password (Sign Up Only) */}
                      {isSignUp && (
-                       <div className="relative animate-fade-in-up animation-delay-300">
+                       <div className="relative animate-fade-in-up animation-delay-400">
                           <input 
                             type="password"
                             placeholder="Confirm Password" 
@@ -179,14 +182,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                      
                      {/* Forgot Password (Sign In Only) */}
                      {!isSignUp && (
-                       <div className="flex justify-end items-center mt-1 animate-fade-in animation-delay-200">
+                       <div className="flex justify-end items-center mt-1 animate-fade-in animation-delay-300">
                          <a href="#" className="text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors underline-offset-4 hover:underline">Forgot password?</a>
                        </div>
                      )}
 
                      <button 
                        type="submit"
-                       className={`mt-4 md:mt-6 w-full py-4 rounded-full text-white font-medium text-lg gradient-btn shadow-lg hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98] animate-fade-in-up ${isSignUp ? 'animation-delay-400' : 'animation-delay-300'}`}
+                       className={`mt-4 md:mt-6 w-full py-4 rounded-full text-white font-medium text-lg gradient-btn shadow-lg hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98] animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-400'}`}
                      >
                        <span className="relative">
                          {isSignUp ? 'Sign Up' : 'Sign In'}
@@ -196,17 +199,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                   </form>
 
                   {/* Divider */}
-                  <div className={`relative flex py-6 items-center animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-400'}`}>
+                  <div className={`relative flex py-6 items-center animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-500'}`}>
                     <div className="flex-grow border-t border-gray-100"></div>
                     <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">Or continue with</span>
                     <div className="flex-grow border-t border-gray-100"></div>
                   </div>
 
                   {/* Social Buttons */}
-                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-400'}`}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button 
                       type="button" 
-                      className="relative flex items-center justify-center gap-3 px-4 py-3.5 bg-white border border-gray-200 rounded-full text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98]"
+                      className={`relative flex items-center justify-center gap-3 px-4 py-3.5 bg-white border border-gray-200 rounded-full text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98] animate-fade-in-up ${isSignUp ? 'animation-delay-500' : 'animation-delay-500'}`}
+                      style={{ animationFillMode: 'backwards' }}
                     >
                         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -219,7 +223,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                     <button 
                       type="button" 
-                      className="relative flex items-center justify-center gap-3 px-4 py-3.5 bg-[#1877F2] border border-[#1877F2] rounded-full text-white font-medium hover:bg-[#166fe5] hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98]"
+                      className="relative flex items-center justify-center gap-3 px-4 py-3.5 bg-[#1877F2] border border-[#1877F2] rounded-full text-white font-medium hover:bg-[#166fe5] hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98] animate-fade-in-up"
+                      style={{ animationDelay: '600ms', animationFillMode: 'backwards' }}
                     >
                         <svg className="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -230,7 +235,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                </div>
 
                {/* Footer */}
-               <div className={`flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400 mt-8 md:mt-0 gap-4 animate-fade-in ${isSignUp ? 'animation-delay-700' : 'animation-delay-500'}`}>
+               <div 
+                 className="flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400 mt-8 md:mt-0 gap-4 animate-fade-in"
+                 style={{ animationDelay: '700ms', animationFillMode: 'backwards' }}
+               >
                   <p className="text-center sm:text-left transition-colors hover:text-gray-600">© 2005-2025 Ghurni Ai Inc.</p>
                   <div className="flex gap-6">
                      <a href="#" className="hover:text-gray-600 transition-colors">Contact Us</a>
