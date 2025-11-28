@@ -230,7 +230,7 @@ const ChatInterface: React.FC = () => {
                 px-4 md:px-2 -mx-4 md:mx-0 
                 scrollbar-hide 
                 animate-fade-in-up animation-delay-500
-                md:grid-cols-2 lg:grid-cols-4
+                md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
             ">
               {SUGGESTIONS.map((suggestion) => (
                 <button
