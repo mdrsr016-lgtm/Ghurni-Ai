@@ -11,7 +11,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       // Expose process.env.API_KEY to the client-side code
-      'process.env.API_KEY': JSON.stringify(env.API_KEY)
+      // Fallback to empty string to prevent "undefined" injection
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || '')
     },
     server: {
       port: 3000
