@@ -65,15 +65,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                     overflow-hidden group
                     [backface-visibility:hidden] [transform:translateZ(0)] will-change-transform
+                    [-webkit-mask-image:-webkit-radial-gradient(white,black)]
                 ">
                     <img 
                       src="https://picsum.photos/400/800?grayscale" 
                       alt="App Screen" 
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 z-10 relative"
                     />
                     
                     {/* Floating Widget on Phone */}
-                    <div className="absolute bottom-6 md:bottom-6 left-2 right-2 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-2 md:p-3 rounded-xl md:rounded-2xl border border-white/20 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                    <div className="absolute bottom-6 md:bottom-6 left-2 right-2 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-2 md:p-3 rounded-xl md:rounded-2xl border border-white/20 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
                       <div className="flex justify-between items-end">
                         <div>
                           <p className="text-[8px] md:text-xs text-gray-300">Flight to</p>
