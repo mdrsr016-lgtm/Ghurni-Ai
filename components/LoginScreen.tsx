@@ -207,15 +207,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         )}
 
         {/* Left Side (Dark) - Branding & Visuals */}
-        <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[35%] bg-[#1C1C1E] relative p-6 sm:p-8 md:p-12 lg:px-10 lg:py-12 xl:p-16 flex flex-col justify-center text-white shrink-0 min-h-[40vh] md:min-h-screen transition-all duration-500 z-0 gap-6 md:gap-12">
+        <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[35%] bg-[#1C1C1E] relative p-6 sm:p-8 md:p-12 lg:px-10 lg:py-12 xl:p-16 flex flex-col justify-center text-white shrink-0 min-h-[40vh] md:min-h-screen transition-all duration-500 z-0 gap-6 md:gap-8 lg:gap-12">
            {/* Background Decoration */}
            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none overflow-hidden">
              <div className="absolute top-[-10%] right-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full border border-gray-700/50 animate-fade-in duration-1000"></div>
              <div className="absolute top-[-5%] right-[-5%] w-[250px] md:w-[500px] h-[250px] md:h-[500px] rounded-full border border-gray-700/50 animate-fade-in duration-1000 delay-200"></div>
            </div>
 
-           {/* Header / Tagline - Absolute on Desktop to stay top */}
-           <div className="md:absolute md:top-12 md:left-12 lg:left-16 relative z-10 animate-fade-in-up text-left">
+           {/* Header / Tagline - Absolute on Desktop to stay top, Centered on Mobile */}
+           <div className="md:absolute md:top-12 md:left-12 lg:left-16 relative z-10 animate-fade-in-up w-full md:w-auto text-center md:text-left">
               <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">
                 {t.tagline}
               </p>
@@ -239,7 +239,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               
               {/* Phone Mockup visual */}
               {/* Wrapper handles the entrance animation (Slide Up/Fade In) */}
-              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-end md:self-center -mb-16 md:mb-0 lg:-mb-32">
+              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-center md:self-center -mb-16 md:mb-0">
                 {/* Inner Div handles the Rotation and Hover transform */}
                 <div className="
                     relative 
@@ -251,7 +251,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     bg-gray-800 rounded-[1.25rem] md:rounded-[2.5rem] border-[3px] md:border-4 border-gray-700 
                     shadow-2xl 
                     transform -rotate-6 md:-rotate-6 hover:rotate-0 
-                    md:self-center
+                    md:self-start
                     transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                     overflow-hidden group
                     [backface-visibility:hidden] [transform:translateZ(0)] will-change-transform
@@ -278,7 +278,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
            </div>
 
            {/* Footer Icons - Visible on all screens */}
-           <div className="relative md:absolute md:bottom-12 md:left-12 lg:left-16 z-20 flex gap-4 animate-fade-in animation-delay-500 mt-2 md:mt-0">
+           <div className="relative z-20 flex gap-4 animate-fade-in animation-delay-500 mt-6 md:mt-8 md:self-start">
               
               {/* Language Selector */}
               <div className="relative">
