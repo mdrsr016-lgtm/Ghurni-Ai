@@ -215,7 +215,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
            </div>
 
            {/* Header / Tagline - Absolute on Desktop to stay top, Centered on Mobile */}
-           <div className="md:absolute md:top-12 md:left-12 lg:left-16 relative z-10 animate-fade-in-up w-full md:w-auto text-center md:text-left">
+           <div className="md:absolute md:top-6 md:left-12 lg:left-16 relative z-10 animate-fade-in-up w-full md:w-auto text-center md:text-left">
               <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">
                 {t.tagline}
               </p>
