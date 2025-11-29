@@ -207,7 +207,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         )}
 
         {/* Left Side (Dark) - Branding & Visuals */}
-        <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[35%] bg-[#1C1C1E] relative p-6 sm:p-8 md:p-12 lg:px-10 lg:py-12 xl:p-16 flex flex-col justify-center text-white shrink-0 min-h-[40vh] md:min-h-screen transition-all duration-500 z-0 gap-6 md:gap-8 lg:gap-12">
+        <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[35%] bg-[#1C1C1E] relative p-6 sm:p-8 md:p-12 lg:px-10 lg:py-12 xl:p-16 flex flex-col justify-start md:justify-center text-white shrink-0 min-h-[40vh] md:min-h-screen transition-all duration-500 z-0 gap-6 md:gap-8 lg:gap-12 pt-4 md:pt-16">
            {/* Background Decoration */}
            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none overflow-hidden">
              <div className="absolute top-[-10%] right-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full border border-gray-700/50 animate-fade-in duration-1000"></div>
@@ -215,18 +215,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
            </div>
 
            {/* Header / Tagline - Absolute on Desktop to stay top, Centered on Mobile */}
-           <div className="md:absolute md:top-6 md:left-12 lg:left-16 relative z-10 animate-fade-in-up w-full md:w-auto text-center md:text-left">
+           <div className="md:absolute md:top-6 md:left-12 lg:left-16 relative z-10 animate-fade-in-up w-full md:w-auto text-center md:text-left mb-2 md:mb-0">
               <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">
                 {t.tagline}
               </p>
            </div>
 
-           {/* Main Heading & Mockup - Flex Row on Mobile, Column on Desktop - LEFT ALIGNED ON DESKTOP */}
-           <div className="relative z-10 flex flex-row md:flex-col md:justify-center items-center md:items-start gap-6 sm:gap-8 md:gap-10 lg:gap-14 w-full">
+           {/* Main Heading & Mockup - Flex Row on Mobile (Side by Side) to clean up layout */}
+           <div className="relative z-10 flex flex-row md:flex-col items-start md:items-start justify-between md:justify-center w-full mt-6 md:mt-0">
               
-              {/* Text Section - Left aligned on Desktop */}
-              <div className="flex-1 text-left md:text-left md:w-full z-20">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] md:leading-[1.1] tracking-tighter transition-all duration-300">
+              {/* Text Section - Left on mobile, Left on Desktop */}
+              <div className="flex-1 text-left md:text-left md:w-full z-20 min-w-0 pr-1 md:pr-0 pb-0 md:pb-0 pt-2">
+                  <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] md:leading-[1.1] tracking-tighter transition-all duration-300">
                     <span key={isSignUp ? 'start' : 'discover'} className="inline-block animate-fade-in-up">
                         {isSignUp ? t.start : t.discover}
                     </span>
@@ -235,23 +235,76 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 animate-fade-in-up animation-delay-200 inline-block">{t.adventure}</span>
                   </h1>
+
+                  {/* Mobile Footer Icons (Box 2 position) - Left aligned under text */}
+                  <div className="relative z-20 flex md:hidden gap-3 mt-6 justify-start animate-fade-in animation-delay-500">
+                      {/* Language Selector */}
+                      <div className="relative">
+                          <button 
+                              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                              className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 ${isLangMenuOpen ? 'bg-gray-800 border-gray-500 scale-110 text-white' : 'border-gray-700 text-gray-400 hover:bg-gray-800 hover:border-gray-500 hover:scale-110 hover:text-white'}`}
+                              title="Select Language"
+                          >
+                              <Globe size={18} />
+                          </button>
+                          
+                          {isLangMenuOpen && (
+                              <>
+                                {/* Click backdrop to close */}
+                                <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsLangMenuOpen(false)}></div>
+                                
+                                {/* Menu */}
+                                <div className="absolute bottom-full left-0 mb-3 w-40 bg-[#252525] border border-gray-700 rounded-xl shadow-2xl p-1.5 flex flex-col gap-1 animate-scale-in origin-bottom-left z-50">
+                                    <button 
+                                        onClick={() => handleLangSelect('English')}
+                                        className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${currentLang === 'English' ? 'bg-gray-700 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <img src="https://flagcdn.com/w40/us.png" alt="US" className="w-5 rounded-sm shadow-sm" />
+                                            English
+                                        </span>
+                                        {currentLang === 'English' && <Check size={14} className="text-green-500" />}
+                                    </button>
+                                    <button 
+                                        onClick={() => handleLangSelect('Bangla')}
+                                        className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${currentLang === 'Bangla' ? 'bg-gray-700 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <img src="https://flagcdn.com/w40/bd.png" alt="BD" className="w-5 rounded-sm shadow-sm" />
+                                            Bangla
+                                        </span>
+                                        {currentLang === 'Bangla' && <Check size={14} className="text-green-500" />}
+                                    </button>
+                                </div>
+                              </>
+                          )}
+                      </div>
+
+                      {/* Contact Us Button */}
+                      <button 
+                          onClick={() => setIsContactOpen(true)}
+                          className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center hover:bg-gray-800 hover:border-gray-500 hover:scale-110 transition-all duration-300 cursor-pointer text-gray-400 hover:text-white"
+                          title="Contact Us"
+                      >
+                          <Mail size={18} />
+                      </button>
+                  </div>
               </div>
               
-              {/* Phone Mockup visual */}
+              {/* Phone Mockup visual - Right side on mobile */}
               {/* Wrapper handles the entrance animation (Slide Up/Fade In) */}
-              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 self-center md:self-center -mb-16 md:mb-0">
+              <div className="relative flex-shrink-0 z-10 animate-fade-in-up animation-delay-300 -ml-4 -mr-5 min-[375px]:-mr-8 md:mr-0 md:ml-0 md:mb-0 md:self-center">
                 {/* Inner Div handles the Rotation and Hover transform */}
                 <div className="
                     relative 
-                    w-28 h-48 
-                    sm:w-40 sm:h-64 
+                    w-[32vw] h-[60vw] max-w-[140px] max-h-[260px] md:max-w-none md:max-h-none
                     md:w-56 md:h-[22rem] 
                     lg:w-72 lg:h-[28rem] 
-                    xl:w-80 xl:h-[32rem]
+                    xl:w-80 xl:h-[32rem] 
                     2xl:w-96 2xl:h-[38rem]
-                    bg-gray-800 rounded-[1.25rem] md:rounded-[2.5rem] border-[3px] md:border-4 border-gray-700 
+                    bg-gray-800 rounded-[1.2rem] md:rounded-[2.5rem] border-[3px] md:border-4 border-gray-700 
                     shadow-2xl 
-                    transform -rotate-6 md:-rotate-6 hover:rotate-0 
+                    transform rotate-0 md:-rotate-6 hover:rotate-0 
                     transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                     overflow-hidden group
                     [backface-visibility:hidden] [transform:translateZ(0)] will-change-transform
@@ -264,11 +317,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     />
                     
                     {/* Floating Widget on Phone */}
-                    <div className="absolute bottom-2 md:bottom-6 left-1.5 right-1.5 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-1.5 md:p-3 rounded-lg md:rounded-xl border border-white/20 shadow-lg transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
+                    <div className="absolute bottom-3 md:bottom-6 left-2 right-2 md:left-4 md:right-4 bg-white/10 backdrop-blur-md p-2 md:p-3 rounded-xl border border-white/20 shadow-lg transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-[6px] md:text-[10px] text-gray-300 leading-tight">{t.flightTo}</p>
-                          <p className="text-[9px] md:text-sm font-bold leading-tight">{t.tokyo}</p>
+                          <p className="text-[8px] md:text-[10px] text-gray-300 leading-tight">{t.flightTo}</p>
+                          <p className="text-[10px] md:text-sm font-bold leading-tight">{t.tokyo}</p>
                         </div>
                         <div className="text-[10px] md:text-base font-bold text-black leading-tight">$897</div>
                       </div>
@@ -277,8 +330,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               </div>
            </div>
 
-           {/* Footer Icons - Visible on all screens */}
-           <div className="relative z-20 flex gap-4 animate-fade-in animation-delay-500 mt-6 md:mt-8 md:self-start">
+           {/* Footer Icons - Visible on Desktop Only */}
+           <div className="relative z-20 hidden md:flex gap-4 animate-fade-in animation-delay-500 mt-6 md:mt-8 md:self-start">
               
               {/* Language Selector */}
               <div className="relative">
@@ -335,7 +388,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
         {/* Right Side (Light) - Login/Signup Form */}
         <div className="flex-1 md:w-[55%] lg:w-[60%] xl:w-[65%] bg-white flex flex-col justify-center rounded-t-[30px] md:rounded-tr-none md:rounded-l-[40px] lg:rounded-l-[50px] relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.4)] md:shadow-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-[55vh] md:min-h-screen">
-           <div className="p-6 sm:p-10 md:p-14 lg:p-20 xl:p-24 flex flex-col w-full h-full justify-center max-w-2xl mx-auto">
+           {/* Fluid Background Blobs */}
+           <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-t-[30px] md:rounded-l-[40px]">
+             <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-orange-400/30 rounded-full blur-[100px] animate-blob mix-blend-multiply"></div>
+             <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-pink-500/30 rounded-full blur-[100px] animate-blob animation-delay-200 mix-blend-multiply"></div>
+             <div className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-rose-400/30 rounded-full blur-[100px] animate-blob animation-delay-400 mix-blend-multiply"></div>
+           </div>
+
+           <div className="p-6 sm:p-10 md:p-14 lg:p-20 xl:p-24 flex flex-col w-full h-full justify-center max-w-2xl mx-auto relative z-10">
                
                {/* Top Bar - Mobile/Tablet mainly, adjusted for Desktop spacing */}
                <div className="flex justify-between items-center mb-8 md:mb-12 animate-fade-in">
