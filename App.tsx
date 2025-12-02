@@ -1,32 +1,11 @@
-import { useState } from 'react';
-import LoginScreen from './components/LoginScreen';
-import ChatInterface from './components/ChatInterface';
-import Sidebar from './components/Sidebar';
-import { ViewState } from './types';
+import React from 'react';
 
-function App() {
-  const [view, setView] = useState<ViewState>(ViewState.LOGIN);
-
-  const handleLogin = () => {
-    setView(ViewState.DASHBOARD);
-  };
-
-  const handleLogout = () => {
-    setView(ViewState.LOGIN);
-  };
-
+const App: React.FC = () => {
   return (
-    <div className={`w-full font-sans text-gray-900 bg-white ${view === ViewState.DASHBOARD ? 'h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
-      {view === ViewState.LOGIN ? (
-        <LoginScreen onLogin={handleLogin} />
-      ) : (
-        <div className="flex w-full h-full">
-          <Sidebar onLogout={handleLogout} />
-          <ChatInterface />
-        </div>
-      )}
-    </div>
+    <main className="w-full min-h-screen bg-gradient-to-br from-rose-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white">
+      {/* Platform Ready - Colorful Mode */}
+    </main>
   );
-}
+};
 
 export default App;
