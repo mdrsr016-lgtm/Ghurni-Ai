@@ -98,16 +98,16 @@ function useWallpaper() {
 const SocialButton = ({ icon, label, className, onClick }: { icon: React.ReactNode, label: string, className?: string, onClick?: () => void }) => (
   <button 
     onClick={onClick}
-    className={`group relative flex items-center justify-center w-full px-6 py-4 rounded-xl border transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] shadow-lg ${className}`}
+    className={`group relative flex items-center justify-center w-full px-6 py-4 rounded-xl border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-[1.02] active:scale-[0.98] shadow-lg overflow-hidden ${className}`}
   >
-    <div className="absolute left-6 flex items-center justify-center">
+    <div className="absolute left-6 flex items-center justify-center z-10">
       {icon}
     </div>
-    <span className="text-white font-medium tracking-wide text-sm sm:text-base">
+    <span className="relative z-10 text-white font-medium tracking-wide text-sm sm:text-base">
       {label}
     </span>
     {/* Shine effect */}
-    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 overflow-hidden" />
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out z-0" />
   </button>
 );
 
@@ -125,7 +125,7 @@ const App: React.FC = () => {
         {/* Image Overlay */}
         {currentSrc && (
           <div 
-            className={`absolute inset-0 w-full h-full bg-black/40 transition-all duration-[2000ms] ease-out transform ${
+            className={`absolute inset-0 w-full h-full bg-black/40 transition-all duration-[2500ms] ease-[cubic-bezier(0.23,1,0.32,1)] transform ${
               isLoading ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
             }`}
           >
