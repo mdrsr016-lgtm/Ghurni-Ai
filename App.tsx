@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // --- CONFIGURATION ---
-const ANIMATION_DURATION = 1500; // Slow, premium fade-in (ms)
+const ANIMATION_DURATION = 2000; // Increased to 2s for smoother cinematic feel
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -107,11 +107,10 @@ const App: React.FC = () => {
         {/* 2. High-Res Image Overlay */}
         {currentSrc && (
           <div 
-            className={`absolute inset-0 w-full h-full bg-black/20 transition-opacity ease-in-out`}
-            style={{ 
-              opacity: isLoading ? 0 : 1, 
-              transitionDuration: `${ANIMATION_DURATION}ms` 
-            }}
+            // Combined opacity and scale transition for a "Ken Burns" style reveal
+            className={`absolute inset-0 w-full h-full bg-black/20 transition-all duration-[2000ms] ease-out transform ${
+              isLoading ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+            }`}
           >
              <img 
               src={currentSrc}
