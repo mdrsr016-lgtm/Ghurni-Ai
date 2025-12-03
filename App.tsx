@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -101,7 +102,7 @@ function useWallpaper() {
 const SocialButton = ({ icon, label, className, onClick }: { icon: React.ReactNode, label: string, className?: string, onClick?: () => void }) => (
   <button 
     onClick={onClick}
-    className={`group relative flex items-center justify-center w-full px-6 py-4 rounded-xl border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-[1.02] active:scale-[0.98] shadow-lg overflow-hidden ${className}`}
+    className={`group relative flex items-center justify-center w-full px-6 py-3 rounded-xl border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-[1.02] active:scale-[0.98] shadow-lg overflow-hidden ${className}`}
   >
     <div className="absolute left-6 flex items-center justify-center z-10">
       {icon}
@@ -116,9 +117,10 @@ const SocialButton = ({ icon, label, className, onClick }: { icon: React.ReactNo
 
 const App: React.FC = () => {
   const { currentSrc, isLoading, setIsLoading } = useWallpaper();
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <main className="relative w-full min-h-screen overflow-hidden text-white font-sans selection:bg-rose-500/30">
+    <main className="relative w-full h-screen overflow-hidden text-white font-sans selection:bg-rose-500/30">
       
       {/* --- BACKGROUND LAYER --- */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -150,38 +152,97 @@ const App: React.FC = () => {
           Responsiveness Logic:
           - Default (Mobile/Tablet): flex-col, justify-end (bottom), items-center
           - lg (Desktop): flex-row, justify-end (right), items-center
+          - h-full ensure it fits exactly, no scrolling main page
       */}
-      <div className="relative z-10 flex flex-col w-full min-h-screen p-6 lg:p-24 transition-all duration-500 justify-end items-center lg:flex-row lg:justify-end lg:items-center">
+      <div className="relative z-10 flex flex-col w-full h-full p-4 lg:p-12 transition-all duration-500 justify-end items-center lg:flex-row lg:justify-end lg:items-center">
         
         {/* Login Card */}
-        <div className="w-full max-w-md glass-panel rounded-3xl p-8 sm:p-10 flex flex-col items-center animate-card-entry mb-8 lg:mb-0 lg:mr-10 relative overflow-hidden">
+        {/* max-h-[90vh] ensures card fits on small phones. overflow-y-auto handles extremely small heights safely */}
+        <div className="w-full max-w-md glass-panel rounded-3xl p-6 sm:p-8 flex flex-col items-center animate-card-entry mb-2 lg:mb-0 lg:mr-10 relative overflow-hidden shrink-0 shadow-2xl max-h-full overflow-y-auto scrollbar-hide">
           
           {/* Card Header Row */}
-          <div className="w-full flex justify-between items-center mb-10 z-20">
+          <div className="w-full flex justify-between items-center mb-6 z-20 shrink-0">
              {/* Brand */}
              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
-                   <LogoIcon className="w-6 h-6 text-white" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
+                   <LogoIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <span className="text-xl font-bold tracking-wide text-white">Ghurni</span>
+                <span className="text-xl sm:text-2xl font-bold tracking-wider text-white flex items-center gap-1">
+                  Ghurni <span className="font-light opacity-90">Ai</span>
+                </span>
              </div>
              {/* Sign Up Button */}
-             <button className="px-4 py-2 text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
+             <button className="px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
                  Sign Up
              </button>
           </div>
           
           {/* Main Content */}
-          <div className="w-full flex flex-col items-center text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">
-              Welcome Back
+          <div className="w-full flex flex-col items-center text-center shrink-0">
+            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2 sm:mb-3 flex items-center justify-center gap-2 sm:gap-3 text-white">
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
+              <span>👋</span>
             </h1>
-            <p className="text-white/60 font-light text-base mb-8 max-w-xs mx-auto leading-relaxed">
+            <p className="text-white/60 font-light text-sm sm:text-base mb-6 max-w-xs mx-auto leading-relaxed">
               Plan your next adventure with intelligent insights.
             </p>
 
-            {/* Buttons */}
-            <div className="w-full space-y-4 animate-fade-in-up animate-delay-100">
+            {/* --- SIGN IN FORM --- */}
+            <div className="w-full mb-4 sm:mb-6 space-y-3 animate-fade-in-up animate-delay-100">
+               {/* Email/Username Input */}
+               <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                     <User className="w-5 h-5" />
+                  </div>
+                  <input 
+                    type="text" 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
+                    placeholder="Email or Username"
+                  />
+               </div>
+               
+               {/* Password Input */}
+               <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                     <Lock className="w-5 h-5" />
+                  </div>
+                  <input 
+                    type={showPassword ? "text" : "password"}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 sm:py-4 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
+                    placeholder="Password"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+               </div>
+
+               {/* Forgot Password */}
+               <div className="flex justify-end">
+                 <button className="text-xs sm:text-sm font-medium text-orange-400/90 hover:text-orange-400 transition-colors">
+                   Forgot password?
+                 </button>
+               </div>
+
+               {/* Gradient Sign In Button */}
+               <button className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-[#FF512F] to-[#DD2476] text-white font-bold text-base sm:text-lg tracking-wide shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2">
+                 <span className="text-white/80"><ArrowRight className="w-5 h-5" /></span>
+                 Sign In
+               </button>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full flex items-center gap-4 mb-4 sm:mb-6 animate-fade-in-up animate-delay-100 opacity-60">
+                <div className="h-px bg-white/10 flex-1" />
+                <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Or continue with</span>
+                <div className="h-px bg-white/10 flex-1" />
+            </div>
+
+            {/* Social Buttons */}
+            <div className="w-full space-y-3 animate-fade-in-up animate-delay-200">
               <SocialButton 
                 icon={<GoogleIcon />} 
                 label="Continue with Google"
@@ -199,7 +260,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="mt-8 pt-6 w-full border-t border-white/5 animate-fade-in-up animate-delay-200">
+          <div className="mt-4 sm:mt-8 pt-4 sm:pt-6 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0">
              <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
                <a href="#" className="hover:text-white transition-colors">Privacy</a>
                <span>•</span>
@@ -213,8 +274,8 @@ const App: React.FC = () => {
         
         {/* Bottom secured badge */}
         {/* Desktop: Bottom Left | Mobile: Bottom Center (relative due to flex-col) */}
-        <div className="absolute bottom-6 w-full flex justify-center lg:justify-start lg:left-10 lg:w-auto animate-fade-in-up animate-delay-200 pointer-events-none">
-          <div className="flex items-center space-x-2 text-white/30 text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+        <div className="absolute bottom-4 sm:bottom-6 w-full flex justify-center lg:justify-start lg:left-10 lg:w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
+          <div className="flex items-center space-x-2 text-white/30 text-[10px] sm:text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
             <Lock className="w-3 h-3" />
             <span>Secured by Ghurni ID</span>
           </div>
