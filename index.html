@@ -22,7 +22,9 @@
       /* Professional Reset & Base Styles */
       :root {
         --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        --gradient-blur: 0px;
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-bg: rgba(0, 0, 0, 0.2);
+        --glass-highlight: rgba(255, 255, 255, 0.05);
       }
       
       html {
@@ -51,10 +53,56 @@
         background-size: cover;
       }
 
-      .frosted-backdrop {
-        backdrop-filter: blur(var(--gradient-blur)) contrast(100%) brightness(100%);
-        -webkit-backdrop-filter: blur(var(--gradient-blur)) contrast(100%) brightness(100%);
+      /* Glassmorphism Utilities */
+      .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
       }
+
+      .text-gradient {
+        background: linear-gradient(135deg, #fff 0%, #ffffff80 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .animate-fade-in-up {
+        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+
+      /* Responsive Card Entrance Animations */
+      @keyframes slideInUpMobile {
+        from { opacity: 0; transform: translateY(100px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes slideInRightDesktop {
+        from { opacity: 0; transform: translateX(100px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .animate-card-entry {
+        opacity: 0; /* Start hidden to avoid flash */
+        animation: slideInUpMobile 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+
+      @media (min-width: 1024px) {
+        .animate-card-entry {
+          /* Desktop: Slide Left (from Right) */
+          animation-name: slideInRightDesktop;
+        }
+      }
+
+      .animate-delay-100 { animation-delay: 100ms; }
+      .animate-delay-200 { animation-delay: 200ms; }
 
       /* Clean Scrollbar */
       ::-webkit-scrollbar {
