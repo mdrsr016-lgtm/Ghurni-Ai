@@ -157,11 +157,14 @@ const App: React.FC = () => {
       <div className="relative z-10 flex flex-col w-full h-full p-4 lg:p-12 transition-all duration-500 justify-end items-center lg:flex-row lg:justify-end lg:items-center">
         
         {/* Login Card */}
-        {/* max-h-[90vh] ensures card fits on small phones. overflow-y-auto handles extremely small heights safely */}
-        <div className="w-full max-w-md glass-panel rounded-3xl p-6 sm:p-8 flex flex-col items-center animate-card-entry mb-2 lg:mb-0 lg:mr-10 relative overflow-hidden shrink-0 shadow-2xl max-h-full overflow-y-auto scrollbar-hide">
+        {/* 
+           Desktop (lg): lg:overflow-y-hidden, lg:mb-0, reduced padding lg:p-8
+           Mobile: overflow-y-auto to allow scrolling on tiny screens, p-6
+        */}
+        <div className="w-full max-w-md glass-panel rounded-3xl p-6 lg:p-8 flex flex-col items-center animate-card-entry mb-2 lg:mb-0 lg:mr-10 relative shrink-0 shadow-2xl max-h-full overflow-y-auto lg:overflow-y-hidden scrollbar-hide">
           
           {/* Card Header Row */}
-          <div className="w-full flex justify-between items-center mb-6 z-20 shrink-0">
+          <div className="w-full flex justify-between items-center mb-4 lg:mb-4 z-20 shrink-0">
              {/* Brand */}
              <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
@@ -179,16 +182,17 @@ const App: React.FC = () => {
           
           {/* Main Content */}
           <div className="w-full flex flex-col items-center text-center shrink-0">
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2 sm:mb-3 flex items-center justify-center gap-2 sm:gap-3 text-white">
+            {/* Title: Smaller on standard Desktop (text-3xl) to save height, larger on XL */}
+            <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-2 sm:gap-3 text-white">
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
               <span>👋</span>
             </h1>
-            <p className="text-white/60 font-light text-sm sm:text-base mb-6 max-w-xs mx-auto leading-relaxed">
+            <p className="text-white/60 font-light text-sm sm:text-base mb-4 max-w-xs mx-auto leading-relaxed">
               Plan your next adventure with intelligent insights.
             </p>
 
             {/* --- SIGN IN FORM --- */}
-            <div className="w-full mb-4 sm:mb-6 space-y-3 animate-fade-in-up animate-delay-100">
+            <div className="w-full mb-4 space-y-3 animate-fade-in-up animate-delay-100">
                {/* Email/Username Input */}
                <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
@@ -196,7 +200,7 @@ const App: React.FC = () => {
                   </div>
                   <input 
                     type="text" 
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
                     placeholder="Email or Username"
                   />
                </div>
@@ -208,7 +212,7 @@ const App: React.FC = () => {
                   </div>
                   <input 
                     type={showPassword ? "text" : "password"}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 sm:py-4 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
                     placeholder="Password"
                   />
                   <button 
@@ -228,14 +232,14 @@ const App: React.FC = () => {
                </div>
 
                {/* Gradient Sign In Button */}
-               <button className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-[#FF512F] to-[#DD2476] text-white font-bold text-base sm:text-lg tracking-wide shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2">
+               <button className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#FF512F] to-[#DD2476] text-white font-bold text-base sm:text-lg tracking-wide shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2">
                  <span className="text-white/80"><ArrowRight className="w-5 h-5" /></span>
                  Sign In
                </button>
             </div>
 
             {/* Divider */}
-            <div className="w-full flex items-center gap-4 mb-4 sm:mb-6 animate-fade-in-up animate-delay-100 opacity-60">
+            <div className="w-full flex items-center gap-4 mb-4 animate-fade-in-up animate-delay-100 opacity-60">
                 <div className="h-px bg-white/10 flex-1" />
                 <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Or continue with</span>
                 <div className="h-px bg-white/10 flex-1" />
@@ -246,21 +250,21 @@ const App: React.FC = () => {
               <SocialButton 
                 icon={<GoogleIcon />} 
                 label="Continue with Google"
-                className="bg-white/5 hover:bg-white/10 border-white/10"
+                className="bg-white/5 hover:bg-white/10 border-white/10 py-3"
                 onClick={() => console.log('Google login')}
               />
               
               <SocialButton 
                 icon={<FacebookIcon />} 
                 label="Continue with Facebook"
-                className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20"
+                className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3"
                 onClick={() => console.log('Facebook login')}
               />
             </div>
           </div>
 
           {/* Footer */}
-          <div className="mt-4 sm:mt-8 pt-4 sm:pt-6 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0">
+          <div className="mt-4 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0">
              <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
                <a href="#" className="hover:text-white transition-colors">Privacy</a>
                <span>•</span>
