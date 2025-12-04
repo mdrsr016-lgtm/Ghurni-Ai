@@ -151,28 +151,32 @@ const App: React.FC = () => {
       {/* --- CONTENT LAYER --- */}
       {/* 
           Layout Architecture:
-          - Mobile/Tablet (< xl): `block` layout with `overflow-y-auto`.
-            This allows natural scrolling. We use a spacer div to push the card down initially.
-          - Desktop (>= xl): `flex-row`, `justify-end`, `overflow-hidden`. Fixed layout.
+          - Mobile (< md): `block` layout with `overflow-y-auto`. Scrollable bottom sheet.
+          - Tablet (md to xl): `flex items-center justify-center`. Centered card.
+          - Desktop (>= xl): `flex-row justify-end`. Split screen.
       */}
-      <div className="relative z-10 w-full h-[100dvh] overflow-y-auto xl:overflow-hidden xl:flex xl:flex-row xl:justify-end xl:items-center xl:p-12 transition-all duration-500 scroll-smooth">
+      <div className="relative z-10 w-full h-[100dvh] overflow-y-auto md:overflow-hidden md:flex md:items-center md:justify-center xl:justify-end xl:items-center xl:p-12 transition-all duration-500 scroll-smooth">
         
-        {/* Mobile Spacer - Pushes card down to 50% initially, but allows scrolling past it */}
-        <div className="w-full h-[50dvh] shrink-0 xl:hidden pointer-events-none" aria-hidden="true" />
+        {/* Mobile Spacer - Pushes card down to 50% initially, hidden on Tablet/Desktop */}
+        <div className="w-full h-[50dvh] shrink-0 md:hidden pointer-events-none" aria-hidden="true" />
 
         {/* Login Card */}
         {/* 
-           - Mobile/Tablet: 
-             - `min-h-[50dvh]`: Ensures it fills bottom half initially, but grows with content.
+           - Mobile (< md): 
+             - `min-h-[50dvh]`: Fills bottom half.
              - `w-full`: Full width.
-             - `rounded-b-none`: No gap visuals at bottom.
-             - No internal overflow; relies on parent scroll.
-           - Desktop: 
-             - `xl:h-auto`: Height based on content.
-             - `xl:max-w-md`: Constrained width.
-             - `xl:rounded-3xl`: Fully rounded.
+             - `rounded-b-none`: Gapless bottom.
+           
+           - Tablet (md):
+             - `md:w-full md:max-w-[28rem]`: Constrained width.
+             - `md:min-h-0 md:h-auto`: Auto height.
+             - `md:rounded-3xl`: Fully rounded.
+             - `md:border`: Visible border.
+           
+           - Desktop (xl): 
+             - `xl:max-w-md`: Standard desktop width.
         */}
-        <div className="w-full min-h-[50dvh] xl:min-h-0 xl:h-auto xl:max-w-md glass-panel rounded-t-[2.5rem] rounded-b-none xl:rounded-3xl p-6 md:p-8 xl:p-8 flex flex-col items-center animate-card-entry relative shrink-0 shadow-2xl border-x-0 border-b-0 xl:border backdrop-blur-3xl mb-0">
+        <div className="w-full min-h-[50dvh] md:min-h-0 md:h-auto md:w-full md:max-w-[28rem] xl:max-w-md glass-panel rounded-t-[2.5rem] rounded-b-none md:rounded-3xl p-6 md:p-8 xl:p-8 flex flex-col items-center animate-card-entry relative shrink-0 shadow-2xl border-x-0 border-b-0 md:border backdrop-blur-3xl mb-0 xl:mr-0">
           
           {/* Card Header Row */}
           <div className="w-full flex justify-between items-center mb-6 z-20 shrink-0">
@@ -285,7 +289,7 @@ const App: React.FC = () => {
                <a href="#" className="hover:text-white transition-colors">Help</a>
              </div>
              
-             {/* Mobile Badge - Visible inside card on mobile */}
+             {/* Mobile/Tablet Badge - Visible inside card */}
              <div className="flex xl:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
                 <Lock className="w-3 h-3" />
                 <span>Secured by Ghurni ID</span>

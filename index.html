@@ -113,20 +113,16 @@
       .animate-delay-100 { animation-delay: 150ms; }
       .animate-delay-200 { animation-delay: 300ms; }
 
-      /* Clean Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+      /* Hide Scrollbar Globally */
+      * {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
       }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.2);
+      
+      *::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+        width: 0;
+        height: 0;
       }
     </style>
   </head>
