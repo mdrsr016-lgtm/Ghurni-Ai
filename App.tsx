@@ -120,10 +120,11 @@ const App: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <main className="relative w-full h-screen overflow-hidden text-white font-sans selection:bg-rose-500/30">
+    <main className="relative w-full h-screen overflow-y-auto lg:overflow-hidden text-white font-sans selection:bg-rose-500/30">
       
       {/* --- BACKGROUND LAYER --- */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      {/* Changed to fixed to prevent it from scrolling away on mobile */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Base Gradient */}
         <div className="mesh-gradient-bg absolute inset-0 w-full h-full" />
         
@@ -150,18 +151,25 @@ const App: React.FC = () => {
       {/* --- CONTENT LAYER --- */}
       {/* 
           Responsiveness Logic:
-          - Default (Mobile/Tablet): flex-col, justify-end (bottom), items-center
-          - lg (Desktop): flex-row, justify-end (right), items-center
-          - h-full ensure it fits exactly, no scrolling main page
+          - Mobile/Tablet: 
+             - `flex-col`, `justify-start`
+             - `pt-[50vh]`: This creates the 50% gap at the top.
+             - `pb-0`: Removed bottom padding so card touches bottom (requested).
+             - `px-0`: Full width (requested).
+             - `overflow-visible`: Let it scroll naturally with the main container.
+          - Desktop (lg): 
+             - `lg:h-full` to fit screen
+             - `lg:flex-row`, `lg:justify-end`, `lg:items-center`
+             - `lg:pt-0`: Remove the mobile gap.
       */}
-      <div className="relative z-10 flex flex-col w-full h-full p-4 lg:p-12 transition-all duration-500 justify-end items-center lg:flex-row lg:justify-end lg:items-center">
+      <div className="relative z-10 flex flex-col justify-start w-full min-h-screen pt-[50vh] pb-0 px-0 lg:p-12 lg:pt-0 lg:h-full lg:flex-row lg:justify-end lg:items-center transition-all duration-500">
         
         {/* Login Card */}
         {/* 
-           Desktop (lg): lg:overflow-y-hidden, lg:mb-0, reduced padding lg:p-8
-           Mobile: overflow-y-auto to allow scrolling on tiny screens, p-6
+           Desktop (lg): `lg:overflow-y-hidden`, compact height to fit 1080px screens, `lg:mb-0`, `lg:max-w-md`, full border
+           Mobile: `w-full` (screen width), rounded top only, no side/bottom borders for seamless look.
         */}
-        <div className="w-full max-w-md glass-panel rounded-3xl p-6 lg:p-8 flex flex-col items-center animate-card-entry mb-2 lg:mb-0 lg:mr-10 relative shrink-0 shadow-2xl max-h-full overflow-y-auto lg:overflow-y-hidden scrollbar-hide">
+        <div className="w-full lg:max-w-md glass-panel rounded-t-3xl rounded-b-none lg:rounded-3xl p-5 lg:p-8 flex flex-col items-center animate-card-entry mb-0 lg:mb-0 lg:mr-24 relative shrink-0 shadow-2xl min-h-[50vh] lg:min-h-0 lg:max-h-full overflow-visible lg:overflow-y-hidden scrollbar-hide border-x-0 border-b-0 lg:border">
           
           {/* Card Header Row */}
           <div className="w-full flex justify-between items-center mb-4 lg:mb-4 z-20 shrink-0">
@@ -194,7 +202,7 @@ const App: React.FC = () => {
             {/* --- SIGN IN FORM --- */}
             <div className="w-full mb-4 space-y-3 animate-fade-in-up animate-delay-100">
                {/* Email/Username Input */}
-               <div className="relative group">
+               <div className="relative group w-full">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
                      <User className="w-5 h-5" />
                   </div>
@@ -206,7 +214,7 @@ const App: React.FC = () => {
                </div>
                
                {/* Password Input */}
-               <div className="relative group">
+               <div className="relative group w-full">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
                      <Lock className="w-5 h-5" />
                   </div>
@@ -225,7 +233,7 @@ const App: React.FC = () => {
                </div>
 
                {/* Forgot Password */}
-               <div className="flex justify-end">
+               <div className="flex justify-end w-full">
                  <button className="text-xs sm:text-sm font-medium text-orange-400/90 hover:text-orange-400 transition-colors">
                    Forgot password?
                  </button>
@@ -264,7 +272,8 @@ const App: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="mt-4 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0">
+          <div className="mt-4 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
+             {/* Privacy Links */}
              <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
                <a href="#" className="hover:text-white transition-colors">Privacy</a>
                <span>•</span>
@@ -272,13 +281,18 @@ const App: React.FC = () => {
                <span>•</span>
                <a href="#" className="hover:text-white transition-colors">Help</a>
              </div>
+             
+             {/* Mobile Badge - Visible inside card on mobile */}
+             <div className="flex lg:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+                <Lock className="w-3 h-3" />
+                <span>Secured by Ghurni ID</span>
+             </div>
           </div>
 
         </div>
         
-        {/* Bottom secured badge */}
-        {/* Desktop: Bottom Left | Mobile: Bottom Center (relative due to flex-col) */}
-        <div className="absolute bottom-4 sm:bottom-6 w-full flex justify-center lg:justify-start lg:left-10 lg:w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
+        {/* Bottom secured badge (Desktop Only) */}
+        <div className="hidden lg:flex w-full absolute bottom-6 left-10 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
           <div className="flex items-center space-x-2 text-white/30 text-[10px] sm:text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
             <Lock className="w-3 h-3" />
             <span>Secured by Ghurni ID</span>
