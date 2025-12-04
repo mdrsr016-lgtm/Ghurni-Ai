@@ -204,18 +204,19 @@ const App: React.FC = () => {
             mb-0
             
             /* --- TABLET (tab: 768px+, tab-lg: 1024px+) --- */
-            tab:w-auto tab:min-w-[24rem] tab:max-w-[28rem] 
+            tab:w-full tab:max-w-[30rem] 
             tab:min-h-0 tab:h-auto 
             tab:rounded-3xl tab:rounded-b-3xl
             tab:border tab:border-white/10
             tab:mx-auto tab:p-10
             
             /* --- LAPTOP (laptop: 1280px+) --- */
+            laptop:w-full laptop:max-w-[32rem]
             laptop:mr-0 laptop:mx-0
             
             /* --- DESKTOP (desktop: 1440px+, wide: 1920px+) --- */
-            desktop:max-w-[30rem]
-            wide:max-w-[32rem]
+            desktop:max-w-[35rem]
+            wide:max-w-[38rem]
             
             /* --- 4K / 5K (4k: 2560px+, 5k: 3840px+) --- */
             4k:max-w-[40rem] 4k:p-16 4k:rounded-[3rem] 4k:border-2
