@@ -3,16 +3,18 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  // Safer cwd check for various runtime environments
+  const root = typeof process !== 'undefined' && process.cwd ? process.cwd() : '.';
   // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  const env = loadEnv(mode, (process as any).cwd(), '');
+  const env = loadEnv(mode, root, '');
 
   return {
     plugins: [react()],
     define: {
-      // Expose process.env.API_KEY to the client-side code
-      // Fallback to empty string to prevent "undefined" injection
-      'process.env.API_KEY': JSON.stringify(env.API_KEY || '')
+      // Expose environment variables to the client-side code
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
+      'process.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL || ''),
+      'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || '')
     },
     server: {
       port: 3000

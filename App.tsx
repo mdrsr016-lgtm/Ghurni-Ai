@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X, Mail, AlertCircle } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X, Mail, AlertCircle, LogOut, AlertTriangle } from 'lucide-react';
+import { supabase, isSupabaseConfigured } from './lib/supabase';
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -127,7 +128,7 @@ const App: React.FC = () => {
   
   // Auth State
   const [signinData, setSigninData] = useState({
-    username: '',
+    email: '',
     password: '',
     rememberMe: false
   });
@@ -152,6 +153,30 @@ const App: React.FC = () => {
   const [isVerifyingUser, setIsVerifyingUser] = useState(false);
   const [isUserAvailable, setIsUserAvailable] = useState<boolean | null>(null);
 
+  // Session State
+  const [session, setSession] = useState<any>(null);
+
+  // Initialize Session
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        setSuccessMsg("Logged in successfully!");
+        setFormError('');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Clear errors when switching modes
   useEffect(() => {
     setFormError('');
@@ -159,7 +184,7 @@ const App: React.FC = () => {
     setSuccessMsg('');
   }, [isSignUp]);
 
-  // Simulate Username Verification
+  // Simulate Username Verification (Can be replaced with Supabase function later)
   useEffect(() => {
     if (!isSignUp) return;
     
@@ -173,7 +198,7 @@ const App: React.FC = () => {
     setIsVerifyingUser(true);
     setIsUserAvailable(null);
 
-    // Mock API delay
+    // Simple mock validation for now (or call a custom Supabase edge function)
     const timer = setTimeout(() => {
       setIsVerifyingUser(false);
       // Simulate simple validation: valid if length > 3
@@ -211,8 +236,8 @@ const App: React.FC = () => {
         }
     } else {
          switch (name) {
-            case 'username':
-                return !value.trim() ? "Username is required" : "";
+            case 'email':
+                return !value.trim() ? "Email is required" : "";
             case 'password':
                 return !value ? "Password is required" : "";
             default: return "";
@@ -293,6 +318,11 @@ const App: React.FC = () => {
   const handleAuth = async () => {
     setFormError('');
     setSuccessMsg('');
+
+    if (!isSupabaseConfigured) {
+      setFormError("Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      return;
+    }
     
     if (!validateForm()) {
         return;
@@ -300,24 +330,95 @@ const App: React.FC = () => {
 
     setIsSubmitting(true);
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      if (isSignUp) {
+          const { data, error } = await supabase.auth.signUp({
+            email: signupData.email,
+            password: signupData.password,
+            options: {
+              data: {
+                full_name: signupData.fullName,
+                username: signupData.username,
+                phone: signupData.phone,
+              },
+            },
+          });
 
-    if (isSignUp) {
-        // Mock Success
-        console.log("Sign Up Success:", signupData);
-        setSuccessMsg("Account created successfully! Welcome aboard.");
-    } else {
-        // Mock Success
-        console.log("Sign In Success:", signinData);
-        setSuccessMsg(`Welcome back, ${signinData.username}!`);
+          if (error) throw error;
+
+          console.log("Sign Up Success:", data);
+          setSuccessMsg("Account created! Please check your email to verify your account.");
+      } else {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: signinData.email,
+            password: signinData.password,
+          });
+
+          if (error) throw error;
+          
+          console.log("Sign In Success:", data);
+          // Success message handled by onAuthStateChange
+      }
+    } catch (err: any) {
+      console.error("Auth Error:", err);
+      setFormError(err.message || "An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+    setFormError('');
+    if (!isSupabaseConfigured) {
+      setFormError("Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      return;
     }
 
-    setIsSubmitting(false);
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setFormError(err.message || "Social login failed");
+    }
+  };
+
+  const handleLogout = async () => {
+    if (!isSupabaseConfigured) return;
+    await supabase.auth.signOut();
+    setSuccessMsg('');
+    setFormError('');
   };
 
   // Determine if the submit button should be disabled
   const isButtonDisabled = isSubmitting || (isSignUp && !signupData.agreed);
+
+  // If logged in, show a simple dashboard for now (can be expanded later)
+  if (session) {
+     return (
+       <main className="relative w-full h-[100dvh] overflow-hidden text-white font-sans bg-black flex items-center justify-center">
+         <div className="absolute inset-0 mesh-gradient-bg opacity-50" />
+         <div className="relative z-10 glass-panel p-12 rounded-3xl text-center flex flex-col items-center max-w-lg w-full">
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6 animate-pulse-glow">
+                <Check className="w-10 h-10 text-green-400" />
+            </div>
+            <h1 className="text-4xl font-bold mb-2">Welcome Back!</h1>
+            <p className="text-white/60 mb-8">{session.user.email}</p>
+            <button 
+              onClick={handleLogout}
+              className="px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl transition-all flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
+         </div>
+       </main>
+     )
+  }
 
   return (
     <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
@@ -442,6 +543,19 @@ const App: React.FC = () => {
                 }
               </p>
 
+              {/* Supabase Missing Config Warning */}
+              {!isSupabaseConfigured && (
+                <div className="w-full mb-6 p-4 rounded-xl text-sm font-medium bg-amber-500/10 text-amber-200 border border-amber-500/20 flex flex-col gap-2 items-center text-center animate-fade-in-scale">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-400" />
+                    <span className="font-bold">Supabase Not Connected</span>
+                  </div>
+                  <span className="text-xs opacity-80">
+                    Add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> to your environment variables to enable login.
+                  </span>
+                </div>
+              )}
+
               {/* General Feedback Message Area */}
               {(formError || successMsg) && (
                 <div className={`w-full mb-4 p-3 rounded-lg text-sm font-medium animate-fade-in-scale flex items-center justify-center gap-2 ${formError ? 'bg-red-500/10 text-red-200 border border-red-500/20' : 'bg-green-500/10 text-green-200 border border-green-500/20'}`}>
@@ -548,18 +662,18 @@ const App: React.FC = () => {
                     <div className="overflow-hidden min-h-0">
                        <div className="mb-4">
                           <div className="relative group w-full text-left">
-                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.username ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
+                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.email ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
+                                <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
                               </div>
                               <input 
-                                type="text" 
-                                value={signinData.username}
-                                onChange={(e) => handleSigninChange('username', e.target.value)}
-                                onBlur={() => handleBlur('username', 'signin')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.username ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                                placeholder="Username"
+                                type="email" 
+                                value={signinData.email}
+                                onChange={(e) => handleSigninChange('email', e.target.value)}
+                                onBlur={() => handleBlur('email', 'signin')}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.email ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
+                                placeholder="Email Address"
                               />
-                              {fieldErrors.username && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.username}</span>}
+                              {fieldErrors.email && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.email}</span>}
                            </div>
                        </div>
                     </div>
@@ -713,14 +827,14 @@ const App: React.FC = () => {
                   icon={<GoogleIcon />} 
                   label="Continue with Google"
                   className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5 4k:py-6"
-                  onClick={() => console.log('Google login')}
+                  onClick={() => handleSocialLogin('google')}
                 />
                 
                 <SocialButton 
                   icon={<FacebookIcon />} 
                   label="Continue with Facebook"
                   className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5 4k:py-6"
-                  onClick={() => console.log('Facebook login')}
+                  onClick={() => handleSocialLogin('facebook')}
                 />
               </div>
             </div>
