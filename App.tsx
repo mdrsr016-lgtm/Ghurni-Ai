@@ -316,6 +316,9 @@ const App: React.FC = () => {
     setIsSubmitting(false);
   };
 
+  // Determine if the submit button should be disabled
+  const isButtonDisabled = isSubmitting || (isSignUp && !signupData.agreed);
+
   return (
     <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
       
@@ -658,10 +661,10 @@ const App: React.FC = () => {
                  {/* Premium Glass-Morphic Primary Button */}
                  <button 
                     onClick={handleAuth}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || (isSignUp && !signupData.agreed)}
                     className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 ${
-                    isSubmitting
-                      ? 'opacity-70 cursor-not-allowed grayscale-[0.3]' 
+                    isSubmitting || (isSignUp && !signupData.agreed)
+                      ? 'opacity-50 cursor-not-allowed grayscale-[0.5] brightness-75' 
                       : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-purple-700/60 hover:ring-white/30'
                   }`}
                  >
