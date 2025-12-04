@@ -63,7 +63,8 @@ function useWallpaper() {
     initialized.current = true;
 
     const initWallpaper = () => {
-      const isMobile = window.innerWidth < 1024;
+      // Updated to match XL breakpoint (1280px) so tablets use portrait logic
+      const isMobile = window.innerWidth < 1280;
       const images = isMobile ? PORTRAIT_IMAGES : LANDSCAPE_IMAGES;
       const storageKey = isMobile ? 'ghurni_bg_history_portrait' : 'ghurni_bg_history_landscape';
 
@@ -120,10 +121,9 @@ const App: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <main className="relative w-full h-screen overflow-y-auto lg:overflow-hidden text-white font-sans selection:bg-rose-500/30">
+    <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
       
       {/* --- BACKGROUND LAYER --- */}
-      {/* Changed to fixed to prevent it from scrolling away on mobile */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Base Gradient */}
         <div className="mesh-gradient-bg absolute inset-0 w-full h-full" />
@@ -150,57 +150,60 @@ const App: React.FC = () => {
 
       {/* --- CONTENT LAYER --- */}
       {/* 
-          Responsiveness Logic:
-          - Mobile/Tablet: 
-             - `flex-col`, `justify-start`
-             - `pt-[50vh]`: This creates the 50% gap at the top.
-             - `pb-0`: Removed bottom padding so card touches bottom (requested).
-             - `px-0`: Full width (requested).
-             - `overflow-visible`: Let it scroll naturally with the main container.
-          - Desktop (lg): 
-             - `lg:h-full` to fit screen
-             - `lg:flex-row`, `lg:justify-end`, `lg:items-center`
-             - `lg:pt-0`: Remove the mobile gap.
+          Layout Architecture:
+          - Mobile/Tablet (< xl): `block` layout with `overflow-y-auto`.
+            This allows natural scrolling. We use a spacer div to push the card down initially.
+          - Desktop (>= xl): `flex-row`, `justify-end`, `overflow-hidden`. Fixed layout.
       */}
-      <div className="relative z-10 flex flex-col justify-start w-full min-h-screen pt-[50vh] pb-0 px-0 lg:p-12 lg:pt-0 lg:h-full lg:flex-row lg:justify-end lg:items-center transition-all duration-500">
+      <div className="relative z-10 w-full h-[100dvh] overflow-y-auto xl:overflow-hidden xl:flex xl:flex-row xl:justify-end xl:items-center xl:p-12 transition-all duration-500 scroll-smooth">
         
+        {/* Mobile Spacer - Pushes card down to 50% initially, but allows scrolling past it */}
+        <div className="w-full h-[50dvh] shrink-0 xl:hidden pointer-events-none" aria-hidden="true" />
+
         {/* Login Card */}
         {/* 
-           Desktop (lg): `lg:overflow-y-hidden`, compact height to fit 1080px screens, `lg:mb-0`, `lg:max-w-md`, full border
-           Mobile: `w-full` (screen width), rounded top only, no side/bottom borders for seamless look.
+           - Mobile/Tablet: 
+             - `min-h-[50dvh]`: Ensures it fills bottom half initially, but grows with content.
+             - `w-full`: Full width.
+             - `rounded-b-none`: No gap visuals at bottom.
+             - No internal overflow; relies on parent scroll.
+           - Desktop: 
+             - `xl:h-auto`: Height based on content.
+             - `xl:max-w-md`: Constrained width.
+             - `xl:rounded-3xl`: Fully rounded.
         */}
-        <div className="w-full lg:max-w-md glass-panel rounded-t-3xl rounded-b-none lg:rounded-3xl p-5 lg:p-8 flex flex-col items-center animate-card-entry mb-0 lg:mb-0 lg:mr-24 relative shrink-0 shadow-2xl min-h-[50vh] lg:min-h-0 lg:max-h-full overflow-visible lg:overflow-y-hidden scrollbar-hide border-x-0 border-b-0 lg:border">
+        <div className="w-full min-h-[50dvh] xl:min-h-0 xl:h-auto xl:max-w-md glass-panel rounded-t-[2.5rem] rounded-b-none xl:rounded-3xl p-6 md:p-8 xl:p-8 flex flex-col items-center animate-card-entry relative shrink-0 shadow-2xl border-x-0 border-b-0 xl:border backdrop-blur-3xl mb-0">
           
           {/* Card Header Row */}
-          <div className="w-full flex justify-between items-center mb-4 lg:mb-4 z-20 shrink-0">
+          <div className="w-full flex justify-between items-center mb-6 z-20 shrink-0">
              {/* Brand */}
              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
-                   <LogoIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
+                   <LogoIcon className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-xl sm:text-2xl font-bold tracking-wider text-white flex items-center gap-1">
+                <span className="text-2xl font-bold tracking-wider text-white flex items-center gap-1">
                   Ghurni <span className="font-light opacity-90">Ai</span>
                 </span>
              </div>
              {/* Sign Up Button */}
-             <button className="px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
+             <button className="px-4 py-2 text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
                  Sign Up
              </button>
           </div>
           
-          {/* Main Content */}
-          <div className="w-full flex flex-col items-center text-center shrink-0">
-            {/* Title: Smaller on standard Desktop (text-3xl) to save height, larger on XL */}
-            <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-2 sm:gap-3 text-white">
+          {/* Main Content Container */}
+          <div className="w-full max-w-md xl:max-w-full flex flex-col items-center text-center shrink-0 mx-auto">
+            {/* Title */}
+            <h1 className="text-3xl xl:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white">
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
               <span>👋</span>
             </h1>
-            <p className="text-white/60 font-light text-sm sm:text-base mb-4 max-w-xs mx-auto leading-relaxed">
+            <p className="text-white/60 font-light text-base mb-6 max-w-xs mx-auto leading-relaxed">
               Plan your next adventure with intelligent insights.
             </p>
 
             {/* --- SIGN IN FORM --- */}
-            <div className="w-full mb-4 space-y-3 animate-fade-in-up animate-delay-100">
+            <div className="w-full mb-6 space-y-4 animate-fade-in-up animate-delay-100">
                {/* Email/Username Input */}
                <div className="relative group w-full">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
@@ -208,7 +211,7 @@ const App: React.FC = () => {
                   </div>
                   <input 
                     type="text" 
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
                     placeholder="Email or Username"
                   />
                </div>
@@ -220,7 +223,7 @@ const App: React.FC = () => {
                   </div>
                   <input 
                     type={showPassword ? "text" : "password"}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-sm sm:text-base"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
                     placeholder="Password"
                   />
                   <button 
@@ -234,45 +237,45 @@ const App: React.FC = () => {
 
                {/* Forgot Password */}
                <div className="flex justify-end w-full">
-                 <button className="text-xs sm:text-sm font-medium text-orange-400/90 hover:text-orange-400 transition-colors">
+                 <button className="text-sm font-medium text-orange-400/90 hover:text-orange-400 transition-colors">
                    Forgot password?
                  </button>
                </div>
 
                {/* Gradient Sign In Button */}
-               <button className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#FF512F] to-[#DD2476] text-white font-bold text-base sm:text-lg tracking-wide shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2">
+               <button className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#FF512F] to-[#DD2476] text-white font-bold text-lg tracking-wide shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2">
                  <span className="text-white/80"><ArrowRight className="w-5 h-5" /></span>
                  Sign In
                </button>
             </div>
 
             {/* Divider */}
-            <div className="w-full flex items-center gap-4 mb-4 animate-fade-in-up animate-delay-100 opacity-60">
+            <div className="w-full flex items-center gap-4 mb-6 animate-fade-in-up animate-delay-100 opacity-60">
                 <div className="h-px bg-white/10 flex-1" />
                 <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Or continue with</span>
                 <div className="h-px bg-white/10 flex-1" />
             </div>
 
             {/* Social Buttons */}
-            <div className="w-full space-y-3 animate-fade-in-up animate-delay-200">
+            <div className="w-full space-y-3 animate-fade-in-up animate-delay-200 mb-2">
               <SocialButton 
                 icon={<GoogleIcon />} 
                 label="Continue with Google"
-                className="bg-white/5 hover:bg-white/10 border-white/10 py-3"
+                className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5"
                 onClick={() => console.log('Google login')}
               />
               
               <SocialButton 
                 icon={<FacebookIcon />} 
                 label="Continue with Facebook"
-                className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3"
+                className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5"
                 onClick={() => console.log('Facebook login')}
               />
             </div>
           </div>
 
           {/* Footer */}
-          <div className="mt-4 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
+          <div className="mt-6 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
              {/* Privacy Links */}
              <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
                <a href="#" className="hover:text-white transition-colors">Privacy</a>
@@ -283,7 +286,7 @@ const App: React.FC = () => {
              </div>
              
              {/* Mobile Badge - Visible inside card on mobile */}
-             <div className="flex lg:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+             <div className="flex xl:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
                 <Lock className="w-3 h-3" />
                 <span>Secured by Ghurni ID</span>
              </div>
@@ -292,8 +295,8 @@ const App: React.FC = () => {
         </div>
         
         {/* Bottom secured badge (Desktop Only) */}
-        <div className="hidden lg:flex w-full absolute bottom-6 left-10 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
-          <div className="flex items-center space-x-2 text-white/30 text-[10px] sm:text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+        <div className="hidden xl:flex w-full absolute bottom-6 left-10 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
+          <div className="flex items-center space-x-2 text-white/30 text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
             <Lock className="w-3 h-3" />
             <span>Secured by Ghurni ID</span>
           </div>
