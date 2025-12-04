@@ -290,21 +290,27 @@ const App: React.FC = () => {
                  </div>
 
                  {/* Premium Glass-Morphic Primary Button */}
-                 <button className="group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">
-                   {/* Background Gradient */}
-                   <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-                   
-                   {/* Glass Sheen (Top Highlight) */}
-                   <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent opacity-50 pointer-events-none" />
-                   
-                   {/* Content */}
-                   <div className="relative flex items-center justify-center gap-2 text-white font-bold text-lg 4k:text-3xl tracking-wide z-10">
-                     <span className="opacity-80 group-hover:opacity-100 transition-opacity"><ArrowRight className="w-5 h-5 4k:w-8 4k:h-8" /></span>
-                     <span className="drop-shadow-sm">Sign In</span>
-                   </div>
+                 <button className="group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-purple-900/40 hover:shadow-purple-700/60 ring-1 ring-white/10 hover:ring-white/30">
+                    
+                    {/* Deep Atmospheric Background */}
+                    <div className="absolute inset-0 bg-[#2e1065] opacity-100" /> {/* base rich purple */}
+                    
+                    {/* Gradient Mesh overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    {/* Glass Shine (Top) */}
+                    <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent opacity-100" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10 flex items-center justify-center gap-3">
+                        <span className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors">
+                            Sign In
+                        </span>
+                        <ArrowRight className="w-5 h-5 4k:w-8 4k:h-8 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
 
-                   {/* Animated Shine Sweep */}
-                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                    {/* Moving Highlight Effect */}
+                    <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
                  </button>
               </div>
 
