@@ -62,10 +62,9 @@ function useWallpaper() {
     initialized.current = true;
 
     const initWallpaper = () => {
-      // Improved logic: Use actual orientation for better Tablet support
-      // Fallback to width check for desktops that might be resized
+      // Improved logic using 768px (Standard Tablet) as the cutoff
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-      const isMobileWidth = window.innerWidth < 768;
+      const isMobileWidth = window.innerWidth < 768; // Matches 'tab' breakpoint
       
       const shouldUsePortrait = isPortrait || isMobileWidth;
       
@@ -98,9 +97,6 @@ function useWallpaper() {
     };
 
     initWallpaper();
-    
-    // Optional: Re-evaluate on significant resize (orientation change)
-    // We stick to one wallpaper per session to avoid jarring swaps, but orientation change listeners could go here.
   }, []);
 
   return { currentSrc, isLoading, setIsLoading };
@@ -158,72 +154,86 @@ const App: React.FC = () => {
       {/* --- CONTENT LAYER --- */}
       {/* 
           Breakpoints Architecture:
-          1. Default / Mobile (< 768px): 
+          1. Smartphones (xs, sm, phone-lg) & Small Tablets (tab-sm): 
              - Block layout.
              - `overflow-y-auto` enabled for scroll-to-reveal.
+             - Card is a bottom sheet.
           
-          2. Tablet (md: 768px - xl: 1280px): 
+          2. Standard Tablets (tab, tab-lg) - iPad, Galaxy Tab: 
              - Flex layout.
              - `justify-center items-center` (Centered Card).
-             - `min-h-full` to ensure vertical centering.
+             - `overflow-hidden` to prevent background scroll.
           
-          3. Desktop (xl: 1280px+): 
+          3. Laptop (laptop) & Desktops (desktop, wide, 4k, 5k): 
              - Flex layout.
              - `justify-end items-center` (Split Screen).
       */}
       <div className="relative z-10 w-full h-[100dvh] overflow-hidden">
-        <div className="absolute inset-0 w-full h-full overflow-y-auto md:overflow-hidden md:flex md:items-center md:justify-center xl:justify-end xl:p-16 transition-all duration-500 scroll-smooth">
+        <div className="
+          absolute inset-0 w-full h-full 
+          overflow-y-auto                 /* Mobile: Enable scroll */
+          tab:overflow-hidden             /* Tablet+: Lock scroll */
+          tab:flex tab:items-center tab:justify-center /* Tablet: Center */
+          laptop:justify-end laptop:p-16  /* Laptop: Right Align */
+          desktop:p-24                    /* Desktop: More padding */
+          transition-all duration-500 scroll-smooth
+        ">
           
           {/* 
              Mobile Spacer 
-             - Pushes card down to ~50% of viewport initially.
-             - Hidden on md+ (Tablet/Desktop).
-             - Hidden on landscape mobile (height < 500px) to maximize space.
+             - Pushes card down to ~50% of viewport initially on phones.
+             - Hidden on 'tab' (Standard Tablets) and up.
+             - Hidden on landscape mobile (height < 500px handled via CSS usually, or via 'landscape' modifier if we added it, but here we just rely on flow).
           */}
-          <div className="w-full h-[50dvh] landscape:h-4 shrink-0 md:hidden pointer-events-none transition-all duration-300" aria-hidden="true" />
+          <div className="w-full h-[50dvh] landscape:h-4 shrink-0 block tab:hidden pointer-events-none transition-all duration-300" aria-hidden="true" />
 
           {/* 
              Login Card Container 
-             - Mobile: Full width, bottom-sheet style (rounded top only).
-             - Tablet (md): Fixed max-width, fully rounded, centered.
-             - Desktop (xl): Fixed max-width, right-aligned.
           */}
           <div className="
+            /* --- MOBILE BASE (xs, sm, phone-lg, tab-sm) --- */
             w-full min-h-[50dvh] 
-            md:w-full md:max-w-[28rem] md:min-h-0 md:h-auto 
-            xl:max-w-[28rem] 2xl:max-w-[32rem]
-            
             glass-panel 
-            
             rounded-t-[2.5rem] rounded-b-none 
-            md:rounded-3xl 
-            
-            p-6 sm:p-8 md:p-10 xl:p-10 
-            
+            p-6 sm:p-8 
             flex flex-col items-center 
             animate-card-entry relative shrink-0 
             shadow-2xl 
-            border-x-0 border-b-0 md:border 
+            border-x-0 border-b-0 
             backdrop-blur-3xl 
-            mb-0 
+            mb-0
             
-            /* Ensure it sits at bottom on mobile flow */
-            md:mx-auto xl:mr-0
+            /* --- TABLET (tab: 768px+, tab-lg: 1024px+) --- */
+            tab:w-auto tab:min-w-[24rem] tab:max-w-[28rem] 
+            tab:min-h-0 tab:h-auto 
+            tab:rounded-3xl tab:rounded-b-3xl
+            tab:border tab:border-white/10
+            tab:mx-auto tab:p-10
+            
+            /* --- LAPTOP (laptop: 1280px+) --- */
+            laptop:mr-0 laptop:mx-0
+            
+            /* --- DESKTOP (desktop: 1440px+, wide: 1920px+) --- */
+            desktop:max-w-[30rem]
+            wide:max-w-[32rem]
+            
+            /* --- 4K / 5K (4k: 2560px+, 5k: 3840px+) --- */
+            4k:max-w-[40rem] 4k:p-16 4k:rounded-[3rem] 4k:border-2
           ">
             
             {/* Card Header Row */}
-            <div className="w-full flex justify-between items-center mb-6 sm:mb-8 z-20 shrink-0">
+            <div className="w-full flex justify-between items-center mb-6 sm:mb-8 4k:mb-12 z-20 shrink-0">
                {/* Brand */}
-               <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
-                     <LogoIcon className="w-6 h-6 text-white" />
+               <div className="flex items-center gap-3 4k:gap-5">
+                  <div className="w-10 h-10 4k:w-16 4k:h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
+                     <LogoIcon className="w-6 h-6 4k:w-10 4k:h-10 text-white" />
                   </div>
-                  <span className="text-2xl font-bold tracking-wider text-white flex items-center gap-1">
+                  <span className="text-2xl 4k:text-4xl font-bold tracking-wider text-white flex items-center gap-1">
                     Ghurni <span className="font-light opacity-90">Ai</span>
                   </span>
                </div>
                {/* Sign Up Button */}
-               <button className="px-4 py-2 text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
+               <button className="px-4 py-2 4k:px-8 4k:py-4 text-xs 4k:text-lg font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
                    Sign Up
                </button>
             </div>
@@ -231,56 +241,56 @@ const App: React.FC = () => {
             {/* Main Content Container */}
             <div className="w-full flex flex-col items-center text-center shrink-0">
               {/* Title */}
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white">
+              <h1 className="text-3xl sm:text-4xl 4k:text-6xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white">
                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
                 <span className="hidden sm:inline">👋</span>
               </h1>
-              <p className="text-white/60 font-light text-sm sm:text-base mb-6 sm:mb-8 max-w-xs mx-auto leading-relaxed">
+              <p className="text-white/60 font-light text-sm sm:text-base 4k:text-2xl mb-6 sm:mb-8 4k:mb-12 max-w-xs 4k:max-w-xl mx-auto leading-relaxed">
                 Plan your next adventure with intelligent insights.
               </p>
 
               {/* --- SIGN IN FORM --- */}
-              <div className="w-full mb-6 space-y-4 animate-fade-in-up animate-delay-100">
+              <div className="w-full mb-6 space-y-4 4k:space-y-8 animate-fade-in-up animate-delay-100">
                  {/* Email/Username Input */}
                  <div className="relative group w-full">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
-                       <User className="w-5 h-5" />
+                    <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                       <User className="w-5 h-5 4k:w-8 4k:h-8" />
                     </div>
                     <input 
                       type="text" 
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
                       placeholder="Email or Username"
                     />
                  </div>
                  
                  {/* Password Input */}
                  <div className="relative group w-full">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
-                       <Lock className="w-5 h-5" />
+                    <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                       <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
                     </div>
                     <input 
                       type={showPassword ? "text" : "password"}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
                       placeholder="Password"
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                      className="absolute right-4 4k:right-6 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" /> : <Eye className="w-5 h-5 4k:w-8 4k:h-8" />}
                     </button>
                  </div>
 
                  {/* Forgot Password */}
                  <div className="flex justify-end w-full">
-                   <button className="text-sm font-medium text-purple-300/80 hover:text-purple-300 transition-colors">
+                   <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors">
                      Forgot password?
                    </button>
                  </div>
 
                  {/* Premium Glass-Morphic Primary Button */}
-                 <button className="group relative w-full py-3.5 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">
+                 <button className="group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">
                    {/* Background Gradient */}
                    <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                    
@@ -288,8 +298,8 @@ const App: React.FC = () => {
                    <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent opacity-50 pointer-events-none" />
                    
                    {/* Content */}
-                   <div className="relative flex items-center justify-center gap-2 text-white font-bold text-lg tracking-wide z-10">
-                     <span className="opacity-80 group-hover:opacity-100 transition-opacity"><ArrowRight className="w-5 h-5" /></span>
+                   <div className="relative flex items-center justify-center gap-2 text-white font-bold text-lg 4k:text-3xl tracking-wide z-10">
+                     <span className="opacity-80 group-hover:opacity-100 transition-opacity"><ArrowRight className="w-5 h-5 4k:w-8 4k:h-8" /></span>
                      <span className="drop-shadow-sm">Sign In</span>
                    </div>
 
@@ -299,34 +309,34 @@ const App: React.FC = () => {
               </div>
 
               {/* Divider */}
-              <div className="w-full flex items-center gap-4 mb-6 animate-fade-in-up animate-delay-100 opacity-60">
+              <div className="w-full flex items-center gap-4 mb-6 4k:mb-10 animate-fade-in-up animate-delay-100 opacity-60">
                   <div className="h-px bg-white/10 flex-1" />
-                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Or continue with</span>
+                  <span className="text-white/40 text-[10px] 4k:text-sm font-bold uppercase tracking-widest">Or continue with</span>
                   <div className="h-px bg-white/10 flex-1" />
               </div>
 
               {/* Social Buttons */}
-              <div className="w-full space-y-3 animate-fade-in-up animate-delay-200 mb-2">
+              <div className="w-full space-y-3 4k:space-y-6 animate-fade-in-up animate-delay-200 mb-2">
                 <SocialButton 
                   icon={<GoogleIcon />} 
                   label="Continue with Google"
-                  className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5"
+                  className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5 4k:py-6"
                   onClick={() => console.log('Google login')}
                 />
                 
                 <SocialButton 
                   icon={<FacebookIcon />} 
                   label="Continue with Facebook"
-                  className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5"
+                  className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5 4k:py-6"
                   onClick={() => console.log('Facebook login')}
                 />
               </div>
             </div>
 
             {/* Footer */}
-            <div className="mt-6 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
+            <div className="mt-6 4k:mt-12 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
                {/* Privacy Links */}
-               <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
+               <div className="flex items-center justify-center space-x-4 text-[10px] 4k:text-sm text-white/30 uppercase tracking-widest">
                  <a href="#" className="hover:text-white transition-colors">Privacy</a>
                  <span>•</span>
                  <a href="#" className="hover:text-white transition-colors">Terms</a>
@@ -335,7 +345,7 @@ const App: React.FC = () => {
                </div>
                
                {/* Mobile/Tablet Badge - Visible inside card */}
-               <div className="flex xl:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+               <div className="flex laptop:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
                   <Lock className="w-3 h-3" />
                   <span>Secured by Ghurni ID</span>
                </div>
@@ -343,10 +353,10 @@ const App: React.FC = () => {
 
           </div>
           
-          {/* Bottom secured badge (Desktop Only) */}
-          <div className="hidden xl:flex w-full absolute bottom-8 left-12 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
-            <div className="flex items-center space-x-2 text-white/30 text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
-              <Lock className="w-3 h-3" />
+          {/* Bottom secured badge (Desktop Only - 'laptop' and up) */}
+          <div className="hidden laptop:flex w-full absolute bottom-8 left-12 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
+            <div className="flex items-center space-x-2 text-white/30 text-xs 4k:text-xl backdrop-blur-sm px-3 4k:px-6 py-1 4k:py-2 rounded-full border border-white/5 bg-black/10">
+              <Lock className="w-3 h-3 4k:w-6 4k:h-6" />
               <span>Secured by Ghurni ID</span>
             </div>
           </div>

@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ghurni Ai</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            screens: {
+              'xs': '320px',      // Small Phones
+              'sm': '375px',      // Medium Phones
+              'phone-lg': '425px',// Large Phones / Phablets
+              'tab-sm': '600px',  // Small Tablets
+              'tab': '768px',     // Standard Tablets (iPad Portrait)
+              'tab-lg': '1024px', // Large Tablets (iPad Pro Portrait)
+              'laptop': '1280px', // Small Laptops / iPad Pro Landscape
+              'desktop': '1440px',// Standard Desktops
+              'wide': '1920px',   // Large / Ultra-Wide
+              '4k': '2560px',     // 4K Displays
+              '5k': '3840px',     // 5K & Ultra screens
+            },
+            fontFamily: {
+              sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
     <script type="importmap">
     {
       "imports": {
