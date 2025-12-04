@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X } from 'lucide-react';
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -62,9 +62,9 @@ function useWallpaper() {
     initialized.current = true;
 
     const initWallpaper = () => {
-      // Improved logic using 768px (Standard Tablet) as the cutoff
+      // Improved logic using 769px (Standard Tablet) as the cutoff
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-      const isMobileWidth = window.innerWidth < 768; // Matches 'tab' breakpoint
+      const isMobileWidth = window.innerWidth < 769; // Matches 'tab' breakpoint
       
       const shouldUsePortrait = isPortrait || isMobileWidth;
       
@@ -122,6 +122,47 @@ const SocialButton = ({ icon, label, className, onClick }: { icon: React.ReactNo
 const App: React.FC = () => {
   const { currentSrc, isLoading, setIsLoading } = useWallpaper();
   const [showPassword, setShowPassword] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  
+  // Registration State
+  const [signupData, setSignupData] = useState({
+    fullName: '',
+    phone: '',
+    username: '',
+    password: '',
+    agreed: false
+  });
+  
+  // Realtime Username Verification State
+  const [isVerifyingUser, setIsVerifyingUser] = useState(false);
+  const [isUserAvailable, setIsUserAvailable] = useState<boolean | null>(null);
+
+  // Simulate Username Verification
+  useEffect(() => {
+    if (!isSignUp) return;
+    
+    // Reset state if empty
+    if (!signupData.username) {
+      setIsVerifyingUser(false);
+      setIsUserAvailable(null);
+      return;
+    }
+
+    setIsVerifyingUser(true);
+    setIsUserAvailable(null);
+
+    // Mock API delay
+    const timer = setTimeout(() => {
+      setIsVerifyingUser(false);
+      setIsUserAvailable(true); // Always available for demo
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [signupData.username, isSignUp]);
+
+  const handleInputChange = (field: string, value: any) => {
+    setSignupData(prev => ({ ...prev, [field]: value }));
+  };
 
   return (
     <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
@@ -152,22 +193,6 @@ const App: React.FC = () => {
       </div>
 
       {/* --- CONTENT LAYER --- */}
-      {/* 
-          Breakpoints Architecture:
-          1. Smartphones (xs, sm, phone-lg) & Small Tablets (tab-sm): 
-             - Block layout.
-             - `overflow-y-auto` enabled for scroll-to-reveal.
-             - Card is a bottom sheet.
-          
-          2. Standard Tablets (tab, tab-lg) - iPad, Galaxy Tab: 
-             - Flex layout.
-             - `justify-center items-center` (Centered Card).
-             - `overflow-hidden` to prevent background scroll.
-          
-          3. Laptop (laptop) & Desktops (desktop, wide, 4k, 5k): 
-             - Flex layout.
-             - `justify-end items-center` (Split Screen).
-      */}
       <div className="relative z-10 w-full h-[100dvh] overflow-hidden">
         <div className="
           absolute inset-0 w-full h-full 
@@ -179,19 +204,12 @@ const App: React.FC = () => {
           transition-all duration-500 scroll-smooth
         ">
           
-          {/* 
-             Mobile Spacer 
-             - Pushes card down to ~50% of viewport initially on phones.
-             - Hidden on 'tab' (Standard Tablets) and up.
-             - Hidden on landscape mobile (height < 500px handled via CSS usually, or via 'landscape' modifier if we added it, but here we just rely on flow).
-          */}
+          {/* Mobile Spacer */}
           <div className="w-full h-[50dvh] landscape:h-4 shrink-0 block tab:hidden pointer-events-none transition-all duration-300" aria-hidden="true" />
 
-          {/* 
-             Login Card Container 
-          */}
+          {/* Login Card Container */}
           <div className="
-            /* --- MOBILE BASE (xs, sm, phone-lg, tab-sm) --- */
+            /* --- MOBILE BASE --- */
             w-full min-h-[50dvh] 
             glass-panel 
             rounded-t-[2.5rem] rounded-b-none 
@@ -203,22 +221,25 @@ const App: React.FC = () => {
             backdrop-blur-3xl 
             mb-0
             
-            /* --- TABLET (tab: 768px+, tab-lg: 1024px+) --- */
+            /* --- TRANSITION --- */
+            transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
+            
+            /* --- TABLET --- */
             tab:w-full tab:max-w-[30rem] 
             tab:min-h-0 tab:h-auto 
             tab:rounded-3xl tab:rounded-b-3xl
             tab:border tab:border-white/10
             tab:mx-auto tab:p-10
             
-            /* --- LAPTOP (laptop: 1280px+) --- */
+            /* --- LAPTOP --- */
             laptop:w-full laptop:max-w-[32rem]
             laptop:mr-0 laptop:mx-0
             
-            /* --- DESKTOP (desktop: 1440px+, wide: 1920px+) --- */
+            /* --- DESKTOP --- */
             desktop:max-w-[35rem]
             wide:max-w-[38rem]
             
-            /* --- 4K / 5K (4k: 2560px+, 5k: 3840px+) --- */
+            /* --- 4K / 5K --- */
             4k:max-w-[40rem] 4k:p-16 4k:rounded-[3rem] 4k:border-2
           ">
             
@@ -233,44 +254,135 @@ const App: React.FC = () => {
                     Ghurni <span className="font-light opacity-90">Ai</span>
                   </span>
                </div>
-               {/* Sign Up Button */}
-               <button className="px-4 py-2 4k:px-8 4k:py-4 text-xs 4k:text-lg font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
-                   Sign Up
+               {/* Sign Up / Sign In Toggle Button */}
+               <button 
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="px-4 py-2 4k:px-8 4k:py-4 text-xs 4k:text-lg font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90"
+                >
+                   {isSignUp ? 'Sign In' : 'Sign Up'}
                </button>
             </div>
             
             {/* Main Content Container */}
             <div className="w-full flex flex-col items-center text-center shrink-0">
               {/* Title */}
-              <h1 className="text-3xl sm:text-4xl 4k:text-6xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white">
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
+              <h1 
+                key={isSignUp ? 'signup-title' : 'signin-title'}
+                className="text-3xl sm:text-4xl 4k:text-6xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white animate-fade-in-scale"
+              >
+                <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">
+                   {isSignUp ? 'Create Account' : 'Welcome Back'}
+                </span>
                 <span className="hidden sm:inline">👋</span>
               </h1>
-              <p className="text-white/60 font-light text-sm sm:text-base 4k:text-2xl mb-6 sm:mb-8 4k:mb-12 max-w-xs 4k:max-w-xl mx-auto leading-relaxed">
-                Plan your next adventure with intelligent insights.
+              
+              <p 
+                key={isSignUp ? 'signup-desc' : 'signin-desc'}
+                className="text-white/60 font-light text-sm sm:text-base 4k:text-2xl mb-6 sm:mb-8 4k:mb-12 max-w-xs 4k:max-w-xl mx-auto leading-relaxed animate-fade-in-scale animate-delay-100"
+              >
+                {isSignUp 
+                  ? 'Join the community of explorers.' 
+                  : 'Plan your next adventure with intelligent insights.'
+                }
               </p>
 
-              {/* --- SIGN IN FORM --- */}
-              <div className="w-full mb-6 space-y-4 4k:space-y-8 animate-fade-in-up animate-delay-100">
-                 {/* Email/Username Input */}
-                 <div className="relative group w-full">
-                    <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
-                       <User className="w-5 h-5 4k:w-8 4k:h-8" />
+              {/* --- FORM --- */}
+              <div className="w-full mb-6 flex flex-col gap-4 animate-fade-in-up animate-delay-100">
+                 
+                 {/* ----------------------------
+                     SIGN UP FIELDS (COLLAPSIBLE)
+                 ---------------------------- */}
+                 <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden min-h-0">
+                        <div className="flex flex-col gap-4 pt-1">
+                            {/* Full Name */}
+                            <div className="relative group w-full">
+                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                                <User className="w-5 h-5 4k:w-8 4k:h-8" />
+                              </div>
+                              <input 
+                                type="text" 
+                                value={signupData.fullName}
+                                onChange={(e) => handleInputChange('fullName', e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                placeholder="Full Name"
+                              />
+                            </div>
+
+                            {/* Phone Number */}
+                            <div className="relative group w-full">
+                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                                <Phone className="w-5 h-5 4k:w-8 4k:h-8" />
+                              </div>
+                              <input 
+                                type="tel" 
+                                value={signupData.phone}
+                                onChange={(e) => handleInputChange('phone', e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                placeholder="Phone Number"
+                              />
+                            </div>
+
+                            {/* Username with Realtime Verification */}
+                            <div className="relative group w-full">
+                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                                <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
+                              </div>
+                              <input 
+                                type="text" 
+                                value={signupData.username}
+                                onChange={(e) => handleInputChange('username', e.target.value)}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                                  isUserAvailable === true ? 'border-green-500/50 focus:border-green-500/80' : 
+                                  isUserAvailable === false ? 'border-red-500/50 focus:border-red-500/80' : 
+                                  'border-white/10 focus:border-white/20'
+                                }`}
+                                placeholder="Choose Username"
+                              />
+                              {/* Verification Status Icon */}
+                              <div className="absolute right-4 4k:right-6 top-1/2 -translate-y-1/2">
+                                {isVerifyingUser ? (
+                                  <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white/50 animate-spin" />
+                                ) : isUserAvailable === true ? (
+                                  <Check className="w-5 h-5 4k:w-8 4k:h-8 text-green-400 animate-zoom-in animate-pulse-glow" />
+                                ) : isUserAvailable === false ? (
+                                  <X className="w-5 h-5 4k:w-8 4k:h-8 text-red-400 animate-shake" />
+                                ) : null}
+                              </div>
+                            </div>
+                        </div>
                     </div>
-                    <input 
-                      type="text" 
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
-                      placeholder="Email or Username"
-                    />
+                 </div>
+
+                 {/* ----------------------------
+                     SIGN IN FIELDS (COLLAPSIBLE)
+                 ---------------------------- */}
+                 <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden min-h-0">
+                       <div className="pt-1">
+                          <div className="relative group w-full">
+                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                                <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
+                              </div>
+                              <input 
+                                type="text" 
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                placeholder="Username"
+                              />
+                           </div>
+                       </div>
+                    </div>
                  </div>
                  
-                 {/* Password Input */}
+                 {/* Password Input (Always Visible) */}
                  <div className="relative group w-full">
                     <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
                        <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
                     </div>
                     <input 
                       type={showPassword ? "text" : "password"}
+                      value={isSignUp ? signupData.password : undefined}
+                      onChange={(e) => isSignUp && handleInputChange('password', e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
                       placeholder="Password"
                     />
@@ -283,18 +395,44 @@ const App: React.FC = () => {
                     </button>
                  </div>
 
-                 {/* Forgot Password */}
-                 <div className="flex justify-end w-full">
-                   <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors">
-                     Forgot password?
-                   </button>
+                 {/* Remember Me OR Consent Checkbox - Content Fades */}
+                 <div className="flex justify-between items-start sm:items-center w-full min-h-[1.5rem] 4k:min-h-[2rem]">
+                    <label className="flex items-start sm:items-center gap-2.5 4k:gap-4 cursor-pointer group select-none">
+                      <div className="relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border border-white/20 group-hover:border-white/40 transition-all shrink-0">
+                        <input 
+                           type="checkbox" 
+                           className="peer appearance-none absolute inset-0 w-full h-full cursor-pointer opacity-0" 
+                           checked={isSignUp ? signupData.agreed : undefined}
+                           onChange={(e) => isSignUp && handleInputChange('agreed', e.target.checked)}
+                        />
+                        <div className="absolute inset-0 bg-violet-600 rounded opacity-0 peer-checked:opacity-100 transition-opacity duration-200" />
+                        <Check className="w-3 h-3 4k:w-5 4k:h-5 text-white opacity-0 peer-checked:opacity-100 relative z-10 transition-opacity duration-200" strokeWidth={3} />
+                      </div>
+                      
+                      <span key={isSignUp ? 'signup-consent' : 'signin-remember'} className="animate-fade-in-scale text-xs sm:text-sm 4k:text-xl font-medium text-white/50 group-hover:text-white/80 transition-colors text-left leading-tight">
+                          {isSignUp ? (
+                             <>I agree to <span className="text-violet-300 hover:underline">Privacy Policy</span> & <span className="text-violet-300 hover:underline">Terms</span></>
+                          ) : (
+                             'Remember me'
+                          )}
+                      </span>
+                    </label>
+
+                   {/* Forgot Password Link - Collapsible */}
+                   <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                     <div className="overflow-hidden min-h-0">
+                        <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap">
+                          Forgot password?
+                        </button>
+                     </div>
+                   </div>
                  </div>
 
                  {/* Premium Glass-Morphic Primary Button */}
                  <button className="group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-purple-900/40 hover:shadow-purple-700/60 ring-1 ring-white/10 hover:ring-white/30">
                     
                     {/* Deep Atmospheric Background */}
-                    <div className="absolute inset-0 bg-[#2e1065] opacity-100" /> {/* base rich purple */}
+                    <div className="absolute inset-0 bg-[#2e1065] opacity-100" /> 
                     
                     {/* Gradient Mesh overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
@@ -304,8 +442,8 @@ const App: React.FC = () => {
                     
                     {/* Content */}
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                        <span className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors">
-                            Sign In
+                        <span key={isSignUp ? 'btn-create' : 'btn-signin'} className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors animate-fade-in-scale">
+                            {isSignUp ? 'Create Account' : 'Sign In'}
                         </span>
                         <ArrowRight className="w-5 h-5 4k:w-8 4k:h-8 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
                     </div>
