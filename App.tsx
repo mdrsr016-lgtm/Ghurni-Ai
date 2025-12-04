@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
@@ -63,10 +62,15 @@ function useWallpaper() {
     initialized.current = true;
 
     const initWallpaper = () => {
-      // Updated to match XL breakpoint (1280px) so tablets use portrait logic
-      const isMobile = window.innerWidth < 1280;
-      const images = isMobile ? PORTRAIT_IMAGES : LANDSCAPE_IMAGES;
-      const storageKey = isMobile ? 'ghurni_bg_history_portrait' : 'ghurni_bg_history_landscape';
+      // Improved logic: Use actual orientation for better Tablet support
+      // Fallback to width check for desktops that might be resized
+      const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+      const isMobileWidth = window.innerWidth < 768;
+      
+      const shouldUsePortrait = isPortrait || isMobileWidth;
+      
+      const images = shouldUsePortrait ? PORTRAIT_IMAGES : LANDSCAPE_IMAGES;
+      const storageKey = shouldUsePortrait ? 'ghurni_bg_history_portrait' : 'ghurni_bg_history_landscape';
 
       let seenIndices: number[] = [];
       try {
@@ -94,6 +98,9 @@ function useWallpaper() {
     };
 
     initWallpaper();
+    
+    // Optional: Re-evaluate on significant resize (orientation change)
+    // We stick to one wallpaper per session to avoid jarring swaps, but orientation change listeners could go here.
   }, []);
 
   return { currentSrc, isLoading, setIsLoading };
@@ -150,162 +157,201 @@ const App: React.FC = () => {
 
       {/* --- CONTENT LAYER --- */}
       {/* 
-          Layout Architecture:
-          - Mobile (< md): `block` layout with `overflow-y-auto`. Scrollable bottom sheet.
-          - Tablet (md to xl): `flex items-center justify-center`. Centered card.
-          - Desktop (>= xl): `flex-row justify-end`. Split screen.
+          Breakpoints Architecture:
+          1. Default / Mobile (< 768px): 
+             - Block layout.
+             - `overflow-y-auto` enabled for scroll-to-reveal.
+          
+          2. Tablet (md: 768px - xl: 1280px): 
+             - Flex layout.
+             - `justify-center items-center` (Centered Card).
+             - `min-h-full` to ensure vertical centering.
+          
+          3. Desktop (xl: 1280px+): 
+             - Flex layout.
+             - `justify-end items-center` (Split Screen).
       */}
-      <div className="relative z-10 w-full h-[100dvh] overflow-y-auto md:overflow-hidden md:flex md:items-center md:justify-center xl:justify-end xl:items-center xl:p-12 transition-all duration-500 scroll-smooth">
-        
-        {/* Mobile Spacer - Pushes card down to 50% initially, hidden on Tablet/Desktop */}
-        <div className="w-full h-[50dvh] shrink-0 md:hidden pointer-events-none" aria-hidden="true" />
-
-        {/* Login Card */}
-        {/* 
-           - Mobile (< md): 
-             - `min-h-[50dvh]`: Fills bottom half.
-             - `w-full`: Full width.
-             - `rounded-b-none`: Gapless bottom.
-           
-           - Tablet (md):
-             - `md:w-full md:max-w-[28rem]`: Constrained width.
-             - `md:min-h-0 md:h-auto`: Auto height.
-             - `md:rounded-3xl`: Fully rounded.
-             - `md:border`: Visible border.
-           
-           - Desktop (xl): 
-             - `xl:max-w-md`: Standard desktop width.
-        */}
-        <div className="w-full min-h-[50dvh] md:min-h-0 md:h-auto md:w-full md:max-w-[28rem] xl:max-w-md glass-panel rounded-t-[2.5rem] rounded-b-none md:rounded-3xl p-6 md:p-8 xl:p-8 flex flex-col items-center animate-card-entry relative shrink-0 shadow-2xl border-x-0 border-b-0 md:border backdrop-blur-3xl mb-0 xl:mr-0">
+      <div className="relative z-10 w-full h-[100dvh] overflow-hidden">
+        <div className="absolute inset-0 w-full h-full overflow-y-auto md:overflow-hidden md:flex md:items-center md:justify-center xl:justify-end xl:p-16 transition-all duration-500 scroll-smooth">
           
-          {/* Card Header Row */}
-          <div className="w-full flex justify-between items-center mb-6 z-20 shrink-0">
-             {/* Brand */}
-             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
-                   <LogoIcon className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold tracking-wider text-white flex items-center gap-1">
-                  Ghurni <span className="font-light opacity-90">Ai</span>
-                </span>
-             </div>
-             {/* Sign Up Button */}
-             <button className="px-4 py-2 text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
-                 Sign Up
-             </button>
-          </div>
-          
-          {/* Main Content Container */}
-          <div className="w-full max-w-md xl:max-w-full flex flex-col items-center text-center shrink-0 mx-auto">
-            {/* Title */}
-            <h1 className="text-3xl xl:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white">
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
-              <span>👋</span>
-            </h1>
-            <p className="text-white/60 font-light text-base mb-6 max-w-xs mx-auto leading-relaxed">
-              Plan your next adventure with intelligent insights.
-            </p>
+          {/* 
+             Mobile Spacer 
+             - Pushes card down to ~50% of viewport initially.
+             - Hidden on md+ (Tablet/Desktop).
+             - Hidden on landscape mobile (height < 500px) to maximize space.
+          */}
+          <div className="w-full h-[50dvh] landscape:h-4 shrink-0 md:hidden pointer-events-none transition-all duration-300" aria-hidden="true" />
 
-            {/* --- SIGN IN FORM --- */}
-            <div className="w-full mb-6 space-y-4 animate-fade-in-up animate-delay-100">
-               {/* Email/Username Input */}
-               <div className="relative group w-full">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
-                     <User className="w-5 h-5" />
+          {/* 
+             Login Card Container 
+             - Mobile: Full width, bottom-sheet style (rounded top only).
+             - Tablet (md): Fixed max-width, fully rounded, centered.
+             - Desktop (xl): Fixed max-width, right-aligned.
+          */}
+          <div className="
+            w-full min-h-[50dvh] 
+            md:w-full md:max-w-[28rem] md:min-h-0 md:h-auto 
+            xl:max-w-[28rem] 2xl:max-w-[32rem]
+            
+            glass-panel 
+            
+            rounded-t-[2.5rem] rounded-b-none 
+            md:rounded-3xl 
+            
+            p-6 sm:p-8 md:p-10 xl:p-10 
+            
+            flex flex-col items-center 
+            animate-card-entry relative shrink-0 
+            shadow-2xl 
+            border-x-0 border-b-0 md:border 
+            backdrop-blur-3xl 
+            mb-0 
+            
+            /* Ensure it sits at bottom on mobile flow */
+            md:mx-auto xl:mr-0
+          ">
+            
+            {/* Card Header Row */}
+            <div className="w-full flex justify-between items-center mb-6 sm:mb-8 z-20 shrink-0">
+               {/* Brand */}
+               <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
+                     <LogoIcon className="w-6 h-6 text-white" />
                   </div>
-                  <input 
-                    type="text" 
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
-                    placeholder="Email or Username"
-                  />
+                  <span className="text-2xl font-bold tracking-wider text-white flex items-center gap-1">
+                    Ghurni <span className="font-light opacity-90">Ai</span>
+                  </span>
                </div>
-               
-               {/* Password Input */}
-               <div className="relative group w-full">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
-                     <Lock className="w-5 h-5" />
-                  </div>
-                  <input 
-                    type={showPassword ? "text" : "password"}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
-                    placeholder="Password"
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-               </div>
-
-               {/* Forgot Password */}
-               <div className="flex justify-end w-full">
-                 <button className="text-sm font-medium text-orange-400/90 hover:text-orange-400 transition-colors">
-                   Forgot password?
-                 </button>
-               </div>
-
-               {/* Gradient Sign In Button */}
-               <button className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#FF512F] to-[#DD2476] text-white font-bold text-lg tracking-wide shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2">
-                 <span className="text-white/80"><ArrowRight className="w-5 h-5" /></span>
-                 Sign In
+               {/* Sign Up Button */}
+               <button className="px-4 py-2 text-xs font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90">
+                   Sign Up
                </button>
             </div>
+            
+            {/* Main Content Container */}
+            <div className="w-full flex flex-col items-center text-center shrink-0">
+              {/* Title */}
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white">
+                <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">Welcome Back</span>
+                <span className="hidden sm:inline">👋</span>
+              </h1>
+              <p className="text-white/60 font-light text-sm sm:text-base mb-6 sm:mb-8 max-w-xs mx-auto leading-relaxed">
+                Plan your next adventure with intelligent insights.
+              </p>
 
-            {/* Divider */}
-            <div className="w-full flex items-center gap-4 mb-6 animate-fade-in-up animate-delay-100 opacity-60">
-                <div className="h-px bg-white/10 flex-1" />
-                <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Or continue with</span>
-                <div className="h-px bg-white/10 flex-1" />
+              {/* --- SIGN IN FORM --- */}
+              <div className="w-full mb-6 space-y-4 animate-fade-in-up animate-delay-100">
+                 {/* Email/Username Input */}
+                 <div className="relative group w-full">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                       <User className="w-5 h-5" />
+                    </div>
+                    <input 
+                      type="text" 
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
+                      placeholder="Email or Username"
+                    />
+                 </div>
+                 
+                 {/* Password Input */}
+                 <div className="relative group w-full">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                       <Lock className="w-5 h-5" />
+                    </div>
+                    <input 
+                      type={showPassword ? "text" : "password"}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base"
+                      placeholder="Password"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                 </div>
+
+                 {/* Forgot Password */}
+                 <div className="flex justify-end w-full">
+                   <button className="text-sm font-medium text-purple-300/80 hover:text-purple-300 transition-colors">
+                     Forgot password?
+                   </button>
+                 </div>
+
+                 {/* Premium Glass-Morphic Primary Button */}
+                 <button className="group relative w-full py-3.5 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">
+                   {/* Background Gradient */}
+                   <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                   
+                   {/* Glass Sheen (Top Highlight) */}
+                   <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent opacity-50 pointer-events-none" />
+                   
+                   {/* Content */}
+                   <div className="relative flex items-center justify-center gap-2 text-white font-bold text-lg tracking-wide z-10">
+                     <span className="opacity-80 group-hover:opacity-100 transition-opacity"><ArrowRight className="w-5 h-5" /></span>
+                     <span className="drop-shadow-sm">Sign In</span>
+                   </div>
+
+                   {/* Animated Shine Sweep */}
+                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                 </button>
+              </div>
+
+              {/* Divider */}
+              <div className="w-full flex items-center gap-4 mb-6 animate-fade-in-up animate-delay-100 opacity-60">
+                  <div className="h-px bg-white/10 flex-1" />
+                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Or continue with</span>
+                  <div className="h-px bg-white/10 flex-1" />
+              </div>
+
+              {/* Social Buttons */}
+              <div className="w-full space-y-3 animate-fade-in-up animate-delay-200 mb-2">
+                <SocialButton 
+                  icon={<GoogleIcon />} 
+                  label="Continue with Google"
+                  className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5"
+                  onClick={() => console.log('Google login')}
+                />
+                
+                <SocialButton 
+                  icon={<FacebookIcon />} 
+                  label="Continue with Facebook"
+                  className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5"
+                  onClick={() => console.log('Facebook login')}
+                />
+              </div>
             </div>
 
-            {/* Social Buttons */}
-            <div className="w-full space-y-3 animate-fade-in-up animate-delay-200 mb-2">
-              <SocialButton 
-                icon={<GoogleIcon />} 
-                label="Continue with Google"
-                className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5"
-                onClick={() => console.log('Google login')}
-              />
-              
-              <SocialButton 
-                icon={<FacebookIcon />} 
-                label="Continue with Facebook"
-                className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5"
-                onClick={() => console.log('Facebook login')}
-              />
+            {/* Footer */}
+            <div className="mt-6 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
+               {/* Privacy Links */}
+               <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
+                 <a href="#" className="hover:text-white transition-colors">Privacy</a>
+                 <span>•</span>
+                 <a href="#" className="hover:text-white transition-colors">Terms</a>
+                 <span>•</span>
+                 <a href="#" className="hover:text-white transition-colors">Help</a>
+               </div>
+               
+               {/* Mobile/Tablet Badge - Visible inside card */}
+               <div className="flex xl:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+                  <Lock className="w-3 h-3" />
+                  <span>Secured by Ghurni ID</span>
+               </div>
             </div>
+
           </div>
-
-          {/* Footer */}
-          <div className="mt-6 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
-             {/* Privacy Links */}
-             <div className="flex items-center justify-center space-x-4 text-[10px] text-white/30 uppercase tracking-widest">
-               <a href="#" className="hover:text-white transition-colors">Privacy</a>
-               <span>•</span>
-               <a href="#" className="hover:text-white transition-colors">Terms</a>
-               <span>•</span>
-               <a href="#" className="hover:text-white transition-colors">Help</a>
-             </div>
-             
-             {/* Mobile/Tablet Badge - Visible inside card */}
-             <div className="flex xl:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
-                <Lock className="w-3 h-3" />
-                <span>Secured by Ghurni ID</span>
-             </div>
+          
+          {/* Bottom secured badge (Desktop Only) */}
+          <div className="hidden xl:flex w-full absolute bottom-8 left-12 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
+            <div className="flex items-center space-x-2 text-white/30 text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+              <Lock className="w-3 h-3" />
+              <span>Secured by Ghurni ID</span>
+            </div>
           </div>
 
         </div>
-        
-        {/* Bottom secured badge (Desktop Only) */}
-        <div className="hidden xl:flex w-full absolute bottom-6 left-10 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
-          <div className="flex items-center space-x-2 text-white/30 text-xs backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
-            <Lock className="w-3 h-3" />
-            <span>Secured by Ghurni ID</span>
-          </div>
-        </div>
-
       </div>
     </main>
   );
