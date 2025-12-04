@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X, Mail } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X, Mail, AlertCircle } from 'lucide-react';
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -125,7 +125,13 @@ const App: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   
-  // Registration State
+  // Auth State
+  const [signinData, setSigninData] = useState({
+    username: '',
+    password: '',
+    rememberMe: false
+  });
+
   const [signupData, setSignupData] = useState({
     fullName: '',
     email: '',
@@ -135,10 +141,23 @@ const App: React.FC = () => {
     confirmPassword: '',
     agreed: false
   });
+
+  // UI Feedback State
+  const [formError, setFormError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [successMsg, setSuccessMsg] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Realtime Username Verification State
   const [isVerifyingUser, setIsVerifyingUser] = useState(false);
   const [isUserAvailable, setIsUserAvailable] = useState<boolean | null>(null);
+
+  // Clear errors when switching modes
+  useEffect(() => {
+    setFormError('');
+    setFieldErrors({});
+    setSuccessMsg('');
+  }, [isSignUp]);
 
   // Simulate Username Verification
   useEffect(() => {
@@ -157,17 +176,145 @@ const App: React.FC = () => {
     // Mock API delay
     const timer = setTimeout(() => {
       setIsVerifyingUser(false);
-      setIsUserAvailable(true); // Always available for demo
+      // Simulate simple validation: valid if length > 3
+      setIsUserAvailable(signupData.username.length > 3);
     }, 1200);
 
     return () => clearTimeout(timer);
   }, [signupData.username, isSignUp]);
 
-  const handleInputChange = (field: string, value: any) => {
-    setSignupData(prev => ({ ...prev, [field]: value }));
+  // Helper to Validate a Single Field
+  const validateSingleField = (name: string, value: any, context: 'signin' | 'signup', data: any) => {
+    if (context === 'signup') {
+        switch (name) {
+            case 'fullName':
+                return !value.trim() ? "Full name is required" : "";
+            case 'email':
+                if (!value.trim()) return "Email is required";
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Invalid email address";
+                return "";
+            case 'phone':
+                return !value.trim() ? "Phone number is required" : "";
+            case 'username':
+                return !value.trim() ? "Username is required" : "";
+            case 'password':
+                if (!value) return "Password is required";
+                if (value.length < 6) return "Password must be at least 6 characters";
+                return "";
+            case 'confirmPassword':
+                if (!value) return "Please confirm your password";
+                if (value !== data.password) return "Passwords do not match";
+                return "";
+            case 'agreed':
+                return !value ? "You must agree to the terms" : "";
+            default: return "";
+        }
+    } else {
+         switch (name) {
+            case 'username':
+                return !value.trim() ? "Username is required" : "";
+            case 'password':
+                return !value ? "Password is required" : "";
+            default: return "";
+         }
+    }
   };
 
-  const isSignupValid = isSignUp && signupData.agreed;
+  const handleBlur = (field: string, context: 'signin' | 'signup') => {
+      const data = context === 'signup' ? signupData : signinData;
+      // @ts-ignore
+      const value = data[field];
+      const error = validateSingleField(field, value, context, data);
+      
+      setFieldErrors(prev => ({
+          ...prev,
+          [field]: error
+      }));
+  };
+
+  const handleSignupChange = (field: string, value: any) => {
+    // 1. Calculate New State
+    const newState = { ...signupData, [field]: value };
+    setSignupData(newState);
+    
+    // 2. Clear Global Error
+    setFormError('');
+
+    // 3. Realtime Validation (Only if error exists or for specific interactions)
+    let error = '';
+    
+    // Special Case: Password matching should update in realtime if confirmed
+    if (field === 'password' && newState.confirmPassword) {
+         if (newState.confirmPassword !== value) {
+              setFieldErrors(prev => ({ ...prev, confirmPassword: "Passwords do not match" }));
+         } else {
+              setFieldErrors(prev => ({ ...prev, confirmPassword: "" }));
+         }
+    }
+
+    // Standard: If field has error, re-validate to see if we can clear it
+    if (fieldErrors[field]) {
+        error = validateSingleField(field, value, 'signup', newState);
+        setFieldErrors(prev => ({ ...prev, [field]: error }));
+    }
+  };
+
+  const handleSigninChange = (field: string, value: any) => {
+    // 1. Calculate New State
+    const newState = { ...signinData, [field]: value };
+    setSigninData(newState);
+    setFormError('');
+
+    // 2. Realtime Validation (Only if error exists)
+    if (fieldErrors[field]) {
+        const error = validateSingleField(field, value, 'signin', newState);
+        setFieldErrors(prev => ({ ...prev, [field]: error }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const data = isSignUp ? signupData : signinData;
+    const context = isSignUp ? 'signup' : 'signin';
+
+    // Validate all fields based on context
+    Object.keys(data).forEach(field => {
+        // @ts-ignore
+        const error = validateSingleField(field, data[field], context, data);
+        if (error) {
+            errors[field] = error;
+        }
+    });
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleAuth = async () => {
+    setFormError('');
+    setSuccessMsg('');
+    
+    if (!validateForm()) {
+        return;
+    }
+
+    setIsSubmitting(true);
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    if (isSignUp) {
+        // Mock Success
+        console.log("Sign Up Success:", signupData);
+        setSuccessMsg("Account created successfully! Welcome aboard.");
+    } else {
+        // Mock Success
+        console.log("Sign In Success:", signinData);
+        setSuccessMsg(`Welcome back, ${signinData.username}!`);
+    }
+
+    setIsSubmitting(false);
+  };
 
   return (
     <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
@@ -291,6 +438,14 @@ const App: React.FC = () => {
                 }
               </p>
 
+              {/* General Feedback Message Area */}
+              {(formError || successMsg) && (
+                <div className={`w-full mb-4 p-3 rounded-lg text-sm font-medium animate-fade-in-scale flex items-center justify-center gap-2 ${formError ? 'bg-red-500/10 text-red-200 border border-red-500/20' : 'bg-green-500/10 text-green-200 border border-green-500/20'}`}>
+                    {formError ? <AlertCircle className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                    <span>{formError || successMsg}</span>
+                </div>
+              )}
+
               {/* --- FORM --- */}
               <div className="w-full mb-6 flex flex-col animate-fade-in-up animate-delay-100">
                  
@@ -301,65 +456,73 @@ const App: React.FC = () => {
                     <div className="overflow-hidden min-h-0">
                         <div className="flex flex-col gap-4 mb-4">
                             {/* Full Name */}
-                            <div className="relative group w-full">
-                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                            <div className="relative group w-full text-left">
+                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.fullName ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                                 <User className="w-5 h-5 4k:w-8 4k:h-8" />
                               </div>
                               <input 
                                 type="text" 
                                 value={signupData.fullName}
-                                onChange={(e) => handleInputChange('fullName', e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                onChange={(e) => handleSignupChange('fullName', e.target.value)}
+                                onBlur={() => handleBlur('fullName', 'signup')}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.fullName ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
                                 placeholder="Full Name"
                               />
+                              {fieldErrors.fullName && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.fullName}</span>}
                             </div>
 
-                             {/* Email Field - Added for Validation/Recovery */}
-                            <div className="relative group w-full">
-                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                             {/* Email Field */}
+                            <div className="relative group w-full text-left">
+                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.email ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                                 <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
                               </div>
                               <input 
                                 type="email" 
                                 value={signupData.email}
-                                onChange={(e) => handleInputChange('email', e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                onChange={(e) => handleSignupChange('email', e.target.value)}
+                                onBlur={() => handleBlur('email', 'signup')}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.email ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
                                 placeholder="Email Address"
                               />
+                               {fieldErrors.email && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.email}</span>}
                             </div>
 
                             {/* Phone Number */}
-                            <div className="relative group w-full">
-                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                            <div className="relative group w-full text-left">
+                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.phone ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                                 <Phone className="w-5 h-5 4k:w-8 4k:h-8" />
                               </div>
                               <input 
                                 type="tel" 
                                 value={signupData.phone}
-                                onChange={(e) => handleInputChange('phone', e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                onChange={(e) => handleSignupChange('phone', e.target.value)}
+                                onBlur={() => handleBlur('phone', 'signup')}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.phone ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
                                 placeholder="Phone Number"
                               />
+                              {fieldErrors.phone && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.phone}</span>}
                             </div>
 
                             {/* Username with Realtime Verification */}
-                            <div className="relative group w-full">
-                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                            <div className="relative group w-full text-left">
+                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.username ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                                 <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
                               </div>
                               <input 
                                 type="text" 
                                 value={signupData.username}
-                                onChange={(e) => handleInputChange('username', e.target.value)}
+                                onChange={(e) => handleSignupChange('username', e.target.value)}
+                                onBlur={() => handleBlur('username', 'signup')}
                                 className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                                  fieldErrors.username ? 'border-red-500/50 focus:border-red-500' :
                                   isUserAvailable === true ? 'border-green-500/50 focus:border-green-500/80' : 
                                   isUserAvailable === false ? 'border-red-500/50 focus:border-red-500/80' : 
-                                  'border-white/10 focus:border-white/20'
+                                  'border-white/10 focus:border-white'
                                 }`}
                                 placeholder="Choose Username"
                               />
                               {/* Verification Status Icon */}
-                              <div className="absolute right-4 4k:right-6 top-1/2 -translate-y-1/2">
+                              <div className="absolute right-4 4k:right-6 top-3.5 4k:top-6">
                                 {isVerifyingUser ? (
                                   <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white/50 animate-spin" />
                                 ) : isUserAvailable === true ? (
@@ -368,6 +531,7 @@ const App: React.FC = () => {
                                   <X className="w-5 h-5 4k:w-8 4k:h-8 text-red-400 animate-shake" />
                                 ) : null}
                               </div>
+                              {fieldErrors.username && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.username}</span>}
                             </div>
                         </div>
                     </div>
@@ -379,107 +543,125 @@ const App: React.FC = () => {
                  <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden min-h-0">
                        <div className="mb-4">
-                          <div className="relative group w-full">
-                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                          <div className="relative group w-full text-left">
+                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.username ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                                 <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
                               </div>
                               <input 
                                 type="text" 
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                value={signinData.username}
+                                onChange={(e) => handleSigninChange('username', e.target.value)}
+                                onBlur={() => handleBlur('username', 'signin')}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.username ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
                                 placeholder="Username"
                               />
+                              {fieldErrors.username && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.username}</span>}
                            </div>
                        </div>
                     </div>
                  </div>
                  
                  {/* Password Input (Always Visible) */}
-                 <div className="relative group w-full mb-4">
-                    <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                 <div className="relative group w-full mb-4 text-left">
+                    <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.password ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                        <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
                     </div>
                     <input 
                       type={showPassword ? "text" : "password"}
-                      value={isSignUp ? signupData.password : undefined}
-                      onChange={(e) => isSignUp && handleInputChange('password', e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                      value={isSignUp ? signupData.password : signinData.password}
+                      onChange={(e) => isSignUp 
+                        ? handleSignupChange('password', e.target.value) 
+                        : handleSigninChange('password', e.target.value)
+                      }
+                      onBlur={() => handleBlur('password', isSignUp ? 'signup' : 'signin')}
+                      className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.password ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
                       placeholder="Password"
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 4k:right-6 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                      className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" /> : <Eye className="w-5 h-5 4k:w-8 4k:h-8" />}
                     </button>
+                    {fieldErrors.password && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.password}</span>}
                  </div>
 
                 {/* Confirm Password (Sign Up Only) */}
                 <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden min-h-0">
                        <div className="mb-4">
-                            <div className="relative group w-full">
-                                <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                            <div className="relative group w-full text-left">
+                                <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.confirmPassword ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
                                 <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
                                 </div>
                                 <input 
                                 type={showConfirmPassword ? "text" : "password"}
                                 value={signupData.confirmPassword}
-                                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                onChange={(e) => handleSignupChange('confirmPassword', e.target.value)}
+                                onBlur={() => handleBlur('confirmPassword', 'signup')}
+                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.confirmPassword ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
                                 placeholder="Confirm Password"
                                 />
                                 <button 
                                 type="button"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute right-4 4k:right-6 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                                className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
                                 >
                                 {showConfirmPassword ? <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" /> : <Eye className="w-5 h-5 4k:w-8 4k:h-8" />}
                                 </button>
+                                {fieldErrors.confirmPassword && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.confirmPassword}</span>}
                             </div>
                        </div>
                     </div>
                 </div>
 
                  {/* Remember Me OR Consent Checkbox - Content Fades */}
-                 <div className="flex justify-between items-start sm:items-center w-full min-h-[1.5rem] 4k:min-h-[2rem] mb-6">
-                    <label className="flex items-start sm:items-center gap-2.5 4k:gap-4 cursor-pointer group select-none">
-                      <div className={`relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border transition-all shrink-0 ${isSignUp && !signupData.agreed ? 'border-white/20 group-hover:border-red-400' : 'border-white/20 group-hover:border-white/40'}`}>
-                        <input 
-                           type="checkbox" 
-                           className="peer appearance-none absolute inset-0 w-full h-full cursor-pointer opacity-0" 
-                           checked={isSignUp ? signupData.agreed : undefined}
-                           onChange={(e) => isSignUp && handleInputChange('agreed', e.target.checked)}
-                        />
-                        <div className="absolute inset-0 bg-violet-600 rounded opacity-0 peer-checked:opacity-100 transition-opacity duration-200" />
-                        <Check className="w-3 h-3 4k:w-5 4k:h-5 text-white opacity-0 peer-checked:opacity-100 relative z-10 transition-opacity duration-200" strokeWidth={3} />
-                      </div>
-                      
-                      <span key={isSignUp ? 'signup-consent' : 'signin-remember'} className="animate-fade-in-scale text-xs sm:text-sm 4k:text-xl font-medium text-white/50 group-hover:text-white/80 transition-colors text-left leading-tight">
-                          {isSignUp ? (
-                             <>I agree to <span className="text-violet-300 hover:underline">Privacy Policy</span> & <span className="text-violet-300 hover:underline">Terms</span></>
-                          ) : (
-                             'Remember me'
-                          )}
-                      </span>
-                    </label>
+                 <div className="flex flex-col w-full min-h-[1.5rem] 4k:min-h-[2rem] mb-6">
+                    <div className="flex justify-between items-start sm:items-center w-full">
+                        <label className="flex items-start sm:items-center gap-2.5 4k:gap-4 cursor-pointer group select-none">
+                        <div className={`relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border transition-all shrink-0 ${fieldErrors.agreed ? 'border-red-400' : (isSignUp && !signupData.agreed ? 'border-white/20 group-hover:border-red-400' : 'border-white/20 group-hover:border-white/40')}`}>
+                            <input 
+                            type="checkbox" 
+                            className="peer appearance-none absolute inset-0 w-full h-full cursor-pointer opacity-0" 
+                            checked={isSignUp ? signupData.agreed : signinData.rememberMe}
+                            onChange={(e) => isSignUp 
+                                ? handleSignupChange('agreed', e.target.checked)
+                                : handleSigninChange('rememberMe', e.target.checked)
+                            }
+                            />
+                            <div className="absolute inset-0 bg-violet-600 rounded opacity-0 peer-checked:opacity-100 transition-opacity duration-200" />
+                            <Check className="w-3 h-3 4k:w-5 4k:h-5 text-white opacity-0 peer-checked:opacity-100 relative z-10 transition-opacity duration-200" strokeWidth={3} />
+                        </div>
+                        
+                        <span key={isSignUp ? 'signup-consent' : 'signin-remember'} className="animate-fade-in-scale text-xs sm:text-sm 4k:text-xl font-medium text-white/50 group-hover:text-white/80 transition-colors text-left leading-tight">
+                            {isSignUp ? (
+                                <>I agree to <span className="text-violet-300 hover:underline">Privacy Policy</span> & <span className="text-violet-300 hover:underline">Terms</span></>
+                            ) : (
+                                'Remember me'
+                            )}
+                        </span>
+                        </label>
 
-                   {/* Forgot Password Link - Collapsible */}
-                   <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                     <div className="overflow-hidden min-h-0">
-                        <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap">
-                          Forgot password?
-                        </button>
-                     </div>
-                   </div>
+                        {/* Forgot Password Link - Collapsible */}
+                        <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                            <div className="overflow-hidden min-h-0">
+                                <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap">
+                                Forgot password?
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {fieldErrors.agreed && <span className="text-red-400 text-xs mt-1 block animate-fade-in-up text-left">{fieldErrors.agreed}</span>}
                  </div>
 
                  {/* Premium Glass-Morphic Primary Button */}
                  <button 
-                    disabled={isSignUp && !signupData.agreed}
+                    onClick={handleAuth}
+                    disabled={isSubmitting}
                     className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 ${
-                    isSignUp && !signupData.agreed 
-                      ? 'opacity-50 cursor-not-allowed grayscale' 
+                    isSubmitting
+                      ? 'opacity-70 cursor-not-allowed grayscale-[0.3]' 
                       : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-purple-700/60 hover:ring-white/30'
                   }`}
                  >
@@ -495,14 +677,22 @@ const App: React.FC = () => {
                     
                     {/* Content */}
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                        <span key={isSignUp ? 'btn-create' : 'btn-signin'} className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors animate-fade-in-scale">
-                            {isSignUp ? 'Create Account' : 'Sign In'}
-                        </span>
-                        <ArrowRight className="w-5 h-5 4k:w-8 4k:h-8 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+                        {isSubmitting ? (
+                          <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white animate-spin" />
+                        ) : (
+                          <>
+                            <span key={isSignUp ? 'btn-create' : 'btn-signin'} className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors animate-fade-in-scale">
+                                {isSignUp ? 'Create Account' : 'Sign In'}
+                            </span>
+                            <ArrowRight className="w-5 h-5 4k:w-8 4k:h-8 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+                          </>
+                        )}
                     </div>
 
                     {/* Moving Highlight Effect */}
-                    <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
+                    {!isSubmitting && (
+                      <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
+                    )}
                  </button>
               </div>
 
