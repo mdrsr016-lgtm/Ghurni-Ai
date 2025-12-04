@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X, Mail } from 'lucide-react';
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -122,14 +122,17 @@ const SocialButton = ({ icon, label, className, onClick }: { icon: React.ReactNo
 const App: React.FC = () => {
   const { currentSrc, isLoading, setIsLoading } = useWallpaper();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   
   // Registration State
   const [signupData, setSignupData] = useState({
     fullName: '',
+    email: '',
     phone: '',
     username: '',
     password: '',
+    confirmPassword: '',
     agreed: false
   });
   
@@ -163,6 +166,8 @@ const App: React.FC = () => {
   const handleInputChange = (field: string, value: any) => {
     setSignupData(prev => ({ ...prev, [field]: value }));
   };
+
+  const isSignupValid = isSignUp && signupData.agreed;
 
   return (
     <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
@@ -287,14 +292,14 @@ const App: React.FC = () => {
               </p>
 
               {/* --- FORM --- */}
-              <div className="w-full mb-6 flex flex-col gap-4 animate-fade-in-up animate-delay-100">
+              <div className="w-full mb-6 flex flex-col animate-fade-in-up animate-delay-100">
                  
                  {/* ----------------------------
                      SIGN UP FIELDS (COLLAPSIBLE)
                  ---------------------------- */}
                  <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden min-h-0">
-                        <div className="flex flex-col gap-4 pt-1">
+                        <div className="flex flex-col gap-4 mb-4">
                             {/* Full Name */}
                             <div className="relative group w-full">
                               <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
@@ -306,6 +311,20 @@ const App: React.FC = () => {
                                 onChange={(e) => handleInputChange('fullName', e.target.value)}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
                                 placeholder="Full Name"
+                              />
+                            </div>
+
+                             {/* Email Field - Added for Validation/Recovery */}
+                            <div className="relative group w-full">
+                              <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                                <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
+                              </div>
+                              <input 
+                                type="email" 
+                                value={signupData.email}
+                                onChange={(e) => handleInputChange('email', e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                placeholder="Email Address"
                               />
                             </div>
 
@@ -359,7 +378,7 @@ const App: React.FC = () => {
                  ---------------------------- */}
                  <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden min-h-0">
-                       <div className="pt-1">
+                       <div className="mb-4">
                           <div className="relative group w-full">
                               <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
                                 <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
@@ -375,7 +394,7 @@ const App: React.FC = () => {
                  </div>
                  
                  {/* Password Input (Always Visible) */}
-                 <div className="relative group w-full">
+                 <div className="relative group w-full mb-4">
                     <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
                        <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
                     </div>
@@ -395,10 +414,37 @@ const App: React.FC = () => {
                     </button>
                  </div>
 
+                {/* Confirm Password (Sign Up Only) */}
+                <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden min-h-0">
+                       <div className="mb-4">
+                            <div className="relative group w-full">
+                                <div className="absolute left-4 4k:left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white transition-colors duration-300">
+                                <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
+                                </div>
+                                <input 
+                                type={showConfirmPassword ? "text" : "password"}
+                                value={signupData.confirmPassword}
+                                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all duration-300 text-base 4k:text-2xl"
+                                placeholder="Confirm Password"
+                                />
+                                <button 
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-4 4k:right-6 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                                >
+                                {showConfirmPassword ? <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" /> : <Eye className="w-5 h-5 4k:w-8 4k:h-8" />}
+                                </button>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+
                  {/* Remember Me OR Consent Checkbox - Content Fades */}
-                 <div className="flex justify-between items-start sm:items-center w-full min-h-[1.5rem] 4k:min-h-[2rem]">
+                 <div className="flex justify-between items-start sm:items-center w-full min-h-[1.5rem] 4k:min-h-[2rem] mb-6">
                     <label className="flex items-start sm:items-center gap-2.5 4k:gap-4 cursor-pointer group select-none">
-                      <div className="relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border border-white/20 group-hover:border-white/40 transition-all shrink-0">
+                      <div className={`relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border transition-all shrink-0 ${isSignUp && !signupData.agreed ? 'border-white/20 group-hover:border-red-400' : 'border-white/20 group-hover:border-white/40'}`}>
                         <input 
                            type="checkbox" 
                            className="peer appearance-none absolute inset-0 w-full h-full cursor-pointer opacity-0" 
@@ -429,7 +475,14 @@ const App: React.FC = () => {
                  </div>
 
                  {/* Premium Glass-Morphic Primary Button */}
-                 <button className="group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-purple-900/40 hover:shadow-purple-700/60 ring-1 ring-white/10 hover:ring-white/30">
+                 <button 
+                    disabled={isSignUp && !signupData.agreed}
+                    className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 ${
+                    isSignUp && !signupData.agreed 
+                      ? 'opacity-50 cursor-not-allowed grayscale' 
+                      : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-purple-700/60 hover:ring-white/30'
+                  }`}
+                 >
                     
                     {/* Deep Atmospheric Background */}
                     <div className="absolute inset-0 bg-[#2e1065] opacity-100" /> 
