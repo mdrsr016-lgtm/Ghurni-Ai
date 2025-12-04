@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ghurni Ai</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importing Bodoni Moda (closest Google Font match to Caviler) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..900&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -24,6 +28,8 @@
             },
             fontFamily: {
               sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+              // Maps to local 'Caviler' first, then 'Bodoni Moda' as web fallback
+              caviler: ['Caviler', 'Bodoni Moda', 'serif'], 
             }
           }
         }
@@ -66,6 +72,25 @@
         color: #ffffff;
         margin: 0;
         height: 100%;
+      }
+      
+      /* 
+         Setup for local Caviler font file. 
+         In a real project, place the font files in /public/fonts/ 
+      */
+      @font-face {
+        font-family: 'Caviler';
+        src: url('/fonts/Caviler.woff2') format('woff2'),
+             url('/fonts/Caviler.woff') format('woff'),
+             url('/fonts/Caviler.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      
+      /* Explicit Font Override */
+      .font-caviler {
+        font-family: 'Caviler', 'Bodoni Moda', serif !important;
       }
 
       /* Premium Mesh Gradient */

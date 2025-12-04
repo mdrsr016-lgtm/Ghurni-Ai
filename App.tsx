@@ -405,8 +405,9 @@ const App: React.FC = () => {
                   <div className="w-10 h-10 4k:w-16 4k:h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
                      <LogoIcon className="w-6 h-6 4k:w-10 4k:h-10 text-white" />
                   </div>
-                  <span className="text-2xl 4k:text-4xl font-bold tracking-wider text-white flex items-center gap-1">
-                    Ghurni <span className="font-light opacity-90">Ai</span>
+                  {/* UNIFIED TEXT STYLE: Same Font (Caviler), Same Size, Same Weight */}
+                  <span className="font-caviler text-3xl 4k:text-5xl font-bold tracking-widest text-white pt-1">
+                    Ghurni Ai
                   </span>
                </div>
                {/* Sign Up / Sign In Toggle Button */}
