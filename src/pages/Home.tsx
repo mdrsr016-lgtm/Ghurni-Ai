@@ -17,6 +17,7 @@ import React from "react";
 import { supabase } from "../lib/supabase";
 import { useWallpaper } from "../lib/hooks";
 import Header from "../components/Header";
+import { LogoIcon } from "../components/Icons";
 import {
   MoreHorizontal,
   ThumbsUp,
@@ -80,7 +81,21 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
           onMouseLeave={() => setIsSidebarExpanded(false)}
           className="hidden md:flex flex-col w-[72px] hover:w-[280px] lg:hover:w-[320px] bg-black/40 backdrop-blur-xl border-r border-white/5 fixed left-0 top-0 h-screen pt-20 z-20 transition-all duration-300 ease-in-out group"
         >
-          {/* Logo & Search */}
+          {/* Logo Section */}
+          <div className="px-3 py-4 border-b border-white/5">
+            <div className="flex items-center gap-3">
+              {/* Logo Icon - Always visible */}
+              <div className="w-10 h-10 bg-gradient-to-br from-violet-600/80 to-indigo-600/80 rounded-xl flex items-center justify-center shadow-lg border border-white/20 shrink-0">
+                <LogoIcon className="w-6 h-6 text-white" />
+              </div>
+              {/* Logo Text - Only visible when expanded */}
+              <span className="font-bold text-xl text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Ghurni Ai
+              </span>
+            </div>
+          </div>
+
+          {/* Search Section */}
           <div className="px-3 py-6 space-y-4">
             {/* Search Bar - Only visible when expanded */}
             <div className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
