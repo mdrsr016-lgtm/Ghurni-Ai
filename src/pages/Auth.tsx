@@ -678,6 +678,8 @@ const Auth: React.FC = () => {
                               : ""
                           }`}
                           numberInputProps={{
+                            autoComplete: "tel",
+                            type: "tel",
                             className: `w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 transition-all duration-300 text-base 4k:text-2xl ${
                               fieldErrors.phone
                                 ? "border-red-500/50 focus:border-red-500"

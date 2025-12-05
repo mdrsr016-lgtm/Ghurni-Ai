@@ -347,11 +347,17 @@
 
       .PhoneInput .PhoneInputCountry {
         position: absolute;
-        left: 0.75rem;
+        left: 2.75rem;
         top: 50%;
         transform: translateY(-50%);
         z-index: 10;
         pointer-events: auto;
+      }
+      
+      @media (min-width: 2560px) {
+        .PhoneInput .PhoneInputCountry {
+          left: 3.5rem;
+        }
       }
 
       .PhoneInput .PhoneInputCountrySelect {
