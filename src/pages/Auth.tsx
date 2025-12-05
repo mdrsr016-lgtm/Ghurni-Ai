@@ -102,8 +102,6 @@ const Auth: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
 
   // Realtime Username Verification State
   const [isVerifyingUser, setIsVerifyingUser] = useState(false);
@@ -378,9 +376,9 @@ const Auth: React.FC = () => {
       return;
     }
 
-    const email = resetEmail || signinData.email;
+    const email = signinData.email;
     if (!email || !isValidEmail(email)) {
-      setFormError("Please enter a valid email address.");
+      setFormError("Please enter your email address in the login form first.");
       return;
     }
 
@@ -396,8 +394,6 @@ const Auth: React.FC = () => {
       if (error) throw error;
 
       setSuccessMsg("Password reset email sent! Please check your inbox.");
-      setShowForgotPassword(false);
-      setResetEmail("");
     } catch (err: any) {
       setFormError(getErrorMessage(err));
     } finally {
