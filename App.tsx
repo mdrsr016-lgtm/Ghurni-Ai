@@ -1,6 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Lock, User, Eye, EyeOff, ArrowRight, Check, Phone, AtSign, Loader2, X, Mail, AlertCircle, LogOut, AlertTriangle } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from './lib/supabase';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Check,
+  Phone,
+  AtSign,
+  Loader2,
+  X,
+  Mail,
+  AlertCircle,
+  LogOut,
+  AlertTriangle,
+} from "lucide-react";
+import { supabase, isSupabaseConfigured } from "./lib/supabase";
 
 // Desktop: 16:9 Aspect Ratio (4K Ultra HD)
 const LANDSCAPE_IMAGES = [
@@ -32,25 +47,46 @@ const PORTRAIT_IMAGES = [
 
 // --- ICONS ---
 const GoogleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" fill="#FBBC05"/>
-    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+  <svg
+    className="w-5 h-5"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      fill="#4285F4"
+    />
+    <path
+      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      fill="#34A853"
+    />
+    <path
+      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z"
+      fill="#FBBC05"
+    />
+    <path
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+      fill="#EA4335"
+    />
   </svg>
 );
 
 const FacebookIcon = () => (
-   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-       <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.84c0-2.435 1.488-3.768 3.655-3.768 1.038 0 1.933.077 2.193.111v2.542h-1.505c-1.181 0-1.41.561-1.41 1.385v1.57h2.82l-.367 3.667h-2.453v7.98H9.101z" />
-   </svg>
+  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.84c0-2.435 1.488-3.768 3.655-3.768 1.038 0 1.933.077 2.193.111v2.542h-1.505c-1.181 0-1.41.561-1.41 1.385v1.57h2.82l-.367 3.667h-2.453v7.98H9.101z" />
+  </svg>
 );
 
 const LogoIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3200 3200" className={className} fill="currentColor">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 3200 3200"
+    className={className}
+    fill="currentColor"
+  >
     <path d="M1671.79 1880.79c-9.69-13.24-21.85-26.4-30.37-40.01-57.74-92.22-15.88-219.75 70.48-278.48 29.58-20.11 59.68-36.49 90.93-53.75 46.18-25.17 92.15-50.73 137.91-76.66a7593 7593 0 0 0 171.35-101.81c32.08-19.34 64.12-39.22 96.86-57.35 9.35-5.18 34.11-18.72 44.7-16.56 21.16 4.3 22.63 28.25 22.64 45.41.05 95.29-2.48 190.61-3.36 285.9-.29 87.78 3.09 175.85 2.53 263.68-.19 30.37-.17 61.75-8.19 91.19-19.41 71.56-87.6 103.07-147.03 136.33l-119.15 67.26-191.32 111.6c-51.01 29.98-151.32 96.84-210.51 98.06-52.65 1.09-136.56-55.04-182.51-80.67-54.61-31.33-105.7-64.39-159.18-95.03l-157.24-88.14c-178.802-100.13-179.712-105.57-177.866-308.37l1.013-168.53-.502-192.46c-.339-48.99-2.983-102.3 3.511-150.61 5.308-39.48 30.84-76.98 62.854-99.75 49.5-34.67 105.26-63.31 157.98-93 85.53-48.28 170.73-97.147 255.61-146.585l383.65-225.924c98.82-59.188 196.24-120.792 298.42-174.009 55.86-29.096 121.96-57.877 186.07-57.635 103.8 1.484 202.49 63.68 291.22 112.462 103.18 56.724 212.59 113.427 301.59 190.443 64.78 56.057 87.78 151.111 91.07 233.228 2.99 74.52 1.34 150.54.15 225.16-2.4 116.41-3.72 232.84-3.94 349.27-.34 103.32.57 206.63 2.71 309.93 2.1 86.04 6.18 174.89 3.53 260.79-1.28 41.67-8.5 105.6-20.05 144.92-15.12 51.5-52.71 103.4-94.82 136.67-76.89 60.77-167 108-252.28 155.87-88.85 49.86-179.85 98.62-268.02 149.15a10492 10492 0 0 0-263.59 155.14c-91.38 55.48-182.9 112.64-277.51 162.08-86.63 45.27-169.98 72.83-266.45 41.16-107.98-35.46-197.43-97.58-294.95-154.38-108.06-65.17-212.86-128.23-322.356-191.17-80.468-46-161.335-91.29-242.59-135.89-92.485-50.2-187.436-101.41-273.901-161.57-42.428-29.52-77.498-65.66-101.453-111.79-25.52-49.14-34.236-118.83-37.291-174.47-3.897-70.96-1.844-150.5.229-221.79a8532 8532 0 0 0 4.702-236.08c.527-99.24.215-198.49-.936-297.74-1.875-67.13-3.322-134.29-4.344-201.44-1.735-87.77-5.812-238.259 20.262-319.338a287.24 287.24 0 0 1 93.501-136.396c33.659-27.536 76.796-54.431 114.04-76.996a4263 4263 0 0 1 173.208-98.498 21142 21142 0 0 0 268.061-149.6 22860 22860 0 0 0 293.188-174.208c72.31-43.588 140.58-84.526 215.13-124.099 170.61-90.567 268.09-53.505 424.51 35.467a7171 7171 0 0 1 158.03 93.035c23.91 14.368 50.71 31.504 74.75 44.999-.17.853-.97 2.771-1.31 3.67-6.34-.242-19.76-6.374-26.8-9.234-22.79-9.253-85.93-12.745-106.19 2.013-66.53 20.352-135.81 62.647-195.49 98.441l-139.94 84.037-444.33 263.213c-134.39 78.454-273.163 146.968-404.6 231.268-131.318 84.226-116.31 207.156-114.734 343.596l2.147 218.09c.313 81.74-.124 163.48-1.31 245.21-.993 80.78-9.159 229.5 14.116 303.35 12.849 40.76 37.668 72.83 70.447 99.79 50.428 41.48 111.394 72.68 168.17 104.61l240.734 134.53c64.33 36.55 127.47 76.73 191.64 113.77 44.53 25.71 87.4 54.53 133.77 77.27 69.64 34.55 125.27 57.44 202.12 31.19 65.02-22.21 116.91-56.82 175.39-90.72 72.54-42.05 144.16-87.67 216.49-129.26l229.93-129.36c55.35-30.9 113.52-62.35 165.27-98.75 32.69-23 57.56-45.19 75.47-81.33 16.13-32.56 21.69-57.37 24.54-93.64 5.25-66.65 3.2-132.92 2.25-199.64l-2.42-246.17c.27-78.39.96-156.78 2.07-235.16 1.18-78.78 7.77-173.24-15.08-249-17.53-58.16-71.69-107.94-125.1-133.078-64.56-30.2-116.77-42.71-184.79-17.356-66.43 24.761-126.07 61.194-186.34 97.634-61.11 37.31-122.56 74.07-184.34 110.27a18928 18928 0 0 1-222.04 125.61c-66.77 36.95-132.86 72.45-195.32 116.93-76.37 52.52-119.43 165.42-86.89 253.78 31.82 86.41 137.67 133.07 214.05 172.94 28.5 14.87 60.39 33.46 89.19 46.75 4.8 2.22 9.65 4.33 14.55 6.32" />
   </svg>
-)
+);
 
 // --- HOOKS ---
 function useWallpaper() {
@@ -66,11 +102,13 @@ function useWallpaper() {
       // Improved logic using 769px (Standard Tablet) as the cutoff
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
       const isMobileWidth = window.innerWidth < 769; // Matches 'tab' breakpoint
-      
+
       const shouldUsePortrait = isPortrait || isMobileWidth;
-      
+
       const images = shouldUsePortrait ? PORTRAIT_IMAGES : LANDSCAPE_IMAGES;
-      const storageKey = shouldUsePortrait ? 'ghurni_bg_history_portrait' : 'ghurni_bg_history_landscape';
+      const storageKey = shouldUsePortrait
+        ? "ghurni_bg_history_portrait"
+        : "ghurni_bg_history_landscape";
 
       let seenIndices: number[] = [];
       try {
@@ -80,18 +118,24 @@ function useWallpaper() {
         console.warn("Failed to parse wallpaper history", e);
       }
 
-      let availableIndices = images.map((_, i) => i).filter(i => !seenIndices.includes(i));
+      let availableIndices = images
+        .map((_, i) => i)
+        .filter((i) => !seenIndices.includes(i));
       if (availableIndices.length === 0) {
         availableIndices = images.map((_, i) => i);
         seenIndices = [];
       }
 
-      const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+      const randomIndex =
+        availableIndices[Math.floor(Math.random() * availableIndices.length)];
       setCurrentSrc(images[randomIndex]);
       setIsLoading(true);
 
       try {
-        localStorage.setItem(storageKey, JSON.stringify([...seenIndices, randomIndex]));
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify([...seenIndices, randomIndex])
+        );
       } catch (e) {
         console.warn("Failed to save wallpaper history", e);
       }
@@ -104,8 +148,18 @@ function useWallpaper() {
 }
 
 // --- COMPONENTS ---
-const SocialButton = ({ icon, label, className, onClick }: { icon: React.ReactNode, label: string, className?: string, onClick?: () => void }) => (
-  <button 
+const SocialButton = ({
+  icon,
+  label,
+  className,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  className?: string;
+  onClick?: () => void;
+}) => (
+  <button
     onClick={onClick}
     className={`group relative flex items-center justify-center w-full px-6 py-3 rounded-xl border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-[1.02] active:scale-[0.98] shadow-lg overflow-hidden ${className}`}
   >
@@ -125,30 +179,30 @@ const App: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-  
+
   // Auth State
   const [signinData, setSigninData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+    email: "",
+    password: "",
+    rememberMe: false,
   });
 
   const [signupData, setSignupData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
-    agreed: false
+    fullName: "",
+    email: "",
+    phone: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    agreed: false,
   });
 
   // UI Feedback State
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [successMsg, setSuccessMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Realtime Username Verification State
   const [isVerifyingUser, setIsVerifyingUser] = useState(false);
   const [isUserAvailable, setIsUserAvailable] = useState<boolean | null>(null);
@@ -170,7 +224,7 @@ const App: React.FC = () => {
       setSession(session);
       if (session) {
         setSuccessMsg("Logged in successfully!");
-        setFormError('');
+        setFormError("");
       }
     });
 
@@ -179,15 +233,15 @@ const App: React.FC = () => {
 
   // Clear errors when switching modes
   useEffect(() => {
-    setFormError('');
+    setFormError("");
     setFieldErrors({});
-    setSuccessMsg('');
+    setSuccessMsg("");
   }, [isSignUp]);
 
   // Simulate Username Verification (Can be replaced with Supabase function later)
   useEffect(() => {
     if (!isSignUp) return;
-    
+
     // Reset state if empty
     if (!signupData.username) {
       setIsVerifyingUser(false);
@@ -209,78 +263,89 @@ const App: React.FC = () => {
   }, [signupData.username, isSignUp]);
 
   // Helper to Validate a Single Field
-  const validateSingleField = (name: string, value: any, context: 'signin' | 'signup', data: any) => {
-    if (context === 'signup') {
-        switch (name) {
-            case 'fullName':
-                return !value.trim() ? "Full name is required" : "";
-            case 'email':
-                if (!value.trim()) return "Email is required";
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Invalid email address";
-                return "";
-            case 'phone':
-                return !value.trim() ? "Phone number is required" : "";
-            case 'username':
-                return !value.trim() ? "Username is required" : "";
-            case 'password':
-                if (!value) return "Password is required";
-                if (value.length < 6) return "Password must be at least 6 characters";
-                return "";
-            case 'confirmPassword':
-                if (!value) return "Please confirm your password";
-                if (value !== data.password) return "Passwords do not match";
-                return "";
-            case 'agreed':
-                return !value ? "You must agree to the terms" : "";
-            default: return "";
-        }
+  const validateSingleField = (
+    name: string,
+    value: any,
+    context: "signin" | "signup",
+    data: any
+  ) => {
+    if (context === "signup") {
+      switch (name) {
+        case "fullName":
+          return !value.trim() ? "Full name is required" : "";
+        case "email":
+          if (!value.trim()) return "Email is required";
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+            return "Invalid email address";
+          return "";
+        case "phone":
+          return !value.trim() ? "Phone number is required" : "";
+        case "username":
+          return !value.trim() ? "Username is required" : "";
+        case "password":
+          if (!value) return "Password is required";
+          if (value.length < 6) return "Password must be at least 6 characters";
+          return "";
+        case "confirmPassword":
+          if (!value) return "Please confirm your password";
+          if (value !== data.password) return "Passwords do not match";
+          return "";
+        case "agreed":
+          return !value ? "You must agree to the terms" : "";
+        default:
+          return "";
+      }
     } else {
-         switch (name) {
-            case 'email':
-                return !value.trim() ? "Email is required" : "";
-            case 'password':
-                return !value ? "Password is required" : "";
-            default: return "";
-         }
+      switch (name) {
+        case "email":
+          return !value.trim() ? "Email is required" : "";
+        case "password":
+          return !value ? "Password is required" : "";
+        default:
+          return "";
+      }
     }
   };
 
-  const handleBlur = (field: string, context: 'signin' | 'signup') => {
-      const data = context === 'signup' ? signupData : signinData;
-      // @ts-ignore
-      const value = data[field];
-      const error = validateSingleField(field, value, context, data);
-      
-      setFieldErrors(prev => ({
-          ...prev,
-          [field]: error
-      }));
+  const handleBlur = (field: string, context: "signin" | "signup") => {
+    const data = context === "signup" ? signupData : signinData;
+    // @ts-ignore
+    const value = data[field];
+    const error = validateSingleField(field, value, context, data);
+
+    setFieldErrors((prev) => ({
+      ...prev,
+      [field]: error,
+    }));
   };
 
   const handleSignupChange = (field: string, value: any) => {
     // 1. Calculate New State
     const newState = { ...signupData, [field]: value };
     setSignupData(newState);
-    
+
     // 2. Clear Global Error
-    setFormError('');
+    setFormError("");
 
     // 3. Realtime Validation (Only if error exists or for specific interactions)
-    let error = '';
-    
+    let error = "";
+
     // Special Case: Password matching should update in realtime if confirmed
-    if (field === 'password' && newState.confirmPassword) {
-         if (newState.confirmPassword !== value) {
-              setFieldErrors(prev => ({ ...prev, confirmPassword: "Passwords do not match" }));
-         } else {
-              setFieldErrors(prev => ({ ...prev, confirmPassword: "" }));
-         }
+    if (field === "password" && newState.confirmPassword) {
+      if (newState.confirmPassword !== value) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          confirmPassword: "Passwords do not match",
+        }));
+      } else {
+        setFieldErrors((prev) => ({ ...prev, confirmPassword: "" }));
+      }
     }
 
     // Standard: If field has error, re-validate to see if we can clear it
     if (fieldErrors[field]) {
-        error = validateSingleField(field, value, 'signup', newState);
-        setFieldErrors(prev => ({ ...prev, [field]: error }));
+      error = validateSingleField(field, value, "signup", newState);
+      setFieldErrors((prev) => ({ ...prev, [field]: error }));
     }
   };
 
@@ -288,27 +353,27 @@ const App: React.FC = () => {
     // 1. Calculate New State
     const newState = { ...signinData, [field]: value };
     setSigninData(newState);
-    setFormError('');
+    setFormError("");
 
     // 2. Realtime Validation (Only if error exists)
     if (fieldErrors[field]) {
-        const error = validateSingleField(field, value, 'signin', newState);
-        setFieldErrors(prev => ({ ...prev, [field]: error }));
+      const error = validateSingleField(field, value, "signin", newState);
+      setFieldErrors((prev) => ({ ...prev, [field]: error }));
     }
   };
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
     const data = isSignUp ? signupData : signinData;
-    const context = isSignUp ? 'signup' : 'signin';
+    const context = isSignUp ? "signup" : "signin";
 
     // Validate all fields based on context
-    Object.keys(data).forEach(field => {
-        // @ts-ignore
-        const error = validateSingleField(field, data[field], context, data);
-        if (error) {
-            errors[field] = error;
-        }
+    Object.keys(data).forEach((field) => {
+      // @ts-ignore
+      const error = validateSingleField(field, data[field], context, data);
+      if (error) {
+        errors[field] = error;
+      }
     });
 
     setFieldErrors(errors);
@@ -316,48 +381,52 @@ const App: React.FC = () => {
   };
 
   const handleAuth = async () => {
-    setFormError('');
-    setSuccessMsg('');
+    setFormError("");
+    setSuccessMsg("");
 
     if (!isSupabaseConfigured) {
-      setFormError("Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      setFormError(
+        "Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."
+      );
       return;
     }
-    
+
     if (!validateForm()) {
-        return;
+      return;
     }
 
     setIsSubmitting(true);
 
     try {
       if (isSignUp) {
-          const { data, error } = await supabase.auth.signUp({
-            email: signupData.email,
-            password: signupData.password,
-            options: {
-              data: {
-                full_name: signupData.fullName,
-                username: signupData.username,
-                phone: signupData.phone,
-              },
+        const { data, error } = await supabase.auth.signUp({
+          email: signupData.email,
+          password: signupData.password,
+          options: {
+            data: {
+              full_name: signupData.fullName,
+              username: signupData.username,
+              phone: signupData.phone,
             },
-          });
+          },
+        });
 
-          if (error) throw error;
+        if (error) throw error;
 
-          console.log("Sign Up Success:", data);
-          setSuccessMsg("Account created! Please check your email to verify your account.");
+        console.log("Sign Up Success:", data);
+        setSuccessMsg(
+          "Account created! Please check your email to verify your account."
+        );
       } else {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: signinData.email,
-            password: signinData.password,
-          });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: signinData.email,
+          password: signinData.password,
+        });
 
-          if (error) throw error;
-          
-          console.log("Sign In Success:", data);
-          // Success message handled by onAuthStateChange
+        if (error) throw error;
+
+        console.log("Sign In Success:", data);
+        // Success message handled by onAuthStateChange
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
@@ -367,15 +436,17 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    setFormError('');
+  const handleSocialLogin = async (provider: "google" | "facebook") => {
+    setFormError("");
     if (!isSupabaseConfigured) {
-      setFormError("Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      setFormError(
+        "Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."
+      );
       return;
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
           redirectTo: window.location.origin,
@@ -390,67 +461,66 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     if (!isSupabaseConfigured) return;
     await supabase.auth.signOut();
-    setSuccessMsg('');
-    setFormError('');
+    setSuccessMsg("");
+    setFormError("");
   };
 
   // Determine if the submit button should be disabled
-  const isButtonDisabled = isSubmitting || (isSignUp && !signupData.agreed);
 
   // If logged in, show a simple dashboard for now (can be expanded later)
   if (session) {
-     return (
-       <main className="relative w-full h-[100dvh] overflow-hidden text-white font-sans bg-black flex items-center justify-center">
-         <div className="absolute inset-0 mesh-gradient-bg opacity-50" />
-         <div className="relative z-10 glass-panel p-12 rounded-3xl text-center flex flex-col items-center max-w-lg w-full">
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6 animate-pulse-glow">
-                <Check className="w-10 h-10 text-green-400" />
-            </div>
-            <h1 className="text-4xl font-bold mb-2">Welcome Back!</h1>
-            <p className="text-white/60 mb-8">{session.user.email}</p>
-            <button 
-              onClick={handleLogout}
-              className="px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl transition-all flex items-center gap-2"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </button>
-         </div>
-       </main>
-     )
+    return (
+      <main className="relative w-full h-[100dvh] overflow-hidden text-white font-sans bg-black flex items-center justify-center">
+        <div className="absolute inset-0 mesh-gradient-bg opacity-50" />
+        <div className="relative z-10 glass-panel p-12 rounded-3xl text-center flex flex-col items-center max-w-lg w-full">
+          <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6 animate-pulse-glow">
+            <Check className="w-10 h-10 text-green-400" />
+          </div>
+          <h1 className="text-4xl font-bold mb-2">Welcome Back!</h1>
+          <p className="text-white/60 mb-8">{session.user.email}</p>
+          <button
+            onClick={handleLogout}
+            className="px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl transition-all flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </main>
+    );
   }
 
   return (
     <main className="relative w-full min-h-[100dvh] overflow-hidden text-white font-sans selection:bg-rose-500/30">
-      
       {/* --- BACKGROUND LAYER --- */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Base Gradient */}
         <div className="mesh-gradient-bg absolute inset-0 w-full h-full" />
-        
+
         {/* Image Overlay */}
         {currentSrc && (
-          <div 
+          <div
             className={`absolute inset-0 w-full h-full bg-black/40 transition-all duration-[2500ms] ease-[cubic-bezier(0.23,1,0.32,1)] transform ${
-              isLoading ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              isLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
             }`}
           >
-             <img 
+            <img
               src={currentSrc}
               alt="Destination"
               className="w-full h-full object-cover"
               onLoad={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
             />
-             {/* Gradient Overlay for Readability */}
-             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
+            {/* Gradient Overlay for Readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
           </div>
         )}
       </div>
 
       {/* --- CONTENT LAYER --- */}
       <div className="relative z-10 w-full h-[100dvh] overflow-hidden">
-        <div className="
+        <div
+          className="
           absolute inset-0 w-full h-full 
           overflow-y-auto                 /* Mobile: Enable scroll */
           tab:overflow-hidden             /* Tablet+: Lock scroll */
@@ -458,13 +528,17 @@ const App: React.FC = () => {
           laptop:justify-end laptop:p-16  /* Laptop: Right Align */
           desktop:p-24                    /* Desktop: More padding */
           transition-all duration-500 scroll-smooth
-        ">
-          
+        "
+        >
           {/* Mobile Spacer */}
-          <div className="w-full h-[50dvh] landscape:h-4 shrink-0 block tab:hidden pointer-events-none transition-all duration-300" aria-hidden="true" />
+          <div
+            className="w-full h-[50dvh] landscape:h-4 shrink-0 block tab:hidden pointer-events-none transition-all duration-300"
+            aria-hidden="true"
+          />
 
           {/* Login Card Container */}
-          <div className="
+          <div
+            className="
             /* --- MOBILE BASE --- */
             w-full min-h-[50dvh] 
             glass-panel 
@@ -497,50 +571,49 @@ const App: React.FC = () => {
             
             /* --- 4K / 5K --- */
             4k:max-w-[40rem] 4k:p-16 4k:rounded-[3rem] 4k:border-2
-          ">
-            
+          "
+          >
             {/* Card Header Row */}
             <div className="w-full flex justify-between items-center mb-6 sm:mb-8 4k:mb-12 z-20 shrink-0">
-               {/* Brand */}
-               <div className="flex items-center gap-3 4k:gap-5">
-                  <div className="w-10 h-10 4k:w-16 4k:h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
-                     <LogoIcon className="w-6 h-6 4k:w-10 4k:h-10 text-white" />
-                  </div>
-                  {/* UNIFIED TEXT STYLE: Same Font (Caviler), Same Size, Same Weight */}
-                  <span className="font-caviler text-3xl 4k:text-5xl font-bold tracking-widest text-white pt-1">
-                    Ghurni Ai
-                  </span>
-               </div>
-               {/* Sign Up / Sign In Toggle Button */}
-               <button 
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  className="px-4 py-2 4k:px-8 4k:py-4 text-xs 4k:text-lg font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90"
-                >
-                   {isSignUp ? 'Sign In' : 'Sign Up'}
-               </button>
+              {/* Brand */}
+              <div className="flex items-center gap-3 4k:gap-5">
+                <div className="w-10 h-10 4k:w-16 4k:h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
+                  <LogoIcon className="w-6 h-6 4k:w-10 4k:h-10 text-white" />
+                </div>
+                {/* UNIFIED TEXT STYLE: Same Font (Caviler), Same Size, Same Weight */}
+                <span className="font-caviler text-3xl 4k:text-5xl font-bold tracking-widest text-white pt-1">
+                  Ghurni Ai
+                </span>
+              </div>
+              {/* Sign Up / Sign In Toggle Button */}
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="px-4 py-2 4k:px-8 4k:py-4 text-xs 4k:text-lg font-bold tracking-wide uppercase bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-white hover:text-white/90"
+              >
+                {isSignUp ? "Sign In" : "Sign Up"}
+              </button>
             </div>
-            
+
             {/* Main Content Container */}
             <div className="w-full flex flex-col items-center text-center shrink-0">
               {/* Title */}
-              <h1 
-                key={isSignUp ? 'signup-title' : 'signin-title'}
+              <h1
+                key={isSignUp ? "signup-title" : "signin-title"}
                 className="text-3xl sm:text-4xl 4k:text-6xl font-bold tracking-tight mb-2 flex items-center justify-center gap-3 text-white animate-fade-in-scale"
               >
                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/60">
-                   {isSignUp ? 'Create Account' : 'Welcome Back'}
+                  {isSignUp ? "Create Account" : "Welcome Back"}
                 </span>
                 <span className="hidden sm:inline">👋</span>
               </h1>
-              
-              <p 
-                key={isSignUp ? 'signup-desc' : 'signin-desc'}
+
+              <p
+                key={isSignUp ? "signup-desc" : "signin-desc"}
                 className="text-white/60 font-light text-sm sm:text-base 4k:text-2xl mb-6 sm:mb-8 4k:mb-12 max-w-xs 4k:max-w-xl mx-auto leading-relaxed animate-fade-in-scale animate-delay-100"
               >
-                {isSignUp 
-                  ? 'Join the community of explorers.' 
-                  : 'Plan your next adventure with intelligent insights.'
-                }
+                {isSignUp
+                  ? "Join the community of explorers."
+                  : "Plan your next adventure with intelligent insights."}
               </p>
 
               {/* Supabase Missing Config Warning */}
@@ -551,314 +624,516 @@ const App: React.FC = () => {
                     <span className="font-bold">Supabase Not Connected</span>
                   </div>
                   <span className="text-xs opacity-80">
-                    Add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> to your environment variables to enable login.
+                    Add <code>VITE_SUPABASE_URL</code> and{" "}
+                    <code>VITE_SUPABASE_ANON_KEY</code> to your environment
+                    variables to enable login.
                   </span>
                 </div>
               )}
 
               {/* General Feedback Message Area */}
               {(formError || successMsg) && (
-                <div className={`w-full mb-4 p-3 rounded-lg text-sm font-medium animate-fade-in-scale flex items-center justify-center gap-2 ${formError ? 'bg-red-500/10 text-red-200 border border-red-500/20' : 'bg-green-500/10 text-green-200 border border-green-500/20'}`}>
-                    {formError ? <AlertCircle className="w-4 h-4" /> : <Check className="w-4 h-4" />}
-                    <span>{formError || successMsg}</span>
+                <div
+                  className={`w-full mb-4 p-3 rounded-lg text-sm font-medium animate-fade-in-scale flex items-center justify-center gap-2 ${
+                    formError
+                      ? "bg-red-500/10 text-red-200 border border-red-500/20"
+                      : "bg-green-500/10 text-green-200 border border-green-500/20"
+                  }`}
+                >
+                  {formError ? (
+                    <AlertCircle className="w-4 h-4" />
+                  ) : (
+                    <Check className="w-4 h-4" />
+                  )}
+                  <span>{formError || successMsg}</span>
                 </div>
               )}
 
               {/* --- FORM --- */}
               <div className="w-full mb-6 flex flex-col animate-fade-in-up animate-delay-100">
-                 
-                 {/* ----------------------------
+                {/* ----------------------------
                      SIGN UP FIELDS (COLLAPSIBLE)
                  ---------------------------- */}
-                 <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                    <div className="overflow-hidden min-h-0">
-                        <div className="flex flex-col gap-4 mb-4">
-                            {/* Full Name */}
-                            <div className="relative group w-full text-left">
-                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.fullName ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <User className="w-5 h-5 4k:w-8 4k:h-8" />
-                              </div>
-                              <input 
-                                type="text" 
-                                value={signupData.fullName}
-                                onChange={(e) => handleSignupChange('fullName', e.target.value)}
-                                onBlur={() => handleBlur('fullName', 'signup')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.fullName ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                                placeholder="Full Name"
-                              />
-                              {fieldErrors.fullName && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.fullName}</span>}
-                            </div>
-
-                             {/* Email Field */}
-                            <div className="relative group w-full text-left">
-                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.email ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
-                              </div>
-                              <input 
-                                type="email" 
-                                value={signupData.email}
-                                onChange={(e) => handleSignupChange('email', e.target.value)}
-                                onBlur={() => handleBlur('email', 'signup')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.email ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                                placeholder="Email Address"
-                              />
-                               {fieldErrors.email && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.email}</span>}
-                            </div>
-
-                            {/* Phone Number */}
-                            <div className="relative group w-full text-left">
-                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.phone ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <Phone className="w-5 h-5 4k:w-8 4k:h-8" />
-                              </div>
-                              <input 
-                                type="tel" 
-                                value={signupData.phone}
-                                onChange={(e) => handleSignupChange('phone', e.target.value)}
-                                onBlur={() => handleBlur('phone', 'signup')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.phone ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                                placeholder="Phone Number"
-                              />
-                              {fieldErrors.phone && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.phone}</span>}
-                            </div>
-
-                            {/* Username with Realtime Verification */}
-                            <div className="relative group w-full text-left">
-                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.username ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
-                              </div>
-                              <input 
-                                type="text" 
-                                value={signupData.username}
-                                onChange={(e) => handleSignupChange('username', e.target.value)}
-                                onBlur={() => handleBlur('username', 'signup')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
-                                  fieldErrors.username ? 'border-red-500/50 focus:border-red-500' :
-                                  isUserAvailable === true ? 'border-green-500/50 focus:border-green-500/80' : 
-                                  isUserAvailable === false ? 'border-red-500/50 focus:border-red-500/80' : 
-                                  'border-white/10 focus:border-white'
-                                }`}
-                                placeholder="Choose Username"
-                              />
-                              {/* Verification Status Icon */}
-                              <div className="absolute right-4 4k:right-6 top-3.5 4k:top-6">
-                                {isVerifyingUser ? (
-                                  <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white/50 animate-spin" />
-                                ) : isUserAvailable === true ? (
-                                  <Check className="w-5 h-5 4k:w-8 4k:h-8 text-green-400 animate-zoom-in animate-pulse-glow" />
-                                ) : isUserAvailable === false ? (
-                                  <X className="w-5 h-5 4k:w-8 4k:h-8 text-red-400 animate-shake" />
-                                ) : null}
-                              </div>
-                              {fieldErrors.username && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.username}</span>}
-                            </div>
+                <div
+                  className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                    isSignUp
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden min-h-0">
+                    <div className="flex flex-col gap-4 mb-4">
+                      {/* Full Name */}
+                      <div className="relative group w-full text-left">
+                        <div
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                            fieldErrors.fullName
+                              ? "text-red-400"
+                              : "text-white/40 group-focus-within:text-white"
+                          } transition-colors duration-300`}
+                        >
+                          <User className="w-5 h-5 4k:w-8 4k:h-8" />
                         </div>
-                    </div>
-                 </div>
+                        <input
+                          type="text"
+                          value={signupData.fullName}
+                          onChange={(e) =>
+                            handleSignupChange("fullName", e.target.value)
+                          }
+                          onBlur={() => handleBlur("fullName", "signup")}
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                            fieldErrors.fullName
+                              ? "border-red-500/50 focus:border-red-500"
+                              : "border-white/10 focus:border-white"
+                          }`}
+                          placeholder="Full Name"
+                        />
+                        {fieldErrors.fullName && (
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                            {fieldErrors.fullName}
+                          </span>
+                        )}
+                      </div>
 
-                 {/* ----------------------------
-                     SIGN IN FIELDS (COLLAPSIBLE)
-                 ---------------------------- */}
-                 <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                    <div className="overflow-hidden min-h-0">
-                       <div className="mb-4">
-                          <div className="relative group w-full text-left">
-                              <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.email ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
-                              </div>
-                              <input 
-                                type="email" 
-                                value={signinData.email}
-                                onChange={(e) => handleSigninChange('email', e.target.value)}
-                                onBlur={() => handleBlur('email', 'signin')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.email ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                                placeholder="Email Address"
-                              />
-                              {fieldErrors.email && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.email}</span>}
-                           </div>
-                       </div>
-                    </div>
-                 </div>
-                 
-                 {/* Password Input (Always Visible) */}
-                 <div className="relative group w-full mb-4 text-left">
-                    <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.password ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                       <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
-                    </div>
-                    <input 
-                      type={showPassword ? "text" : "password"}
-                      value={isSignUp ? signupData.password : signinData.password}
-                      onChange={(e) => isSignUp 
-                        ? handleSignupChange('password', e.target.value) 
-                        : handleSigninChange('password', e.target.value)
-                      }
-                      onBlur={() => handleBlur('password', isSignUp ? 'signup' : 'signin')}
-                      className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.password ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                      placeholder="Password"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" /> : <Eye className="w-5 h-5 4k:w-8 4k:h-8" />}
-                    </button>
-                    {fieldErrors.password && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.password}</span>}
-                 </div>
+                      {/* Email Field */}
+                      <div className="relative group w-full text-left">
+                        <div
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                            fieldErrors.email
+                              ? "text-red-400"
+                              : "text-white/40 group-focus-within:text-white"
+                          } transition-colors duration-300`}
+                        >
+                          <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
+                        </div>
+                        <input
+                          type="email"
+                          value={signupData.email}
+                          onChange={(e) =>
+                            handleSignupChange("email", e.target.value)
+                          }
+                          onBlur={() => handleBlur("email", "signup")}
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                            fieldErrors.email
+                              ? "border-red-500/50 focus:border-red-500"
+                              : "border-white/10 focus:border-white"
+                          }`}
+                          placeholder="Email Address"
+                        />
+                        {fieldErrors.email && (
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                            {fieldErrors.email}
+                          </span>
+                        )}
+                      </div>
 
-                {/* Confirm Password (Sign Up Only) */}
-                <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                    <div className="overflow-hidden min-h-0">
-                       <div className="mb-4">
-                            <div className="relative group w-full text-left">
-                                <div className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${fieldErrors.confirmPassword ? 'text-red-400' : 'text-white/40 group-focus-within:text-white'} transition-colors duration-300`}>
-                                <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
-                                </div>
-                                <input 
-                                type={showConfirmPassword ? "text" : "password"}
-                                value={signupData.confirmPassword}
-                                onChange={(e) => handleSignupChange('confirmPassword', e.target.value)}
-                                onBlur={() => handleBlur('confirmPassword', 'signup')}
-                                className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${fieldErrors.confirmPassword ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white'}`}
-                                placeholder="Confirm Password"
-                                />
-                                <button 
-                                type="button"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
-                                >
-                                {showConfirmPassword ? <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" /> : <Eye className="w-5 h-5 4k:w-8 4k:h-8" />}
-                                </button>
-                                {fieldErrors.confirmPassword && <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">{fieldErrors.confirmPassword}</span>}
-                            </div>
-                       </div>
+                      {/* Phone Number */}
+                      <div className="relative group w-full text-left">
+                        <div
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                            fieldErrors.phone
+                              ? "text-red-400"
+                              : "text-white/40 group-focus-within:text-white"
+                          } transition-colors duration-300`}
+                        >
+                          <Phone className="w-5 h-5 4k:w-8 4k:h-8" />
+                        </div>
+                        <input
+                          type="tel"
+                          value={signupData.phone}
+                          onChange={(e) =>
+                            handleSignupChange("phone", e.target.value)
+                          }
+                          onBlur={() => handleBlur("phone", "signup")}
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                            fieldErrors.phone
+                              ? "border-red-500/50 focus:border-red-500"
+                              : "border-white/10 focus:border-white"
+                          }`}
+                          placeholder="Phone Number"
+                        />
+                        {fieldErrors.phone && (
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                            {fieldErrors.phone}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Username with Realtime Verification */}
+                      <div className="relative group w-full text-left">
+                        <div
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                            fieldErrors.username
+                              ? "text-red-400"
+                              : "text-white/40 group-focus-within:text-white"
+                          } transition-colors duration-300`}
+                        >
+                          <AtSign className="w-5 h-5 4k:w-8 4k:h-8" />
+                        </div>
+                        <input
+                          type="text"
+                          value={signupData.username}
+                          onChange={(e) =>
+                            handleSignupChange("username", e.target.value)
+                          }
+                          onBlur={() => handleBlur("username", "signup")}
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                            fieldErrors.username
+                              ? "border-red-500/50 focus:border-red-500"
+                              : isUserAvailable === true
+                              ? "border-green-500/50 focus:border-green-500/80"
+                              : isUserAvailable === false
+                              ? "border-red-500/50 focus:border-red-500/80"
+                              : "border-white/10 focus:border-white"
+                          }`}
+                          placeholder="Choose Username"
+                        />
+                        {/* Verification Status Icon */}
+                        <div className="absolute right-4 4k:right-6 top-3.5 4k:top-6">
+                          {isVerifyingUser ? (
+                            <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white/50 animate-spin" />
+                          ) : isUserAvailable === true ? (
+                            <Check className="w-5 h-5 4k:w-8 4k:h-8 text-green-400 animate-zoom-in animate-pulse-glow" />
+                          ) : isUserAvailable === false ? (
+                            <X className="w-5 h-5 4k:w-8 4k:h-8 text-red-400 animate-shake" />
+                          ) : null}
+                        </div>
+                        {fieldErrors.username && (
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                            {fieldErrors.username}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                  </div>
                 </div>
 
-                 {/* Remember Me OR Consent Checkbox - Content Fades */}
-                 <div className="flex flex-col w-full min-h-[1.5rem] 4k:min-h-[2rem] mb-6">
-                    <div className="flex justify-between items-start sm:items-center w-full">
-                        <label className="flex items-start sm:items-center gap-2.5 4k:gap-4 cursor-pointer group select-none">
-                        <div className={`relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border transition-all shrink-0 ${fieldErrors.agreed ? 'border-red-400' : (isSignUp && !signupData.agreed ? 'border-white/20 group-hover:border-red-400' : 'border-white/20 group-hover:border-white/40')}`}>
-                            <input 
-                            type="checkbox" 
-                            className="peer appearance-none absolute inset-0 w-full h-full cursor-pointer opacity-0" 
-                            checked={isSignUp ? signupData.agreed : signinData.rememberMe}
-                            onChange={(e) => isSignUp 
-                                ? handleSignupChange('agreed', e.target.checked)
-                                : handleSigninChange('rememberMe', e.target.checked)
-                            }
-                            />
-                            <div className="absolute inset-0 bg-violet-600 rounded opacity-0 peer-checked:opacity-100 transition-opacity duration-200" />
-                            <Check className="w-3 h-3 4k:w-5 4k:h-5 text-white opacity-0 peer-checked:opacity-100 relative z-10 transition-opacity duration-200" strokeWidth={3} />
-                        </div>
-                        
-                        <span key={isSignUp ? 'signup-consent' : 'signin-remember'} className="animate-fade-in-scale text-xs sm:text-sm 4k:text-xl font-medium text-white/50 group-hover:text-white/80 transition-colors text-left leading-tight">
-                            {isSignUp ? (
-                                <>I agree to <span className="text-violet-300 hover:underline">Privacy Policy</span> & <span className="text-violet-300 hover:underline">Terms</span></>
-                            ) : (
-                                'Remember me'
-                            )}
-                        </span>
-                        </label>
-
-                        {/* Forgot Password Link - Collapsible */}
-                        <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${!isSignUp ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                            <div className="overflow-hidden min-h-0">
-                                <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap">
-                                Forgot password?
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    {fieldErrors.agreed && <span className="text-red-400 text-xs mt-1 block animate-fade-in-up text-left">{fieldErrors.agreed}</span>}
-                 </div>
-
-                 {/* Premium Glass-Morphic Primary Button */}
-                 <button 
-                    onClick={handleAuth}
-                    disabled={isSubmitting || (isSignUp && !signupData.agreed)}
-                    className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 ${
-                    isSubmitting || (isSignUp && !signupData.agreed)
-                      ? 'opacity-50 cursor-not-allowed grayscale-[0.5] brightness-75' 
-                      : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-purple-700/60 hover:ring-white/30'
+                {/* ----------------------------
+                     SIGN IN FIELDS (COLLAPSIBLE)
+                 ---------------------------- */}
+                <div
+                  className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                    !isSignUp
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
                   }`}
-                 >
-                    
-                    {/* Deep Atmospheric Background */}
-                    <div className="absolute inset-0 bg-[#2e1065] opacity-100" /> 
-                    
-                    {/* Gradient Mesh overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {/* Glass Shine (Top) */}
-                    <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent opacity-100" />
-                    
-                    {/* Content */}
-                    <div className="relative z-10 flex items-center justify-center gap-3">
-                        {isSubmitting ? (
-                          <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white animate-spin" />
-                        ) : (
-                          <>
-                            <span key={isSignUp ? 'btn-create' : 'btn-signin'} className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors animate-fade-in-scale">
-                                {isSignUp ? 'Create Account' : 'Sign In'}
-                            </span>
-                            <ArrowRight className="w-5 h-5 4k:w-8 4k:h-8 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
-                          </>
+                >
+                  <div className="overflow-hidden min-h-0">
+                    <div className="mb-4">
+                      <div className="relative group w-full text-left">
+                        <div
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                            fieldErrors.email
+                              ? "text-red-400"
+                              : "text-white/40 group-focus-within:text-white"
+                          } transition-colors duration-300`}
+                        >
+                          <Mail className="w-5 h-5 4k:w-8 4k:h-8" />
+                        </div>
+                        <input
+                          type="email"
+                          value={signinData.email}
+                          onChange={(e) =>
+                            handleSigninChange("email", e.target.value)
+                          }
+                          onBlur={() => handleBlur("email", "signin")}
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                            fieldErrors.email
+                              ? "border-red-500/50 focus:border-red-500"
+                              : "border-white/10 focus:border-white"
+                          }`}
+                          placeholder="Email Address"
+                        />
+                        {fieldErrors.email && (
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                            {fieldErrors.email}
+                          </span>
                         )}
+                      </div>
                     </div>
+                  </div>
+                </div>
 
-                    {/* Moving Highlight Effect */}
-                    {!isSubmitting && (
-                      <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
+                {/* Password Input (Always Visible) */}
+                <div className="relative group w-full mb-4 text-left">
+                  <div
+                    className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                      fieldErrors.password
+                        ? "text-red-400"
+                        : "text-white/40 group-focus-within:text-white"
+                    } transition-colors duration-300`}
+                  >
+                    <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
+                  </div>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={isSignUp ? signupData.password : signinData.password}
+                    onChange={(e) =>
+                      isSignUp
+                        ? handleSignupChange("password", e.target.value)
+                        : handleSigninChange("password", e.target.value)
+                    }
+                    onBlur={() =>
+                      handleBlur("password", isSignUp ? "signup" : "signin")
+                    }
+                    className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                      fieldErrors.password
+                        ? "border-red-500/50 focus:border-red-500"
+                        : "border-white/10 focus:border-white"
+                    }`}
+                    placeholder="Password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" />
+                    ) : (
+                      <Eye className="w-5 h-5 4k:w-8 4k:h-8" />
                     )}
-                 </button>
+                  </button>
+                  {fieldErrors.password && (
+                    <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                      {fieldErrors.password}
+                    </span>
+                  )}
+                </div>
+
+                {/* Confirm Password (Sign Up Only) */}
+                <div
+                  className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                    isSignUp
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden min-h-0">
+                    <div className="mb-4">
+                      <div className="relative group w-full text-left">
+                        <div
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                            fieldErrors.confirmPassword
+                              ? "text-red-400"
+                              : "text-white/40 group-focus-within:text-white"
+                          } transition-colors duration-300`}
+                        >
+                          <Lock className="w-5 h-5 4k:w-8 4k:h-8" />
+                        </div>
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={signupData.confirmPassword}
+                          onChange={(e) =>
+                            handleSignupChange(
+                              "confirmPassword",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => handleBlur("confirmPassword", "signup")}
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                            fieldErrors.confirmPassword
+                              ? "border-red-500/50 focus:border-red-500"
+                              : "border-white/10 focus:border-white"
+                          }`}
+                          placeholder="Confirm Password"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" />
+                          ) : (
+                            <Eye className="w-5 h-5 4k:w-8 4k:h-8" />
+                          )}
+                        </button>
+                        {fieldErrors.confirmPassword && (
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                            {fieldErrors.confirmPassword}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Remember Me OR Consent Checkbox - Content Fades */}
+                <div className="flex flex-col w-full min-h-[1.5rem] 4k:min-h-[2rem] mb-6">
+                  <div className="flex justify-between items-start sm:items-center w-full">
+                    <label className="flex items-start sm:items-center gap-2.5 4k:gap-4 cursor-pointer group select-none">
+                      <div
+                        className={`relative mt-1 sm:mt-0 flex items-center justify-center w-4 h-4 4k:w-6 4k:h-6 rounded bg-white/5 border transition-all shrink-0 ${
+                          fieldErrors.agreed
+                            ? "border-red-400"
+                            : isSignUp && !signupData.agreed
+                            ? "border-white/20 group-hover:border-red-400"
+                            : "border-white/20 group-hover:border-white/40"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="peer appearance-none absolute inset-0 w-full h-full cursor-pointer opacity-0"
+                          checked={
+                            isSignUp ? signupData.agreed : signinData.rememberMe
+                          }
+                          onChange={(e) =>
+                            isSignUp
+                              ? handleSignupChange("agreed", e.target.checked)
+                              : handleSigninChange(
+                                  "rememberMe",
+                                  e.target.checked
+                                )
+                          }
+                        />
+                        <div className="absolute inset-0 bg-violet-600 rounded opacity-0 peer-checked:opacity-100 transition-opacity duration-200" />
+                        <Check
+                          className="w-3 h-3 4k:w-5 4k:h-5 text-white opacity-0 peer-checked:opacity-100 relative z-10 transition-opacity duration-200"
+                          strokeWidth={3}
+                        />
+                      </div>
+
+                      <span
+                        key={isSignUp ? "signup-consent" : "signin-remember"}
+                        className="animate-fade-in-scale text-xs sm:text-sm 4k:text-xl font-medium text-white/50 group-hover:text-white/80 transition-colors text-left leading-tight"
+                      >
+                        {isSignUp ? (
+                          <>
+                            I agree to{" "}
+                            <span className="text-violet-300 hover:underline">
+                              Privacy Policy
+                            </span>{" "}
+                            &{" "}
+                            <span className="text-violet-300 hover:underline">
+                              Terms
+                            </span>
+                          </>
+                        ) : (
+                          "Remember me"
+                        )}
+                      </span>
+                    </label>
+
+                    {/* Forgot Password Link - Collapsible */}
+                    <div
+                      className={`grid transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                        !isSignUp
+                          ? "grid-rows-[1fr] opacity-100"
+                          : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden min-h-0">
+                        <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap">
+                          Forgot password?
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {fieldErrors.agreed && (
+                    <span className="text-red-400 text-xs mt-1 block animate-fade-in-up text-left">
+                      {fieldErrors.agreed}
+                    </span>
+                  )}
+                </div>
+
+                {/* Premium Glass-Morphic Primary Button */}
+                <button
+                  onClick={handleAuth}
+                  disabled={isSubmitting || (isSignUp && !signupData.agreed)}
+                  className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 ${
+                    isSubmitting || (isSignUp && !signupData.agreed)
+                      ? "opacity-50 cursor-not-allowed grayscale-[0.5] brightness-75"
+                      : "hover:scale-[1.02] active:scale-[0.98] hover:shadow-purple-700/60 hover:ring-white/30"
+                  }`}
+                >
+                  {/* Deep Atmospheric Background */}
+                  <div className="absolute inset-0 bg-[#2e1065] opacity-100" />
+
+                  {/* Gradient Mesh overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Glass Shine (Top) */}
+                  <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent opacity-100" />
+
+                  {/* Content */}
+                  <div className="relative z-10 flex items-center justify-center gap-3">
+                    {isSubmitting ? (
+                      <Loader2 className="w-5 h-5 4k:w-8 4k:h-8 text-white animate-spin" />
+                    ) : (
+                      <>
+                        <span
+                          key={isSignUp ? "btn-create" : "btn-signin"}
+                          className="text-white font-bold text-lg 4k:text-3xl tracking-widest uppercase drop-shadow-md group-hover:text-white transition-colors animate-fade-in-scale"
+                        >
+                          {isSignUp ? "Create Account" : "Sign In"}
+                        </span>
+                        <ArrowRight className="w-5 h-5 4k:w-8 4k:h-8 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+                      </>
+                    )}
+                  </div>
+
+                  {/* Moving Highlight Effect */}
+                  {!isSubmitting && (
+                    <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
+                  )}
+                </button>
               </div>
 
               {/* Divider */}
               <div className="w-full flex items-center gap-4 mb-6 4k:mb-10 animate-fade-in-up animate-delay-100 opacity-60">
-                  <div className="h-px bg-white/10 flex-1" />
-                  <span className="text-white/40 text-[10px] 4k:text-sm font-bold uppercase tracking-widest">Or continue with</span>
-                  <div className="h-px bg-white/10 flex-1" />
+                <div className="h-px bg-white/10 flex-1" />
+                <span className="text-white/40 text-[10px] 4k:text-sm font-bold uppercase tracking-widest">
+                  Or continue with
+                </span>
+                <div className="h-px bg-white/10 flex-1" />
               </div>
 
               {/* Social Buttons */}
               <div className="w-full space-y-3 4k:space-y-6 animate-fade-in-up animate-delay-200 mb-2">
-                <SocialButton 
-                  icon={<GoogleIcon />} 
+                <SocialButton
+                  icon={<GoogleIcon />}
                   label="Continue with Google"
                   className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5 4k:py-6"
-                  onClick={() => handleSocialLogin('google')}
+                  onClick={() => handleSocialLogin("google")}
                 />
-                
-                <SocialButton 
-                  icon={<FacebookIcon />} 
+
+                <SocialButton
+                  icon={<FacebookIcon />}
                   label="Continue with Facebook"
                   className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5 4k:py-6"
-                  onClick={() => handleSocialLogin('facebook')}
+                  onClick={() => handleSocialLogin("facebook")}
                 />
               </div>
             </div>
 
             {/* Footer */}
             <div className="mt-6 4k:mt-12 pt-4 w-full border-t border-white/5 animate-fade-in-up animate-delay-200 shrink-0 flex flex-col items-center gap-4">
-               {/* Privacy Links */}
-               <div className="flex items-center justify-center space-x-4 text-[10px] 4k:text-sm text-white/30 uppercase tracking-widest">
-                 <a href="#" className="hover:text-white transition-colors">Privacy</a>
-                 <span>•</span>
-                 <a href="#" className="hover:text-white transition-colors">Terms</a>
-                 <span>•</span>
-                 <a href="#" className="hover:text-white transition-colors">Help</a>
-               </div>
-               
-               {/* Mobile/Tablet Badge - Visible inside card */}
-               <div className="flex laptop:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
-                  <Lock className="w-3 h-3" />
-                  <span>Secured by Ghurni ID</span>
-               </div>
-            </div>
+              {/* Privacy Links */}
+              <div className="flex items-center justify-center space-x-4 text-[10px] 4k:text-sm text-white/30 uppercase tracking-widest">
+                <a href="#" className="hover:text-white transition-colors">
+                  Privacy
+                </a>
+                <span>•</span>
+                <a href="#" className="hover:text-white transition-colors">
+                  Terms
+                </a>
+                <span>•</span>
+                <a href="#" className="hover:text-white transition-colors">
+                  Help
+                </a>
+              </div>
 
+              {/* Mobile/Tablet Badge - Visible inside card */}
+              <div className="flex laptop:hidden items-center space-x-2 text-white/30 text-[10px] backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 bg-black/10">
+                <Lock className="w-3 h-3" />
+                <span>Secured by Ghurni ID</span>
+              </div>
+            </div>
           </div>
-          
+
           {/* Bottom secured badge (Desktop Only - 'laptop' and up) */}
           <div className="hidden laptop:flex w-full absolute bottom-8 left-12 w-auto animate-fade-in-up animate-delay-200 pointer-events-none z-0">
             <div className="flex items-center space-x-2 text-white/30 text-xs 4k:text-xl backdrop-blur-sm px-3 4k:px-6 py-1 4k:py-2 rounded-full border border-white/5 bg-black/10">
@@ -866,7 +1141,6 @@ const App: React.FC = () => {
               <span>Secured by Ghurni ID</span>
             </div>
           </div>
-
         </div>
       </div>
     </main>
