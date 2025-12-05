@@ -26,21 +26,42 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
+      console.log('[App] Supabase not configured');
       setIsLoading(false);
       return;
     }
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('[App] Error getting session:', error.message);
+        // If there's an error (like clock skew), clear the session
+        setSession(null);
+      } else {
+        console.log('[App] Initial session:', session ? 'EXISTS' : 'NULL');
+        setSession(session);
+      }
+      setIsLoading(false);
+    }).catch((err) => {
+      console.error('[App] Failed to get session:', err);
+      setSession(null);
       setIsLoading(false);
     });
 
     // Listen for changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('[App] Auth state changed:', event, 'Session:', session ? 'EXISTS' : 'NULL');
+      
+      // Handle specific events
+      if (event === 'SIGNED_OUT') {
+        setSession(null);
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setSession(session);
+      } else if (event === 'USER_UPDATED') {
+        setSession(session);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -54,16 +75,18 @@ const App: React.FC = () => {
     );
   }
 
+  console.log('[App] Rendering with session:', session ? 'EXISTS' : 'NULL');
+
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/"
-          element={session ? <Home userEmail={session.user.email} /> : <Navigate to="/auth" />}
+          element={session ? <Home userEmail={session.user.email} /> : <Navigate to="/auth" replace />}
         />
         <Route
           path="/auth"
-          element={!session ? <Auth /> : <Navigate to="/" />}
+          element={!session ? <Auth /> : <Navigate to="/" replace />}
         />
       </Routes>
     </BrowserRouter>
