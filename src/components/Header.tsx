@@ -1,6 +1,5 @@
 import React from "react";
 import { Search, Home, Users, Tv, Store, Bell, MessageCircle, User } from "lucide-react";
-import { LogoIcon } from "./Icons";
 
 interface HeaderProps {
   onLogout: () => void;
@@ -8,17 +7,12 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   return (
-    <header className="fixed top-0 w-full h-16 glass-panel border-b border-white/10 backdrop-blur-xl z-50 flex items-center justify-between px-4 sm:px-6 4k:h-24 4k:px-10 transition-all duration-300">
-      {/* LEFT: Logo & Search */}
+    <header className="fixed top-0 w-full h-16 bg-black/40 backdrop-blur-xl border-b border-white/5 z-50 flex items-center justify-between px-4 sm:px-6 4k:h-24 4k:px-10 transition-all duration-300">
+      {/* LEFT: Search */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 4k:w-14 4k:h-14 bg-gradient-to-br from-violet-600/80 to-indigo-600/80 rounded-full flex items-center justify-center shadow-lg border border-white/20">
-            <LogoIcon className="w-6 h-6 4k:w-9 4k:h-9 text-white" />
-          </div>
-          {/* Mobile Search Icon (Visible only on small screens) */}
-          <div className="md:hidden w-10 h-10 bg-white/5 rounded-full flex items-center justify-center">
-            <Search className="w-5 h-5 text-white/70" />
-          </div>
+        {/* Mobile Search Icon (Visible only on small screens) */}
+        <div className="md:hidden w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer">
+          <Search className="w-5 h-5 text-white/70" />
         </div>
 
         {/* Desktop Search Bar */}
@@ -27,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           <input
             type="text"
             placeholder="Search Ghurni Ai"
-            className="bg-white/5 border border-white/10 rounded-full py-2.5 pl-10 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all w-64 4k:w-96 4k:py-4 4k:pl-12 4k:text-xl"
+            className="bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white placeholder-white/40 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all w-64 4k:w-96 4k:py-4 4k:pl-12 4k:text-xl"
           />
         </div>
       </div>
