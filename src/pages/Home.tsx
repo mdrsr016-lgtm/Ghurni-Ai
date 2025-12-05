@@ -164,44 +164,61 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
         {/* MAIN CONTENT AREA */}
         <div className="flex-1 md:ml-[72px] px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300">
           {/* CENTER FEED */}
-          <div className="max-w-[680px] mx-auto flex flex-col gap-4 sm:gap-6 pb-20">
+          <div className="max-w-full sm:max-w-[600px] md:max-w-[680px] mx-auto flex flex-col gap-3 sm:gap-4 md:gap-6 pb-16 sm:pb-20 md:pb-24" role="feed" aria-label="News Feed">
             
             {/* Create Post Card */}
-            <div className="glass-panel p-4 rounded-2xl flex flex-col gap-4">
-              <div className="flex gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full shrink-0" />
-                <div className="flex-1 bg-white/5 hover:bg-white/10 transition-colors rounded-full px-4 flex items-center cursor-pointer">
-                  <span className="text-white/60 text-sm">What's on your mind, {userEmail?.split('@')[0]}?</span>
-                </div>
+            <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col gap-3 sm:gap-4 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300">
+              <div className="flex gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full shrink-0" />
+                <button 
+                  className="flex-1 bg-white/5 hover:bg-white/10 transition-colors rounded-full px-3 sm:px-4 flex items-center cursor-pointer min-h-[40px] sm:min-h-[44px] text-left"
+                  aria-label="Create a post"
+                >
+                  <span className="text-white/60 text-xs sm:text-sm">What's on your mind, {userEmail?.split('@')[0]}?</span>
+                </button>
               </div>
               <div className="w-full h-px bg-white/10" />
-              <div className="flex justify-between px-2">
-                <ActionItem icon={<Video className="text-red-500" size={20} />} label="Live Video" />
-                <ActionItem icon={<ImageIcon className="text-green-500" size={20} />} label="Photo/Video" />
-                <ActionItem icon={<Smile className="text-yellow-500" size={20} />} label="Feeling/Activity" />
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1 sm:gap-2 px-1 sm:px-2">
+                <ActionItem icon={<Video className="text-red-500" size={18} />} label="Live Video" />
+                <ActionItem icon={<ImageIcon className="text-green-500" size={18} />} label="Photo/Video" />
+                <ActionItem icon={<Smile className="text-yellow-500" size={18} />} label="Feeling" />
               </div>
             </div>
 
             {/* Stories (Simplified) */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory" role="region" aria-label="Stories">
                {/* Add Story */}
-               <div className="w-28 h-48 sm:w-32 sm:h-52 shrink-0 bg-white/5 rounded-xl relative overflow-hidden cursor-pointer hover:opacity-90 transition-opacity group">
-                  <img src={currentSrc || "https://images.unsplash.com/photo-1534528741775-53994a69daeb"} className="w-full h-32 sm:h-36 object-cover group-hover:scale-105 transition-transform duration-500" alt="Me" />
-                  <div className="absolute bottom-0 w-full h-16 bg-zinc-800 flex flex-col items-center justify-center relative">
-                     <div className="w-8 h-8 bg-blue-500 rounded-full border-4 border-zinc-800 flex items-center justify-center absolute -top-4 text-white">
+               <div className="w-24 h-40 sm:w-28 sm:h-48 md:w-32 md:h-52 shrink-0 bg-white/5 rounded-xl relative overflow-hidden cursor-pointer hover:opacity-90 hover:scale-[1.02] transition-all duration-300 group snap-start shadow-lg shadow-black/10">
+                  <img 
+                    src={currentSrc || "https://images.unsplash.com/photo-1534528741775-53994a69daeb"} 
+                    className="w-full h-28 sm:h-32 md:h-36 object-cover group-hover:scale-105 transition-transform duration-500" 
+                    alt="Your story" 
+                    loading="lazy"
+                  />
+                  <div className="absolute bottom-0 w-full h-12 sm:h-16 bg-gradient-to-t from-zinc-900 to-zinc-800 flex flex-col items-center justify-center relative">
+                     <button 
+                       className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full border-3 sm:border-4 border-zinc-800 flex items-center justify-center absolute -top-3 sm:-top-4 text-white text-lg sm:text-xl font-bold shadow-lg hover:bg-blue-600 transition-colors"
+                       aria-label="Create story"
+                     >
                         +
-                     </div>
-                     <span className="text-xs font-bold mt-3">Create Story</span>
+                     </button>
+                     <span className="text-[10px] sm:text-xs font-bold mt-2 sm:mt-3">Create Story</span>
                   </div>
                </div>
                {/* Mock Stories */}
                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-28 h-48 sm:w-32 sm:h-52 shrink-0 bg-black/40 rounded-xl relative overflow-hidden cursor-pointer hover:brightness-110 transition-all border border-white/5">
-                     <img src={`https://source.unsplash.com/random/300x500?sig=${i}`} className="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700" alt="Story" />
-                     <div className="absolute top-2 left-2 w-8 h-8 rounded-full border-4 border-blue-500 overflow-hidden">
-                        <img src={`https://source.unsplash.com/random/100x100?face&sig=${i}`} className="w-full h-full object-cover" />
+                  <div key={i} className="w-24 h-40 sm:w-28 sm:h-48 md:w-32 md:h-52 shrink-0 bg-black/40 rounded-xl relative overflow-hidden cursor-pointer hover:brightness-110 hover:scale-[1.02] transition-all duration-300 border border-white/5 snap-start shadow-lg shadow-black/10">
+                     <img 
+                       src={`https://source.unsplash.com/random/300x500?sig=${i}`} 
+                       className="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700" 
+                       alt={`Story ${i}`} 
+                       loading="lazy"
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+                     <div className="absolute top-2 left-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full border-3 sm:border-4 border-blue-500 overflow-hidden shadow-lg">
+                        <img src={`https://source.unsplash.com/random/100x100?face&sig=${i}`} className="w-full h-full object-cover" alt={`User ${i}`} />
                      </div>
-                     <span className="absolute bottom-2 left-2 text-xs font-bold drop-shadow-md">User {i}</span>
+                     <span className="absolute bottom-2 left-2 text-[10px] sm:text-xs font-bold drop-shadow-md">User {i}</span>
                   </div>
                ))}
             </div>
@@ -242,70 +259,74 @@ const SidebarNavItem = ({ icon, label, iconColor }: { icon: React.ReactNode, lab
 );
 
 const ActionItem = ({ icon, label }: { icon: React.ReactNode, label: string }) => (
-  <div className="flex items-center gap-2 p-2 hover:bg-white/5 rounded-lg cursor-pointer flex-1 justify-center transition-colors">
+  <button className="flex items-center gap-1.5 sm:gap-2 p-2 sm:p-2.5 hover:bg-white/5 active:bg-white/10 rounded-lg cursor-pointer flex-1 justify-center transition-all active:scale-95 min-h-[40px] sm:min-h-[44px]" aria-label={label}>
     {icon}
-    <span className="text-white/60 font-medium text-sm hidden sm:block">{label}</span>
-  </div>
+    <span className="text-white/60 font-medium text-[10px] sm:text-xs md:text-sm whitespace-nowrap">{label}</span>
+  </button>
 );
 
 const PostCard = ({ author, time, content, image }: { author: string, time: string, content: string, image?: string }) => (
-  <div className="glass-panel rounded-2xl w-full flex flex-col animate-fade-in-up">
+  <article className="glass-panel rounded-2xl w-full flex flex-col animate-fade-in-up shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300" role="article" aria-label={`Post by ${author}`}>
     {/* Header */}
-    <div className="p-4 flex justify-between items-start">
-      <div className="flex gap-3">
-        <div className="w-10 h-10 bg-white/10 rounded-full overflow-hidden">
-           <User className="w-full h-full p-2 text-white/50" />
+    <div className="p-3 sm:p-4 flex justify-between items-start">
+      <div className="flex gap-2 sm:gap-3">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-full overflow-hidden shrink-0">
+           <User className="w-full h-full p-1.5 sm:p-2 text-white/50" />
         </div>
         <div className="flex flex-col">
-          <span className="font-semibold text-white hover:underline cursor-pointer">{author}</span>
-          <div className="flex items-center gap-1 text-xs text-white/50">
+          <span className="font-semibold text-sm sm:text-base text-white hover:underline cursor-pointer">{author}</span>
+          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-white/50">
             <span>{time}</span>
             <span>•</span>
-            <Users size={12} />
+            <Users size={10} className="sm:w-3 sm:h-3" />
           </div>
         </div>
       </div>
-      <MoreHorizontal className="text-white/40 cursor-pointer hover:text-white" />
+      <button className="text-white/40 cursor-pointer hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-all" aria-label="More options">
+        <MoreHorizontal className="w-5 h-5" />
+      </button>
     </div>
 
     {/* Content */}
-    <div className="px-4 pb-3">
-      <p className="text-white/90 leading-relaxed font-light text-sm sm:text-base">{content}</p>
+    <div className="px-3 sm:px-4 pb-2 sm:pb-3">
+      <p className="text-white/90 leading-relaxed font-light text-xs sm:text-sm md:text-base">{content}</p>
     </div>
 
     {/* Image */}
     {image && (
       <div className="w-full aspect-video bg-black/20 overflow-hidden cursor-pointer">
-        <img src={image} alt="Post Content" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+        <img src={image} alt="Post Content" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
       </div>
     )}
 
     {/* Stats */}
-    <div className="px-4 py-2 flex justify-between items-center text-xs text-white/50 border-b border-white/5 text-sm">
+    <div className="px-3 sm:px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 text-[10px] sm:text-xs text-white/50 border-b border-white/5">
        <div className="flex items-center gap-1">
-          <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center p-1"><ThumbsUp size={10} className="text-white" fill="white" /></div>
-          <span>2.4K</span>
+          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded-full flex items-center justify-center p-0.5 sm:p-1">
+            <ThumbsUp size={8} className="sm:w-2.5 sm:h-2.5 text-white" fill="white" />
+          </div>
+          <span className="text-xs sm:text-sm">2.4K</span>
        </div>
-       <div className="flex gap-3">
-          <span className="hover:underline cursor-pointer">458 Comments</span>
-          <span className="hover:underline cursor-pointer">128 Shares</span>
+       <div className="flex gap-2 sm:gap-3">
+          <span className="hover:underline cursor-pointer text-xs sm:text-sm">458 Comments</span>
+          <span className="hover:underline cursor-pointer text-xs sm:text-sm">128 Shares</span>
        </div>
     </div>
 
     {/* Actions */}
-    <div className="p-2 px-4 flex justify-between gap-1">
-      <PostAction icon={<ThumbsUp size={20} />} label="Like" />
-      <PostAction icon={<MessageSquare size={20} />} label="Comment" />
-      <PostAction icon={<Share2 size={20} />} label="Share" />
+    <div className="p-2 px-3 sm:px-4 flex justify-between gap-1">
+      <PostAction icon={<ThumbsUp size={16} className="sm:w-5 sm:h-5" />} label="Like" />
+      <PostAction icon={<MessageSquare size={16} className="sm:w-5 sm:h-5" />} label="Comment" />
+      <PostAction icon={<Share2 size={16} className="sm:w-5 sm:h-5" />} label="Share" />
     </div>
-  </div>
+  </article>
 );
 
 const PostAction = ({ icon, label }: { icon: React.ReactNode, label: string }) => (
-  <div className="flex-1 flex items-center justify-center gap-2 p-2 hover:bg-white/10 rounded-lg cursor-pointer transition-all text-white/60 hover:text-white active:scale-95">
+  <button className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-2.5 hover:bg-white/10 active:bg-white/15 rounded-lg cursor-pointer transition-all text-white/60 hover:text-white active:scale-95 min-h-[40px] sm:min-h-[44px]" aria-label={label}>
     {icon}
-    <span className="font-medium text-sm">{label}</span>
-  </div>
+    <span className="font-medium text-xs sm:text-sm">{label}</span>
+  </button>
 );
 
 export default Home;
