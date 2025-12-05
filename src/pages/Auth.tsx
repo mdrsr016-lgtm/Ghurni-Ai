@@ -31,9 +31,12 @@ import {
   AlertCircle,
   AlertTriangle,
 } from "lucide-react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import { useWallpaper } from "../lib/hooks";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { LogoIcon, GoogleIcon, FacebookIcon } from "../components/Icons";
+import { isValidEmail, getErrorMessage } from "../utils/validation";
 
 // --- HOOKS ---
 // (Extracted to src/lib/hooks.ts)
@@ -44,18 +47,23 @@ const SocialButton = ({
   label,
   className,
   onClick,
+  disabled,
+  isLoading,
 }: {
   icon: React.ReactNode;
   label: string;
   className?: string;
   onClick?: () => void;
+  disabled?: boolean;
+  isLoading?: boolean;
 }) => (
   <button
     onClick={onClick}
-    className={`group relative flex items-center justify-center w-full px-6 py-3 rounded-xl border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-[1.02] active:scale-[0.98] shadow-lg overflow-hidden ${className}`}
+    disabled={disabled}
+    className={`group relative flex items-center justify-center w-full px-6 py-3 rounded-xl border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-[1.02] active:scale-[0.98] shadow-lg overflow-hidden ${className} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
   >
     <div className="absolute left-6 flex items-center justify-center z-10">
-      {icon}
+      {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : icon}
     </div>
     <span className="relative z-10 text-white font-medium tracking-wide text-sm sm:text-base">
       {label}
@@ -93,6 +101,9 @@ const Auth: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [successMsg, setSuccessMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
 
   // Realtime Username Verification State
   const [isVerifyingUser, setIsVerifyingUser] = useState(false);
@@ -108,9 +119,9 @@ const Auth: React.FC = () => {
     setSuccessMsg("");
   }, [isSignUp]);
 
-  // Simulate Username Verification (Can be replaced with Supabase function later)
+  // Real Username Verification with Supabase
   useEffect(() => {
-    if (!isSignUp) return;
+    if (!isSignUp || !isSupabaseConfigured) return;
 
     // Reset state if empty
     if (!signupData.username) {
@@ -119,15 +130,40 @@ const Auth: React.FC = () => {
       return;
     }
 
+    // Basic format validation first
+    if (signupData.username.length < 3) {
+      setIsVerifyingUser(false);
+      setIsUserAvailable(false);
+      return;
+    }
+
     setIsVerifyingUser(true);
     setIsUserAvailable(null);
 
-    // Simple mock validation for now (or call a custom Supabase edge function)
-    const timer = setTimeout(() => {
-      setIsVerifyingUser(false);
-      // Simulate simple validation: valid if length > 3
-      setIsUserAvailable(signupData.username.length > 3);
-    }, 1200);
+    // Debounce the check
+    const timer = setTimeout(async () => {
+      try {
+        // Check if username exists in user metadata
+        // Note: This queries auth.users metadata. Adjust if you have a separate profiles table
+        const { data, error } = await supabase.rpc('check_username_availability', {
+          username_to_check: signupData.username
+        });
+
+        if (error) {
+          // If RPC doesn't exist, fall back to basic validation
+          console.warn('Username check RPC not found, using basic validation');
+          setIsUserAvailable(signupData.username.length > 3);
+        } else {
+          setIsUserAvailable(data);
+        }
+      } catch (err) {
+        console.error('Username check error:', err);
+        // Fallback to basic validation
+        setIsUserAvailable(signupData.username.length > 3);
+      } finally {
+        setIsVerifyingUser(false);
+      }
+    }, 800);
 
     return () => clearTimeout(timer);
   }, [signupData.username, isSignUp]);
@@ -145,12 +181,14 @@ const Auth: React.FC = () => {
           return !value.trim() ? "Full name is required" : "";
         case "email":
           if (!value.trim()) return "Email is required";
-          // Relaxed validation: Trim whitespace and check for standard format
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()))
-            return "Invalid email address";
+          // Use stricter validation from utility
+          if (!isValidEmail(value)) return "Invalid email address";
           return "";
         case "phone":
-          return !value.trim() ? "Phone number is required" : "";
+          if (!value) return "Phone number is required";
+          // Validate phone number format
+          if (!isValidPhoneNumber(value)) return "Invalid phone number";
+          return "";
         case "username":
           return !value.trim() ? "Username is required" : "";
         case "password":
@@ -169,7 +207,9 @@ const Auth: React.FC = () => {
     } else {
       switch (name) {
         case "email":
-          return !value.trim() ? "Email is required" : "";
+          if (!value.trim()) return "Email is required";
+          if (!isValidEmail(value)) return "Invalid email address";
+          return "";
         case "password":
           return !value ? "Password is required" : "";
         default:
@@ -301,7 +341,7 @@ const Auth: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
-      setFormError(err.message || "An unexpected error occurred");
+      setFormError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -316,6 +356,7 @@ const Auth: React.FC = () => {
       return;
     }
 
+    setSocialLoading(provider);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
@@ -326,7 +367,41 @@ const Auth: React.FC = () => {
       });
       if (error) throw error;
     } catch (err: any) {
-      setFormError(err.message || "Social login failed");
+      setFormError(getErrorMessage(err));
+      setSocialLoading(null);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!isSupabaseConfigured) {
+      setFormError("Supabase not configured.");
+      return;
+    }
+
+    const email = resetEmail || signinData.email;
+    if (!email || !isValidEmail(email)) {
+      setFormError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError("");
+    setSuccessMsg("");
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      setSuccessMsg("Password reset email sent! Please check your inbox.");
+      setShowForgotPassword(false);
+      setResetEmail("");
+    } catch (err: any) {
+      setFormError(getErrorMessage(err));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -501,7 +576,13 @@ const Auth: React.FC = () => {
               )}
 
               {/* --- FORM --- */}
-              <div className="w-full mb-6 flex flex-col animate-fade-in-up animate-delay-100">
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAuth();
+                }}
+                className="w-full mb-6 flex flex-col animate-fade-in-up animate-delay-100"
+              >
                 {/* ----------------------------
                      SIGN UP FIELDS (COLLAPSIBLE)
                  ---------------------------- */}
@@ -581,7 +662,7 @@ const Auth: React.FC = () => {
                       {/* Phone Number */}
                       <div className="relative group w-full text-left">
                         <div
-                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 ${
+                          className={`absolute left-4 4k:left-6 top-3.5 4k:top-6 z-10 pointer-events-none ${
                             fieldErrors.phone
                               ? "text-red-400"
                               : "text-white/40 group-focus-within:text-white"
@@ -589,22 +670,27 @@ const Auth: React.FC = () => {
                         >
                           <Phone className="w-5 h-5 4k:w-8 4k:h-8" />
                         </div>
-                        <input
-                          type="tel"
+                        <PhoneInput
+                          international
+                          defaultCountry="US"
                           value={signupData.phone}
-                          onChange={(e) =>
-                            handleSignupChange("phone", e.target.value)
-                          }
+                          onChange={(value) => handleSignupChange("phone", value || "")}
                           onBlur={() => handleBlur("phone", "signup")}
-                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                          className={`phone-input-custom ${
                             fieldErrors.phone
-                              ? "border-red-500/50 focus:border-red-500"
-                              : "border-white/10 focus:border-white"
+                              ? "phone-input-error"
+                              : ""
                           }`}
-                          placeholder="Phone Number"
+                          numberInputProps={{
+                            className: `w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-4 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 transition-all duration-300 text-base 4k:text-2xl ${
+                              fieldErrors.phone
+                                ? "border-red-500/50 focus:border-red-500"
+                                : "border-white/10 focus:border-white"
+                            }`,
+                          }}
                         />
                         {fieldErrors.phone && (
-                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up" role="alert">
                             {fieldErrors.phone}
                           </span>
                         )}
@@ -727,7 +813,7 @@ const Auth: React.FC = () => {
                     onBlur={() =>
                       handleBlur("password", isSignUp ? "signup" : "signin")
                     }
-                    className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                    className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 transition-all duration-300 text-base 4k:text-2xl ${
                       fieldErrors.password
                         ? "border-red-500/50 focus:border-red-500"
                         : "border-white/10 focus:border-white"
@@ -737,7 +823,8 @@ const Auth: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 rounded"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" />
@@ -746,7 +833,7 @@ const Auth: React.FC = () => {
                     )}
                   </button>
                   {fieldErrors.password && (
-                    <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                    <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up" role="alert">
                       {fieldErrors.password}
                     </span>
                   )}
@@ -782,7 +869,7 @@ const Auth: React.FC = () => {
                             )
                           }
                           onBlur={() => handleBlur("confirmPassword", "signup")}
-                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 transition-all duration-300 text-base 4k:text-2xl ${
+                          className={`w-full bg-white/5 border rounded-2xl 4k:rounded-3xl py-3.5 4k:py-6 pl-12 4k:pl-20 pr-12 text-white placeholder-white/30 focus:outline-none focus:bg-white/10 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 transition-all duration-300 text-base 4k:text-2xl ${
                             fieldErrors.confirmPassword
                               ? "border-red-500/50 focus:border-red-500"
                               : "border-white/10 focus:border-white"
@@ -794,7 +881,8 @@ const Auth: React.FC = () => {
                           onClick={() =>
                             setShowConfirmPassword(!showConfirmPassword)
                           }
-                          className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none"
+                          aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                          className="absolute right-4 4k:right-6 top-3.5 4k:top-6 text-white/40 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 rounded"
                         >
                           {showConfirmPassword ? (
                             <EyeOff className="w-5 h-5 4k:w-8 4k:h-8" />
@@ -803,7 +891,7 @@ const Auth: React.FC = () => {
                           )}
                         </button>
                         {fieldErrors.confirmPassword && (
-                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up">
+                          <span className="text-red-400 text-xs ml-4 mt-1 block animate-fade-in-up" role="alert">
                             {fieldErrors.confirmPassword}
                           </span>
                         )}
@@ -854,13 +942,23 @@ const Auth: React.FC = () => {
                         {isSignUp ? (
                           <>
                             I agree to{" "}
-                            <span className="text-violet-300 hover:underline">
+                            <a 
+                              href="/privacy-policy" 
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-violet-300 hover:underline"
+                            >
                               Privacy Policy
-                            </span>{" "}
+                            </a>{" "}
                             &{" "}
-                            <span className="text-violet-300 hover:underline">
+                            <a 
+                              href="/terms-of-service"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-violet-300 hover:underline"
+                            >
                               Terms
-                            </span>
+                            </a>
                           </>
                         ) : (
                           "Remember me"
@@ -877,7 +975,11 @@ const Auth: React.FC = () => {
                       }`}
                     >
                       <div className="overflow-hidden min-h-0">
-                        <button className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap">
+                        <button 
+                          type="button"
+                          onClick={handleForgotPassword}
+                          className="text-sm 4k:text-xl font-medium text-purple-300/80 hover:text-purple-300 transition-colors whitespace-nowrap"
+                        >
                           Forgot password?
                         </button>
                       </div>
@@ -892,9 +994,9 @@ const Auth: React.FC = () => {
 
                 {/* Premium Glass-Morphic Primary Button */}
                 <button
-                  onClick={handleAuth}
+                  type="submit"
                   disabled={isSubmitting || (isSignUp && !signupData.agreed)}
-                  className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 ${
+                  className={`group relative w-full py-3.5 4k:py-6 rounded-2xl 4k:rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-2xl shadow-purple-900/40 ring-1 ring-white/10 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
                     isSubmitting || (isSignUp && !signupData.agreed)
                       ? "opacity-50 cursor-not-allowed grayscale-[0.5] brightness-75"
                       : "hover:scale-[1.02] active:scale-[0.98] hover:shadow-purple-700/60 hover:ring-white/30"
@@ -931,7 +1033,7 @@ const Auth: React.FC = () => {
                     <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
                   )}
                 </button>
-              </div>
+              </form>
 
               {/* Divider */}
               <div className="w-full flex items-center gap-4 mb-6 4k:mb-10 animate-fade-in-up animate-delay-100 opacity-60">
@@ -946,16 +1048,20 @@ const Auth: React.FC = () => {
               <div className="w-full space-y-3 4k:space-y-6 animate-fade-in-up animate-delay-200 mb-2">
                 <SocialButton
                   icon={<GoogleIcon />}
-                  label="Continue with Google"
+                  label={socialLoading === "google" ? "Connecting..." : "Continue with Google"}
                   className="bg-white/5 hover:bg-white/10 border-white/10 py-3.5 4k:py-6"
                   onClick={() => handleSocialLogin("google")}
+                  disabled={socialLoading !== null}
+                  isLoading={socialLoading === "google"}
                 />
 
                 <SocialButton
                   icon={<FacebookIcon />}
-                  label="Continue with Facebook"
+                  label={socialLoading === "facebook" ? "Connecting..." : "Continue with Facebook"}
                   className="bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border-[#1877F2]/20 py-3.5 4k:py-6"
                   onClick={() => handleSocialLogin("facebook")}
+                  disabled={socialLoading !== null}
+                  isLoading={socialLoading === "facebook"}
                 />
               </div>
             </div>

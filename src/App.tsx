@@ -19,6 +19,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { supabase, isSupabaseConfigured } from "./lib/supabase";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
@@ -88,6 +90,8 @@ const App: React.FC = () => {
           path="/auth"
           element={!session ? <Auth /> : <Navigate to="/" replace />}
         />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Routes>
     </BrowserRouter>
   );
