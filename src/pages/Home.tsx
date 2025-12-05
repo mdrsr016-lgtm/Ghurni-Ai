@@ -308,54 +308,54 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <div className="flex-1 md:ml-[72px] px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8 transition-all duration-200 pt-20">
+        <div className="flex-1 w-full md:ml-[72px] px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-6 pb-20 sm:pb-24 md:pb-8 pt-16 sm:pt-20 transition-all duration-200">
           {/* CENTER FEED */}
-          <div className="max-w-full sm:max-w-[600px] md:max-w-[680px] mx-auto flex flex-col gap-4 sm:gap-5 md:gap-6" role="feed" aria-label="News Feed">
+          <div className="max-w-full sm:max-w-[600px] md:max-w-[680px] lg:max-w-[720px] xl:max-w-[800px] mx-auto flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6" role="feed" aria-label="News Feed">
             
             {/* Create Post Card - with staggered animation */}
-            <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col gap-3 sm:gap-4 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 animate-feed-item">
+            <div className="glass-panel p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl flex flex-col gap-3 sm:gap-4 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 animate-feed-item">
               <div className="flex gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full shrink-0" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full shrink-0" />
                 <button 
-                  className="flex-1 bg-white/5 hover:bg-white/10 transition-colors rounded-full px-3 sm:px-4 flex items-center cursor-pointer min-h-[40px] sm:min-h-[44px] text-left"
+                  className="flex-1 bg-white/5 hover:bg-white/10 transition-colors rounded-full px-3 sm:px-4 md:px-5 flex items-center cursor-pointer min-h-[36px] sm:min-h-[40px] md:min-h-[44px] text-left"
                   aria-label="Create a post"
                 >
-                  <span className="text-white/60 text-xs sm:text-sm">What's on your mind, {userEmail?.split('@')[0]}?</span>
+                  <span className="text-white/60 text-xs sm:text-sm md:text-base">What's on your mind, {userEmail?.split('@')[0]}?</span>
                 </button>
               </div>
               <div className="w-full h-px bg-white/10" />
-              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1 sm:gap-2 px-1 sm:px-2">
-                <ActionItem icon={<Video className="text-red-500" size={18} />} label="Live Video" />
-                <ActionItem icon={<ImageIcon className="text-green-500" size={18} />} label="Photo/Video" />
-                <ActionItem icon={<Smile className="text-yellow-500" size={18} />} label="Feeling" />
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1.5 sm:gap-2 md:gap-3 px-1 sm:px-2">
+                <ActionItem icon={<Video className="text-red-500" size={16} />} label="Live Video" />
+                <ActionItem icon={<ImageIcon className="text-green-500" size={16} />} label="Photo/Video" />
+                <ActionItem icon={<Smile className="text-yellow-500" size={16} />} label="Feeling" />
               </div>
             </div>
 
             {/* Stories Section - with staggered animations and gradient rings */}
-            <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory animate-feed-item animate-delay-100" role="region" aria-label="Stories">
+            <div className="flex gap-2 sm:gap-3 md:gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory animate-feed-item animate-delay-100" role="region" aria-label="Stories">
                {/* Add Story */}
-               <div className="w-24 h-40 sm:w-28 sm:h-48 md:w-32 md:h-52 shrink-0 bg-white/5 rounded-xl relative overflow-hidden cursor-pointer hover:opacity-90 hover:scale-[1.02] transition-all duration-300 group snap-start shadow-lg shadow-black/10 animate-story">
+               <div className="w-20 h-32 sm:w-24 sm:h-40 md:w-28 md:h-48 lg:w-32 lg:h-52 shrink-0 bg-white/5 rounded-lg sm:rounded-xl relative overflow-hidden cursor-pointer hover:opacity-90 hover:scale-[1.02] transition-all duration-300 group snap-start shadow-lg shadow-black/10 animate-story">
                   <img 
                     src={currentSrc || "https://images.unsplash.com/photo-1534528741775-53994a69daeb"} 
-                    className="w-full h-28 sm:h-32 md:h-36 object-cover group-hover:scale-105 transition-transform duration-500" 
+                    className="w-full h-20 sm:h-28 md:h-32 lg:h-36 object-cover group-hover:scale-105 transition-transform duration-500" 
                     alt="Your story" 
                     loading="lazy"
                   />
-                  <div className="absolute bottom-0 w-full h-12 sm:h-16 bg-gradient-to-t from-zinc-900 to-zinc-800 flex flex-col items-center justify-center relative">
+                  <div className="absolute bottom-0 w-full h-10 sm:h-12 md:h-16 bg-gradient-to-t from-zinc-900 to-zinc-800 flex flex-col items-center justify-center relative">
                      <button 
-                       className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full border-[3px] sm:border-4 border-zinc-800 flex items-center justify-center absolute -top-3 sm:-top-4 text-white text-lg sm:text-xl font-bold shadow-lg hover:scale-110 transition-transform"
+                       className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full border-[2px] sm:border-[3px] md:border-4 border-zinc-800 flex items-center justify-center absolute -top-2.5 sm:-top-3 md:-top-4 text-white text-base sm:text-lg md:text-xl font-bold shadow-lg hover:scale-110 transition-transform"
                        aria-label="Create story"
                      >
                         +
                      </button>
-                     <span className="text-[10px] sm:text-xs font-semibold mt-2 sm:mt-3">Create Story</span>
+                     <span className="text-[9px] sm:text-[10px] md:text-xs font-semibold mt-1.5 sm:mt-2 md:mt-3">Create Story</span>
                   </div>
                </div>
                {/* Stories with gradient rings */}
                {[1,2,3,4].map((i, index) => (
                   <div 
                     key={i} 
-                    className="w-24 h-40 sm:w-28 sm:h-48 md:w-32 md:h-52 shrink-0 bg-black/40 rounded-xl relative overflow-hidden cursor-pointer hover:brightness-110 hover:scale-[1.02] transition-all duration-300 border border-white/5 snap-start shadow-lg shadow-black/10 animate-story"
+                    className="w-20 h-32 sm:w-24 sm:h-40 md:w-28 md:h-48 lg:w-32 lg:h-52 shrink-0 bg-black/40 rounded-lg sm:rounded-xl relative overflow-hidden cursor-pointer hover:brightness-110 hover:scale-[1.02] transition-all duration-300 border border-white/5 snap-start shadow-lg shadow-black/10 animate-story"
                     style={{ animationDelay: `${(index + 1) * 100}ms` }}
                   >
                      <img 
@@ -366,14 +366,14 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
                      />
                      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
                      {/* Gradient Ring Avatar */}
-                     <div className="absolute top-2 left-2 w-8 h-8 sm:w-9 sm:h-9 rounded-full p-[2px] gradient-ring shadow-lg">
+                     <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-full p-[2px] gradient-ring shadow-lg">
                         <img 
                           src={`https://i.pravatar.cc/100?img=${i + 10}`} 
                           className="w-full h-full rounded-full object-cover border-2 border-zinc-900" 
                           alt={`Friend ${i}`} 
                         />
                      </div>
-                     <span className="absolute bottom-2 left-2 text-[10px] sm:text-xs font-semibold drop-shadow-lg">Friend {i}</span>
+                     <span className="absolute bottom-1.5 sm:bottom-2 left-1.5 sm:left-2 text-[9px] sm:text-[10px] md:text-xs font-semibold drop-shadow-lg">Friend {i}</span>
                   </div>
                ))}
             </div>
@@ -523,28 +523,28 @@ const BottomNavItem = ({
 );
 
 const ActionItem = ({ icon, label }: { icon: React.ReactNode, label: string }) => (
-  <button className="flex items-center gap-1.5 sm:gap-2 p-2 sm:p-2.5 hover:bg-white/5 active:bg-white/10 rounded-lg cursor-pointer flex-1 justify-center transition-all active:scale-95 min-h-[40px] sm:min-h-[44px] hover:scale-[1.02]" aria-label={label}>
+  <button className="flex items-center gap-1 sm:gap-1.5 md:gap-2 p-2 sm:p-2.5 md:p-3 hover:bg-white/5 active:bg-white/10 rounded-lg cursor-pointer flex-1 justify-center transition-all active:scale-95 min-h-[36px] sm:min-h-[40px] md:min-h-[44px] hover:scale-[1.02]" aria-label={label}>
     {icon}
     <span className="text-white/60 font-medium text-[10px] sm:text-xs md:text-sm whitespace-nowrap">{label}</span>
   </button>
 );
 
 const PostCard = ({ author, time, content, image, verified }: { author: string, time: string, content: string, image?: string, verified?: boolean }) => (
-  <article className="glass-panel rounded-2xl w-full flex flex-col shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300" role="article" aria-label={`Post by ${author}`}>
+  <article className="glass-panel rounded-xl sm:rounded-2xl w-full flex flex-col shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300" role="article" aria-label={`Post by ${author}`}>
     {/* Header */}
-    <div className="p-3 sm:p-4 flex justify-between items-start">
+    <div className="p-3 sm:p-4 md:p-5 flex justify-between items-start">
       <div className="flex gap-2 sm:gap-3">
         {/* Gradient Ring Avatar */}
-        <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full p-[2px] gradient-ring shrink-0">
+        <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full p-[2px] gradient-ring shrink-0">
           <div className="w-full h-full bg-zinc-800 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 sm:w-6 sm:h-6 text-white/50" />
+            <User className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white/50" />
           </div>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="font-semibold text-sm sm:text-base text-white hover:underline cursor-pointer">{author}</span>
+            <span className="font-semibold text-xs sm:text-sm md:text-base text-white hover:underline cursor-pointer truncate">{author}</span>
             {verified && (
-              <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
               </svg>
             )}
@@ -556,14 +556,14 @@ const PostCard = ({ author, time, content, image, verified }: { author: string, 
           </div>
         </div>
       </div>
-      <button className="text-white/40 cursor-pointer hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-all" aria-label="More options">
-        <MoreHorizontal className="w-5 h-5" />
+      <button className="text-white/40 cursor-pointer hover:text-white hover:bg-white/10 p-1.5 sm:p-2 rounded-lg transition-all shrink-0" aria-label="More options">
+        <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
       </button>
     </div>
 
     {/* Content */}
-    <div className="px-3 sm:px-4 pb-2 sm:pb-3">
-      <p className="text-white/90 leading-relaxed text-sm sm:text-base">{content}</p>
+    <div className="px-3 sm:px-4 md:px-5 pb-2 sm:pb-3 md:pb-4">
+      <p className="text-white/90 leading-relaxed text-xs sm:text-sm md:text-base break-words">{content}</p>
     </div>
 
     {/* Image */}
@@ -574,32 +574,32 @@ const PostCard = ({ author, time, content, image, verified }: { author: string, 
     )}
 
     {/* Stats */}
-    <div className="px-3 sm:px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 text-[10px] sm:text-xs text-white/50 border-b border-white/5">
-       <div className="flex items-center gap-1">
-          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded-full flex items-center justify-center p-0.5 sm:p-1">
+    <div className="px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 text-[10px] sm:text-xs text-white/50 border-b border-white/5">
+       <div className="flex items-center gap-1.5">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded-full flex items-center justify-center p-0.5 sm:p-1 shrink-0">
             <ThumbsUp size={8} className="sm:w-2.5 sm:h-2.5 text-white" fill="white" />
           </div>
           <span className="text-xs sm:text-sm">2.4K</span>
        </div>
-       <div className="flex gap-2 sm:gap-3">
+       <div className="flex gap-2 sm:gap-3 flex-wrap">
           <span className="hover:underline cursor-pointer text-xs sm:text-sm">458 Comments</span>
           <span className="hover:underline cursor-pointer text-xs sm:text-sm">128 Shares</span>
        </div>
     </div>
 
     {/* Actions */}
-    <div className="p-2 px-3 sm:px-4 flex justify-between gap-1">
-      <PostAction icon={<ThumbsUp size={16} className="sm:w-5 sm:h-5" />} label="Like" />
-      <PostAction icon={<MessageSquare size={16} className="sm:w-5 sm:h-5" />} label="Comment" />
-      <PostAction icon={<Share2 size={16} className="sm:w-5 sm:h-5" />} label="Share" />
+    <div className="p-2 sm:p-2.5 px-3 sm:px-4 md:px-5 flex justify-between gap-1 sm:gap-2">
+      <PostAction icon={<ThumbsUp size={14} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />} label="Like" />
+      <PostAction icon={<MessageSquare size={14} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />} label="Comment" />
+      <PostAction icon={<Share2 size={14} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />} label="Share" />
     </div>
   </article>
 );
 
 const PostAction = ({ icon, label }: { icon: React.ReactNode, label: string }) => (
-  <button className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-2.5 hover:bg-white/10 active:bg-white/15 rounded-lg cursor-pointer transition-all text-white/60 hover:text-violet-400 active:scale-95 min-h-[40px] sm:min-h-[44px] group" aria-label={label}>
+  <button className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 p-2 sm:p-2.5 md:p-3 hover:bg-white/10 active:bg-white/15 rounded-lg cursor-pointer transition-all text-white/60 hover:text-violet-400 active:scale-95 min-h-[36px] sm:min-h-[40px] md:min-h-[44px] group" aria-label={label}>
     <span className="group-hover:scale-110 transition-transform">{icon}</span>
-    <span className="font-medium text-xs sm:text-sm">{label}</span>
+    <span className="font-medium text-[10px] sm:text-xs md:text-sm">{label}</span>
   </button>
 );
 
