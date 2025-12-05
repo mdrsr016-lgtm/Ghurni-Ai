@@ -73,12 +73,12 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
       {/* --- MAIN LAYOUT --- */}
       <div className="relative z-10 pt-20 flex max-w-[1920px] mx-auto min-h-screen">
         
-        {/* MODERN SIDEBAR */}
-        <aside className="hidden md:flex flex-col w-[280px] lg:w-[320px] bg-black/40 backdrop-blur-xl border-r border-white/5 fixed left-0 top-0 h-screen pt-20 z-20">
+        {/* MODERN COLLAPSIBLE SIDEBAR */}
+        <aside className="hidden md:flex flex-col w-[72px] hover:w-[280px] lg:hover:w-[320px] bg-black/40 backdrop-blur-xl border-r border-white/5 fixed left-0 top-0 h-screen pt-20 z-20 transition-all duration-300 ease-in-out group">
           {/* Logo & Search */}
-          <div className="px-6 py-6 space-y-4">
-            {/* Search Bar */}
-            <div className="relative group">
+          <div className="px-3 py-6 space-y-4">
+            {/* Search Bar - Only visible when expanded */}
+            <div className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white/60 transition-colors" />
               <input
                 type="text"
@@ -132,17 +132,17 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
             <div className="w-full h-px bg-white/10 my-4" />
 
             {/* See More */}
-            <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/10 transition-all group">
-              <div className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors">
+            <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/10 transition-all">
+              <div className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors shrink-0">
                 <ChevronDown className="w-5 h-5 text-white/60" />
               </div>
-              <span className="font-medium text-white/90">See more</span>
+              <span className="font-medium text-white/90 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">See more</span>
             </button>
           </nav>
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <div className="flex-1 md:ml-[280px] lg:ml-[320px] px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex-1 md:ml-[72px] px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300">
           {/* CENTER FEED */}
           <div className="max-w-[680px] mx-auto flex flex-col gap-4 sm:gap-6 pb-20">
             
@@ -213,11 +213,11 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
 // --- Sub-components for Layout ---
 
 const SidebarNavItem = ({ icon, label, iconColor }: { icon: React.ReactNode, label: string, iconColor?: string }) => (
-  <div className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/10 cursor-pointer transition-all group">
-    <div className={`w-9 h-9 bg-white/10 rounded-full flex items-center justify-center ${iconColor || 'text-white/60'} group-hover:bg-white/20 transition-colors`}>
+  <div className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/10 cursor-pointer transition-all group/item">
+    <div className={`w-9 h-9 bg-white/10 rounded-full flex items-center justify-center ${iconColor || 'text-white/60'} group-hover/item:bg-white/20 transition-colors shrink-0`}>
       {icon}
     </div>
-    <span className="font-medium text-white/90">{label}</span>
+    <span className="font-medium text-white/90 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">{label}</span>
   </div>
 );
 
