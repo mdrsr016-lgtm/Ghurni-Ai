@@ -34,7 +34,6 @@ import {
   Search,
   User,
   Store,
-  Menu,
   X,
   Home as HomeIcon,
   Bell,
