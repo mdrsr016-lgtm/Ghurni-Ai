@@ -38,7 +38,19 @@ import {
   Home as HomeIcon,
   Bell,
   PlusCircle,
-  Tv
+  Tv,
+  Pencil,
+  Library,
+  Grid3x3,
+  Folder,
+  FolderPlus,
+  MoreVertical,
+  Sparkles,
+  Building2,
+  Brain,
+  Music,
+  FileText,
+  ArrowUp
 } from "lucide-react";
 
 interface HomeProps {
@@ -153,82 +165,150 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
       {/* --- MAIN LAYOUT --- */}
       <div className="relative z-10 pt-20 flex max-w-[1920px] mx-auto min-h-screen">
         
-        {/* MODERN COLLAPSIBLE SIDEBAR (Desktop) */}
+        {/* CHATGPT-STYLE GLASSMORPHIC SIDEBAR (Desktop) */}
         <aside 
           onMouseEnter={() => setIsSidebarExpanded(true)}
           onMouseLeave={() => setIsSidebarExpanded(false)}
-          className="hidden md:flex flex-col w-[72px] hover:w-[280px] lg:hover:w-[320px] bg-black/40 backdrop-blur-xl border-r border-white/5 fixed left-0 top-0 h-screen pt-20 z-20 transition-all duration-300 ease-in-out group"
+          className="hidden md:flex flex-col w-[72px] hover:w-[260px] bg-black/20 backdrop-blur-xl border-r border-white/10 fixed left-0 top-0 h-screen z-20 transition-all duration-200 ease-out group shadow-lg shadow-black/20"
         >
-          {/* Logo Section */}
-          <div className="px-3 py-4 border-b border-white/5">
+          {/* Top Section - Logo */}
+          <div className="px-3 pt-4 pb-3 border-b border-white/10">
             <div className="flex items-center gap-3">
-              {/* Logo Icon - Always visible */}
-              <div className="w-10 h-10 bg-gradient-to-br from-violet-600/80 to-indigo-600/80 rounded-xl flex items-center justify-center shadow-lg border border-white/20 shrink-0">
-                <LogoIcon className="w-6 h-6 text-white" />
+              <div className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center shrink-0 border border-white/10">
+                <LogoIcon className="w-5 h-5 text-white" />
               </div>
-              {/* Logo Text - Only visible when expanded */}
-              <span className="font-bold text-xl text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="font-semibold text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 Ghurni Ai
               </span>
             </div>
           </div>
 
-          {/* Navigation Items */}
-          <nav className="flex-1 px-3 pt-4 overflow-y-auto scrollbar-hide">
-            <div className="space-y-1">
+          {/* Main Navigation */}
+          <nav className="flex-1 px-2 pt-2 overflow-y-auto scrollbar-hide flex flex-col">
+            {/* Top Actions */}
+            <div className="space-y-0.5 mb-4">
               <SidebarNavItem 
-                icon={<Users className="w-6 h-6" />} 
-                label="Friends" 
-                iconColor="text-blue-400"
-                active
+                icon={<Pencil className="w-4 h-4" />} 
+                label="New chat" 
               />
               <SidebarNavItem 
-                icon={<Clock className="w-6 h-6" />} 
-                label="Memories" 
-                iconColor="text-blue-400"
+                icon={<Search className="w-4 h-4" />} 
+                label="Search chats" 
               />
               <SidebarNavItem 
-                icon={<Bookmark className="w-6 h-6" />} 
-                label="Saved" 
-                iconColor="text-purple-400"
-              />
-              <SidebarNavItem 
-                icon={<Users className="w-6 h-6" />} 
-                label="Groups" 
-                iconColor="text-blue-400"
-              />
-              <SidebarNavItem 
-                icon={<Video className="w-6 h-6" />} 
-                label="Video" 
-                iconColor="text-red-400"
-              />
-              <SidebarNavItem 
-                icon={<Store className="w-6 h-6" />} 
-                label="Marketplace" 
-                iconColor="text-blue-400"
-              />
-              <SidebarNavItem 
-                icon={<Calendar className="w-6 h-6" />} 
-                label="Events" 
-                iconColor="text-red-400"
+                icon={<Library className="w-4 h-4" />} 
+                label="Library" 
               />
             </div>
 
-            {/* Divider */}
-            <div className="w-full h-px bg-white/10 my-4" />
-
-            {/* See More */}
-            <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/10 transition-all">
-              <div className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors shrink-0">
-                <ChevronDown className="w-5 h-5 text-white/60" />
+            {/* GPTs Section */}
+            <div className="mb-4">
+              <div className="px-3 py-1.5 mb-1">
+                <span className="text-[10px] font-medium text-white/40 uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  GPTs
+                </span>
               </div>
-              <span className="font-medium text-white/90 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">See more</span>
-            </button>
+              <div className="space-y-0.5">
+                <SidebarNavItem 
+                  icon={<Grid3x3 className="w-4 h-4" />} 
+                  label="Explore" 
+                />
+                <SidebarNavItem 
+                  icon={<Sparkles className="w-4 h-4 text-purple-400" />} 
+                  label="AI Prompt Generator" 
+                />
+                <SidebarNavItem 
+                  icon={<Building2 className="w-4 h-4 text-gray-400" />} 
+                  label="Software Architect GPT" 
+                />
+                <SidebarNavItem 
+                  icon={<div className="w-4 h-4 bg-blue-500 rounded flex items-center justify-center text-white text-[10px] font-bold">C</div>} 
+                  label="Canva" 
+                />
+              </div>
+            </div>
+
+            {/* Projects Section */}
+            <div className="mb-4">
+              <div className="px-3 py-1.5 mb-1">
+                <span className="text-[10px] font-medium text-white/40 uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Projects
+                </span>
+              </div>
+              <div className="space-y-0.5">
+                <SidebarNavItem 
+                  icon={<FolderPlus className="w-4 h-4" />} 
+                  label="New project" 
+                />
+                <SidebarNavItem 
+                  icon={<Folder className="w-4 h-4" />} 
+                  label="Name gen" 
+                />
+                <SidebarNavItem 
+                  icon={<Store className="w-4 h-4" />} 
+                  label="Business" 
+                />
+                <SidebarNavItem 
+                  icon={<Music className="w-4 h-4" />} 
+                  label="Naration" 
+                />
+                <SidebarNavItem 
+                  icon={<FileText className="w-4 h-4" />} 
+                  label="Short Videos" 
+                />
+                <SidebarNavItem 
+                  icon={<Brain className="w-4 h-4" />} 
+                  label="Content + Audience Resear..." 
+                />
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 hover:backdrop-blur-sm transition-all group/item">
+                  <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                    <MoreVertical className="w-4 h-4 text-white/50 group-hover/item:text-white/80 transition-colors" />
+                  </div>
+                  <span className="font-medium text-sm text-white/80 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">See more</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Your chats Section */}
+            <div className="flex-1">
+              <div className="px-3 py-1.5 mb-1">
+                <span className="text-[10px] font-medium text-white/40 uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Your chats
+                </span>
+              </div>
+              <div className="space-y-0.5">
+                <ChatItem label="Color palette selection guide" />
+                <ChatItem label="New chat" />
+                <ChatItem label="Responsive breakpoints guide" />
+                <ChatItem label="Tourism platform UI design" />
+              </div>
+            </div>
           </nav>
+
+          {/* Bottom User Section */}
+          <div className="px-2 pb-3 pt-2 border-t border-white/10">
+            <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 hover:backdrop-blur-sm transition-all group/user">
+              <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0 border border-white/10">
+                <span className="text-xs font-medium text-white">
+                  {userEmail?.split('@')[0]?.substring(0, 2).toUpperCase() || 'U'}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="text-sm font-medium text-white truncate">
+                  {userEmail?.split('@')[0] || 'User'}
+                </div>
+                <div className="text-xs text-white/60">Free</div>
+              </div>
+              <button className="px-3 py-1.5 bg-white/15 backdrop-blur-sm hover:bg-white/20 border border-white/10 rounded text-xs font-medium text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-1">
+                <ArrowUp className="w-3 h-3" />
+                Upgrade
+              </button>
+            </div>
+          </div>
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <div className="flex-1 md:ml-[72px] px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8 transition-all duration-300">
+        <div className="flex-1 md:ml-[72px] px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8 transition-all duration-200 pt-20">
           {/* CENTER FEED */}
           <div className="max-w-full sm:max-w-[600px] md:max-w-[680px] mx-auto flex flex-col gap-4 sm:gap-5 md:gap-6" role="feed" aria-label="News Feed">
             
@@ -366,13 +446,33 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
 
 // --- Sub-components for Layout ---
 
-const SidebarNavItem = ({ icon, label, iconColor, active }: { icon: React.ReactNode, label: string, iconColor?: string, active?: boolean }) => (
-  <div className={`flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/10 cursor-pointer transition-all group/item ${active ? 'bg-violet-500/20 border-l-4 border-violet-500' : ''}`}>
-    <div className={`w-9 h-9 bg-white/10 rounded-full flex items-center justify-center ${iconColor || 'text-white/60'} group-hover/item:bg-white/20 transition-colors shrink-0`}>
+const SidebarNavItem = ({ icon, label, active }: { icon: React.ReactNode, label: string, active?: boolean }) => (
+  <button className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 hover:backdrop-blur-sm cursor-pointer transition-all group/item relative ${
+    active ? 'bg-white/15 backdrop-blur-sm' : ''
+  }`}>
+    <div className={`w-8 h-8 flex items-center justify-center shrink-0 transition-colors ${
+      active ? 'text-white' : 'text-white/70 group-hover/item:text-white'
+    }`}>
       {icon}
     </div>
-    <span className="font-medium text-white/90 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">{label}</span>
-  </div>
+    <span className={`font-medium text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+      active ? 'text-white' : 'text-white/80'
+    }`}>
+      {label}
+    </span>
+    {active && (
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white/80 rounded-r-full backdrop-blur-sm" />
+    )}
+  </button>
+);
+
+const ChatItem = ({ label }: { label: string }) => (
+  <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 hover:backdrop-blur-sm cursor-pointer transition-all group/item">
+    <div className="w-8 h-8 flex items-center justify-center shrink-0" />
+    <span className="font-normal text-sm text-white/80 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 truncate text-left">
+      {label}
+    </span>
+  </button>
 );
 
 const MobileNavItem = ({ icon, label, iconColor, active }: { icon: React.ReactNode, label: string, iconColor?: string, active?: boolean }) => (
