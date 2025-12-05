@@ -7,7 +7,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   return (
-    <header className="fixed top-0 w-full h-16 bg-black/40 backdrop-blur-xl border-b border-white/5 z-50 flex items-center justify-between px-4 sm:px-6 4k:h-24 4k:px-10 transition-all duration-300">
+    <header className="fixed top-0 w-full md:left-[72px] md:w-[calc(100%-72px)] h-16 bg-black/40 backdrop-blur-xl border-b border-white/5 z-50 flex items-center justify-between px-4 sm:px-6 4k:h-24 4k:px-10 transition-all duration-300">
       {/* LEFT: Search */}
       <div className="flex items-center gap-4">
         {/* Mobile Search Icon (Visible only on small screens) */}
