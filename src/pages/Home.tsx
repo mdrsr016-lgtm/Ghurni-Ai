@@ -41,6 +41,7 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ userEmail }) => {
   const { currentSrc, isLoading, setIsLoading } = useWallpaper();
+  const [isSidebarExpanded, setIsSidebarExpanded] = React.useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -68,13 +69,17 @@ const Home: React.FC<HomeProps> = ({ userEmail }) => {
       </div>
 
       {/* --- HEADER --- */}
-      <Header onLogout={handleLogout} />
+      <Header onLogout={handleLogout} isSidebarExpanded={isSidebarExpanded} />
 
       {/* --- MAIN LAYOUT --- */}
       <div className="relative z-10 pt-20 flex max-w-[1920px] mx-auto min-h-screen">
         
         {/* MODERN COLLAPSIBLE SIDEBAR */}
-        <aside className="hidden md:flex flex-col w-[72px] hover:w-[280px] lg:hover:w-[320px] bg-black/40 backdrop-blur-xl border-r border-white/5 fixed left-0 top-0 h-screen pt-20 z-20 transition-all duration-300 ease-in-out group">
+        <aside 
+          onMouseEnter={() => setIsSidebarExpanded(true)}
+          onMouseLeave={() => setIsSidebarExpanded(false)}
+          className="hidden md:flex flex-col w-[72px] hover:w-[280px] lg:hover:w-[320px] bg-black/40 backdrop-blur-xl border-r border-white/5 fixed left-0 top-0 h-screen pt-20 z-20 transition-all duration-300 ease-in-out group"
+        >
           {/* Logo & Search */}
           <div className="px-3 py-6 space-y-4">
             {/* Search Bar - Only visible when expanded */}
