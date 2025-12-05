@@ -30,7 +30,6 @@ import {
   Bookmark,
   Calendar,
   Clock,
-  ChevronDown,
   Search,
   User,
   Store,
