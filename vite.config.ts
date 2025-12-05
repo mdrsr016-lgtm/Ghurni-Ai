@@ -17,7 +17,8 @@ export default defineConfig(({ mode }) => {
       'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || '')
     },
     server: {
-      port: 3000
+      port: 3000,
+      strictPort: true, // Fail if port 3000 is in use (prevents port 3002 mismatch issues)
     }
   };
 });
