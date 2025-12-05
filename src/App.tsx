@@ -576,12 +576,13 @@ const App: React.FC = () => {
             {/* Card Header Row */}
             <div className="w-full flex justify-between items-center mb-6 sm:mb-8 4k:mb-12 z-20 shrink-0">
               {/* Brand */}
-              <div className="flex items-center gap-3 4k:gap-5">
-                <div className="w-10 h-10 4k:w-16 4k:h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm">
-                  <LogoIcon className="w-6 h-6 4k:w-10 4k:h-10 text-white" />
+              {/* Brand */}
+              <div className="flex items-center gap-2 tab:gap-3 laptop:gap-4 4k:gap-5 transition-all duration-300">
+                <div className="w-8 h-8 tab:w-10 tab:h-10 laptop:w-12 laptop:h-12 4k:w-16 4k:h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 shadow-sm transition-all duration-300">
+                  <LogoIcon className="w-5 h-5 tab:w-6 tab:h-6 laptop:w-7 laptop:h-7 4k:w-10 4k:h-10 text-white transition-all duration-300" />
                 </div>
-                {/* UNIFIED TEXT STYLE: Same Font (Caviler), Same Size, Same Weight */}
-                <span className="font-caviler text-3xl 4k:text-5xl font-bold tracking-widest text-white pt-1">
+                {/* UNIFIED TEXT STYLE: Responsive Sizing */}
+                <span className="font-caviler text-2xl tab:text-3xl laptop:text-4xl 4k:text-5xl font-bold tracking-widest text-white pt-1 transition-all duration-300">
                   Ghurni Ai
                 </span>
               </div>
