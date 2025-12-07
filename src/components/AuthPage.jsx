@@ -152,7 +152,7 @@ const AuthPage = () => {
               isSignUp ? "translate-x-1/2" : "translate-x-0"
             )}
             style={{
-              backgroundImage: "linear-gradient(to right, rgba(126, 34, 206, 0.4), rgba(79, 70, 229, 0.4)), url('https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2675&auto=format&fit=crop')",
+              backgroundImage: "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2675&auto=format&fit=crop')",
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
