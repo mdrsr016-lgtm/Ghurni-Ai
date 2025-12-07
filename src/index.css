@@ -7,3 +7,56 @@
 body {
   background-color: var(--color-gray-100);
 }
+
+/* Base styles for the gradient container */
+.gradient-bg {
+    /* Create a very large background size for subtle movement */
+    background-size: 400% 400%;
+    width: 100%;
+    height: 100vh;
+    position: fixed; /* Ensures it covers the entire viewport */
+    top: 0;
+    left: 0;
+    z-index: -10; /* Keep it behind the content */
+    transition: background-image 1s ease-in-out; /* Smooth transition when toggling mode */
+}
+
+/* LIGHT MODE GRADIENT */
+.gradient-light {
+    /* Soft, inviting travel colors: Sky Blue, Light Sand, Ocean Mist */
+    background-image: linear-gradient(135deg, 
+        #D6E6F2 0%, 
+        #B8D5E3 25%, 
+        #F5EBE0 50%, 
+        #D6E6F2 75%,
+        #B8D5E3 100%
+    );
+    animation: moveGradientLight 25s ease infinite;
+}
+
+/* DARK MODE GRADIENT */
+.gradient-dark {
+    /* Deep, sophisticated travel colors: Deep Navy, Midnight Teal, Cosmic Purple */
+    background-image: linear-gradient(135deg, 
+        #0E1C36 0%, 
+        #1B2A49 25%, 
+        #3E5C76 50%, 
+        #0E1C36 75%,
+        #1B2A49 100%
+    );
+    animation: moveGradientDark 25s ease infinite;
+}
+
+/* Keyframes for subtle, slow movement in Light Mode */
+@keyframes moveGradientLight {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Keyframes for subtle, slow movement in Dark Mode */
+@keyframes moveGradientDark {
+    0% { background-position: 100% 50%; }
+    50% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}

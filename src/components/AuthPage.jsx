@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, Github, Facebook, Linkedin } from 'lucide-react';
+import { Mail, Lock, User, Github, Facebook, Linkedin, Moon, Sun } from 'lucide-react';
 import clsx from 'clsx';
 
 const SocialButton = ({ icon: Icon, href = "#" }) => (
@@ -27,20 +27,41 @@ const InputField = ({ icon: Icon, type, placeholder }) => (
 
 const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Controls only the background
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 p-4 font-sans text-gray-800">
-      <div className="relative bg-white rounded-[20px] shadow-2xl overflow-hidden w-full max-w-[900px] min-h-[600px] flex">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 font-sans relative overflow-hidden">
+      
+      {/* Animated Gradient Background - Keeps the requested background */}
+      <div className={clsx("gradient-bg", isDarkMode ? "gradient-dark" : "gradient-light")} />
+
+      {/* Theme Toggle - Keeps the ability to switch background modes */}
+      <button 
+        onClick={() => setIsDarkMode(!isDarkMode)}
+        className="absolute top-4 right-4 p-3 rounded-full bg-white/80 backdrop-blur-sm shadow-md z-50 hover:scale-110 transition-transform"
+      >
+        {isDarkMode ? <Sun size={24} className="text-yellow-500" /> : <Moon size={24} className="text-gray-700" />}
+      </button>
+
+      {/* Card - Restored to ORIGINAL STYLES (Opaque White, no glass/transparency on card itself) */}
+      <div className="relative bg-white rounded-[20px] shadow-2xl overflow-hidden w-full max-w-[900px] min-h-[600px] flex z-10">
         
         {/* Sign Up Form */}
         <motion.div 
           className={clsx(
             "absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-12 text-center bg-white transition-all duration-700",
-            !isSignUp && "pointer-events-none opacity-0 md:opacity-0"
+            !isSignUp && "pointer-events-none opacity-0"
           )}
-          initial={false}
           animate={{ 
-            x: isSignUp ? "100%" : "0%",
+            x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
             zIndex: isSignUp ? 5 : 1,
             opacity: isSignUp ? 1 : 0
           }}
@@ -49,7 +70,7 @@ const AuthPage = () => {
           <form className="w-full flex flex-col items-center h-full justify-center" onSubmit={(e) => e.preventDefault()}>
             <h1 className="font-bold text-3xl mb-4 text-gray-800">Create Account</h1>
             <div className="flex space-x-4 mb-4">
-              <SocialButton icon={Github} /> {/* Using Github as proxy for Google/Generic */}
+              <SocialButton icon={Github} />
               <SocialButton icon={Facebook} />
               <SocialButton icon={Linkedin} />
             </div>
@@ -80,11 +101,10 @@ const AuthPage = () => {
         <motion.div 
           className={clsx(
             "absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-12 text-center bg-white transition-all duration-700",
-             isSignUp && "pointer-events-none opacity-0 md:opacity-0"
+             isSignUp && "pointer-events-none opacity-0"
           )}
-          initial={false}
           animate={{ 
-            x: isSignUp ? "100%" : "0%",
+            x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
             zIndex: isSignUp ? 1 : 5,
             opacity: isSignUp ? 0 : 1
           }}
@@ -121,7 +141,7 @@ const AuthPage = () => {
           </form>
         </motion.div>
 
-        {/* Overlay (Desktop Only) */}
+        {/* Overlay (Desktop Only) - RESTORED ORIGINAL STYLES */}
         <div className={clsx(
           "absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-700 z-[100] hidden md:block",
            isSignUp ? "-translate-x-full" : ""
@@ -137,6 +157,25 @@ const AuthPage = () => {
               backgroundPosition: 'center'
             }}
           >
+             {/* Text Content for Overlay - Re-adding the original text which was separate in the original code? 
+                 In the original code (Step 14), the overlay was just an image div.
+                 The text 'Hello Friend' / 'Welcome Back' was NOT in the overlay in Step 14. 
+                 Wait, looking at Step 14 (original file).
+                 Step 14: Lines 125-141 (Overlay). It was EMPTY inside. just background image.
+                 The text was inside the FORMS? No.
+                 Wait, where was "Hello Friend"? 
+                 Ah, in the original code provided in Step 14, there was NO "Hello Friend" text on the overlay! 
+                 The "Create Account" vs "Sign In" forms were the only text.
+                 Wait, standard sliding auth usually has text on the overlay.
+                 Let's check Step 14 carefully. 
+                 Lines 36-77: Sign Up Form.
+                 Lines 80-122: Sign In Form.
+                 Lines 125-141: Overlay. It is EMPTY. "transform transition-transform... backgroundImage...".
+                 So the original code purely relied on the forms?
+                 Wait, if I restore it EXACTLY, I should leave the overlay empty?
+                 Yes. The previous modification I made added text to the overlay. The user said "undo it".
+                 So I will remove the text from the overlay.
+             */}
           </div>
         </div>
 
