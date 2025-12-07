@@ -60,3 +60,27 @@ body {
     50% { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }
 }
+
+.animate-spin-slow {
+    animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@font-face {
+  font-family: 'Caviler';
+  src: url('/fonts/caviler.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-caviler {
+  font-family: 'Caviler', sans-serif;
+}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Github, Facebook, Linkedin, Moon, Sun } from 'lucide-react';
 import clsx from 'clsx';
 
-// Shared Spring Transition for professional smoothness
+// Shared Spring Transition for professional smoothness (Card Sliding)
 const transitionSpring = {
   type: "spring",
   stiffness: 70,
@@ -11,25 +11,56 @@ const transitionSpring = {
   mass: 1
 };
 
+// Reverted to "Old Type" (Solid, Gray/Purple)
 const SocialButton = ({ icon: Icon, href = "#" }) => (
   <a 
     href={href}
-    className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+    className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-all duration-700 transform hover:scale-110" // Increased duration
   >
     <Icon size={18} />
   </a>
 );
 
-const InputField = ({ icon: Icon, type, placeholder }) => (
-  <div className="relative w-full mb-3">
-    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
+  <div className="relative w-full mb-4">
+    <div className={clsx(
+      "absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-700", // Smooth color transition
+      isDarkMode ? "text-gray-300" : "text-gray-600"
+    )}>
       <Icon size={16} />
     </div>
     <input
       type={type}
       placeholder={placeholder}
-      className="w-full bg-gray-100 border-none rounded-lg py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
+      className={clsx(
+        "w-full rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 transition-all duration-700 backdrop-blur-sm shadow-inner", // Smooth background transition
+        isDarkMode 
+          ? "bg-black/20 border border-white/10 text-white placeholder-gray-400 focus:ring-purple-400/50" 
+          : "bg-white/40 border border-white/40 text-gray-900 placeholder-gray-600 focus:ring-purple-500/30"
+      )}
     />
+  </div>
+);
+
+// Brand Logo Component
+const BrandLogo = ({ isDarkMode }) => (
+  <div className="flex items-center gap-3 mb-6">
+    <div className="relative w-10 h-10 flex items-center justify-center">
+      <img 
+        src="/logo.svg" 
+        alt="Ghurni Ai Logo" 
+        className={clsx(
+          "w-full h-full object-contain animate-spin-slow transition-all duration-700",
+          !isDarkMode && "invert brightness-0" // Turn white logo to black in Light Mode
+        )}
+      />
+    </div>
+    <span className={clsx(
+        "text-xl font-bold tracking-tight transition-colors duration-700 font-caviler", 
+        isDarkMode ? "text-white" : "text-gray-900"
+    )}>
+      Ghurni Ai
+    </span>
   </div>
 );
 
@@ -48,51 +79,43 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 font-sans relative overflow-hidden">
       
-      {/* Animated Gradient Background */}
-      <div className={clsx("gradient-bg", isDarkMode ? "gradient-dark" : "gradient-light")} />
+      {/* 
+          SMOOTH BACKGROUND SYSTEM: CROSS-FADE 
+      */}
+      <div className="absolute inset-0 z-0">
+         <div className="gradient-bg gradient-light absolute inset-0" />
+         <motion.div 
+            className="gradient-bg gradient-dark absolute inset-0"
+            initial={false}
+            animate={{ opacity: isDarkMode ? 1 : 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }} 
+         />
+      </div>
 
       {/* Theme Toggle */}
       <button 
         onClick={() => setIsDarkMode(!isDarkMode)}
-        className="absolute top-4 right-4 p-3 rounded-full bg-white/80 backdrop-blur-sm shadow-md z-50 hover:scale-110 transition-transform"
+        className={clsx(
+          "absolute top-4 right-4 p-3 rounded-full backdrop-blur-xl shadow-lg z-50 hover:scale-110 transition-all duration-700 border transform",
+          isDarkMode ? "bg-black/20 border-white/10" : "bg-white/20 border-white/40"
+        )}
       >
-        {isDarkMode ? <Sun size={24} className="text-yellow-500" /> : <Moon size={24} className="text-gray-700" />}
+        {isDarkMode ? <Sun size={24} className="text-yellow-400 transition-colors duration-700" /> : <Moon size={24} className="text-gray-800 transition-colors duration-700" />}
       </button>
 
-      {/* Card Container */}
-      <div className="relative bg-white rounded-[20px] shadow-2xl overflow-hidden w-full max-w-[900px] min-h-[600px] flex z-10">
+      {/* Main Glass Card Container */}
+      <div className={clsx(
+        "relative rounded-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] overflow-hidden w-full max-w-[900px] min-h-[600px] flex z-10 transition-colors duration-1000 border backdrop-blur-xl", 
+        isDarkMode 
+          ? "bg-black/30 border-white/10"   // Dark Mode: Smoked Glass
+          : "bg-white/30 border-white/40"   // Light Mode: Frosted Ice
+      )}>
         
         {/* Sign Up Form Panel */}
         <motion.div 
-          className={clsx(
-            "absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-12 text-center bg-white",
-            // On mobile, we use opacity to hide. On desktop, we slide it.
-            // But here we rely on the animate prop for visibility logic via z-index/opacity.
-          )}
+          className="absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-12 text-center"
           initial={false}
           animate={{ 
-            // On Mobile: Always 0% x.
-            // On Desktop: If signing up, x is 0% (visible on left). If NOT signing up, x is 100% (behind overlay? No, standard is left=0, overlay moves).
-            // Wait, standard sliding logic:
-            // Sign Up Form is usually on the LEFT.
-            // Sign In Form is usually on the LEFT (occupying same space) and they swap z-index?
-            // OR they are side-by-side?
-            // In the previous code:
-            // Sign Up: x: isSignUp ? "100%" : "0%" ... Wait, if isSignUp is true, it moves to the RIGHT?
-            // Let's re-read the original logic provided in Step 14.
-            // Step 14: Sign Up Form: x: isSignUp ? "100%" : "0%". zIndex: 5 vs 1. Opacity 1 vs 0.
-            // Wait, if x is 100%, it moves to the right half.
-            // So Sign Up form IS on the right when active?
-            // Let's look at the Overlay logic (Step 14): Overlay is "absolute top-0 left-1/2 w-1/2".
-            // If isSignUp is true, Overlay translates -100% (to the left).
-            // So:
-            // Mode A (Sign In): Overlay is on Right. Sign In Form is on Left.
-            // Mode B (Sign Up): Overlay moves Left. Sign Up Form moves Right.
-            
-            // Logic for Sign Up Form:
-            // If isSignUp (Active): x should be "100%" (The Right Side). Opacity 1. Z=5.
-            // If !isSignUp (Inactive): x should be "0%" (The Left Side - behind content? or just hidden?). Opacity 0.
-            
             x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
             zIndex: isSignUp ? 5 : 1,
             opacity: isSignUp ? 1 : 0
@@ -100,24 +123,38 @@ const AuthPage = () => {
           transition={transitionSpring}
         >
           <form className="w-full flex flex-col items-center h-full justify-center" onSubmit={(e) => e.preventDefault()}>
-            <h1 className="font-bold text-3xl mb-4 text-gray-800">Create Account</h1>
-            <div className="flex space-x-4 mb-4">
+            <BrandLogo isDarkMode={isDarkMode} />
+            <h1 className={clsx("font-bold text-3xl mb-6 tracking-tight drop-shadow-sm transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+              Create Account
+            </h1>
+            <div className="flex space-x-4 mb-6">
+              {/* Old Type Social Buttons */}
               <SocialButton icon={Github} />
               <SocialButton icon={Facebook} />
               <SocialButton icon={Linkedin} />
             </div>
-            <span className="text-sm text-gray-500 mb-4">or use your email for registration</span>
+            <span className={clsx("text-sm mb-6 font-medium transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
+              or use your email for registration
+            </span>
             
-            <InputField icon={User} type="text" placeholder="Name" />
-            <InputField icon={Mail} type="email" placeholder="Email" />
-            <InputField icon={Lock} type="password" placeholder="Password" />
+            <InputField icon={User} type="text" placeholder="Name" isDarkMode={isDarkMode} />
+            <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} />
+            <InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} />
             
+            {/* Old Type Main Button */}
             <button className="bg-purple-600 text-white font-bold py-3 px-10 rounded-full uppercase tracking-wider text-xs shadow-lg hover:bg-purple-700 active:scale-95 transition-transform mt-4">
               Sign Up
             </button>
-            <div className="mt-6 flex flex-col items-center">
-                <span className="text-gray-500 text-sm mb-2">Already have an account?</span>
-                <button type="button" onClick={() => setIsSignUp(false)} className="border border-purple-600 text-purple-600 font-bold py-2 px-8 rounded-full uppercase tracking-wider text-xs hover:bg-purple-50 transition">
+            <div className="mt-8 flex flex-col items-center">
+                <span className={clsx("text-sm mb-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
+                  Already have an account?
+                </span>
+                {/* Old Type Toggle Button */}
+                <button 
+                  type="button" 
+                  onClick={() => setIsSignUp(false)} 
+                  className="border border-purple-600 text-purple-600 font-bold py-2 px-8 rounded-full uppercase tracking-wider text-xs hover:bg-purple-50 transition"
+                >
                   Sign In
                 </button>
             </div>
@@ -126,16 +163,9 @@ const AuthPage = () => {
 
         {/* Sign In Form Panel */}
         <motion.div 
-          className={clsx(
-            "absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-12 text-center bg-white",
-          )}
+          className="absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-12 text-center"
           initial={false}
           animate={{ 
-            // If isSignUp is True (Sign Up Active), Sign In is Inactive.
-            // It should move to... "100%"? 
-            // Step 14: x: isSignUp ? "100%" : "0%".
-            // So both forms move TOGETHER to the right when Sign Up is active?
-            // Yes! Because the Overlay moves to the Left.
             x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
             zIndex: isSignUp ? 1 : 5,
             opacity: isSignUp ? 0 : 1
@@ -143,25 +173,40 @@ const AuthPage = () => {
           transition={transitionSpring}
         >
           <form className="w-full flex flex-col items-center h-full justify-center" onSubmit={(e) => e.preventDefault()}>
-            <h1 className="font-bold text-3xl mb-4 text-gray-800">Sign in</h1>
-            <div className="flex space-x-4 mb-4">
+            <BrandLogo isDarkMode={isDarkMode} />
+            <h1 className={clsx("font-bold text-3xl mb-6 tracking-tight drop-shadow-sm transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+              Sign in
+            </h1>
+            <div className="flex space-x-4 mb-6">
               <SocialButton icon={Github} />
               <SocialButton icon={Facebook} />
               <SocialButton icon={Linkedin} />
             </div>
-            <span className="text-sm text-gray-500 mb-4">or use your account</span>
+            <span className={clsx("text-sm mb-6 font-medium transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
+              or use your account
+            </span>
             
-            <InputField icon={Mail} type="email" placeholder="Email" />
-            <InputField icon={Lock} type="password" placeholder="Password" />
+            <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} />
+            <InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} />
             
-            <a href="#" className="text-sm text-gray-600 hover:text-gray-900 mb-6 mt-2">Forgot your password?</a>
+            <a href="#" className={clsx("text-sm mb-8 mt-2 transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900")}>
+              Forgot your password?
+            </a>
             
+            {/* Old Type Main Button */}
             <button className="bg-purple-600 text-white font-bold py-3 px-10 rounded-full uppercase tracking-wider text-xs shadow-lg hover:bg-purple-700 active:scale-95 transition-transform">
               Sign In
             </button>
             <div className="mt-8 flex flex-col items-center">
-                <span className="text-gray-500 text-sm mb-2">New here?</span>
-                <button type="button" onClick={() => setIsSignUp(true)} className="border border-purple-600 text-purple-600 font-bold py-2 px-8 rounded-full uppercase tracking-wider text-xs hover:bg-purple-50 transition">
+                <span className={clsx("text-sm mb-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
+                  New here?
+                </span>
+                {/* Old Type Toggle Button */}
+                <button 
+                  type="button" 
+                  onClick={() => setIsSignUp(true)} 
+                  className="border border-purple-600 text-purple-600 font-bold py-2 px-8 rounded-full uppercase tracking-wider text-xs hover:bg-purple-50 transition"
+                >
                   Create Account
                 </button>
             </div>
@@ -169,29 +214,22 @@ const AuthPage = () => {
         </motion.div>
 
         {/* Overlay Container (Desktop Only) */}
-        {/* We convert this to motion.div to sync the slide animation */}
         <motion.div 
           className="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-[100] hidden md:block"
           initial={false}
           animate={{ 
-            // If isSignUp is true, the Overlay Container moves to the Left (-100% of its width, which is 50% of parent).
-            // So -100% of 50% = -50% of parent? No, translateX percentage is relative to element itself.
-            // Step 14 used: isSignUp ? "-translate-x-full" : "".
-            // -translate-x-full is -100%.
             x: isSignUp ? "-100%" : "0%" 
           }}
           transition={transitionSpring}
         >
-          {/* Inner Text/Image Container (Moves in opposite direction to keep image static-ish) */}
+          {/* Inner Image Container */}
           <motion.div 
              className="relative -left-full h-full w-[200%]"
              initial={false}
              animate={{ 
-               // Step 14: isSignUp ? "translate-x-1/2" : "translate-x-0".
-               // 1/2 of 200% width = 100% width of parent = 50% shift.
                x: isSignUp ? "50%" : "0%"
              }}
-             transition={transitionSpring} // SYNCED transition
+             transition={transitionSpring} 
              style={{
                backgroundImage: "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2675&auto=format&fit=crop')",
                backgroundSize: 'cover',
