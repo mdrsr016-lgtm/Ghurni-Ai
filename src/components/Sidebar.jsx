@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Map, Compass, Plane, Hotel, Calendar, HelpCircle, Plus, Folder, MessageSquare, MoreHorizontal, LogOut } from 'lucide-react';
 import UseAnimations from 'react-useanimations';
 import settings from 'react-useanimations/lib/settings';
@@ -6,20 +6,22 @@ import activity from 'react-useanimations/lib/activity';
 import searchToX from 'react-useanimations/lib/searchToX';
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       {/* Desktop Sidebar (Auto-Expand) */}
-      <div className="hidden md:flex fixed left-0 top-0 h-screen w-[70px] hover:w-64 border-r border-white/5 bg-[#030014]/95 backdrop-blur-xl flex-col z-50 transition-all duration-300 ease-in-out group overflow-hidden peer">
+      <div className={`hidden md:flex fixed left-0 top-0 h-screen ${isOpen ? 'w-64' : 'w-[70px]'} border-r border-white/5 bg-[#030014]/95 backdrop-blur-xl flex-col z-50 transition-all duration-300 ease-in-out overflow-hidden peer`}>
          
          {/* Top Actions */}
          <div className="p-4 flex flex-col gap-4">
             
             {/* App Logo */}
-            <div className="flex items-center gap-3 px-2 mb-2 whitespace-nowrap">
+            <div className="flex items-center gap-3 px-2 mb-2 whitespace-nowrap cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
                <div className="w-8 h-8 min-w-[32px] rounded-full bg-white/10 flex items-center justify-center">
                   <img src="/logo.svg" alt="Ghurni" className="w-5 h-5 opacity-90" />
                </div>
-               <span className="text-xl italic font-normal tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ fontFamily: 'var(--font-serif)' }}>Ghurni Ai</span>
+               <span className={`text-xl italic font-normal tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`} style={{ fontFamily: 'var(--font-serif)' }}>Ghurni Ai</span>
             </div>
 
             <div className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group/btn whitespace-nowrap overflow-hidden">
@@ -27,21 +29,21 @@ const Sidebar = () => {
                   <div className="min-w-[18px]">
                      <UseAnimations animation={activity} size={24} strokeColor="#a78bfa" />
                   </div>
-                  <span className="font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">New Plan</span>
+                  <span className={`font-semibold text-sm transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>New Plan</span>
                </div>
-               <Plus size={18} className="text-zinc-400 group-hover/btn:text-white transition-colors opacity-0 group-hover:opacity-100" />
+               <Plus size={18} className={`text-zinc-400 group-hover/btn:text-white transition-colors ${isOpen ? 'opacity-100' : 'opacity-0'}`} />
             </div>
 
             <button className="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:bg-white/5 hover:text-white transition-all text-sm whitespace-nowrap overflow-hidden">
                <div className="min-w-[18px]">
                   <UseAnimations animation={searchToX} size={24} strokeColor="currentColor" />
                </div>
-               <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">Search plans...</span>
+               <span className={`transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>Search plans...</span>
             </button>
          </div>
 
          {/* Scrollable Content */}
-         <div className="flex-1 overflow-y-auto no-scrollbar px-3 py-2 flex flex-col gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+         <div className={`flex-1 overflow-y-auto no-scrollbar px-3 py-2 flex flex-col gap-6 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
             
             {/* Plan Boards (Projects) */}
             <div className="flex flex-col gap-1">
@@ -53,7 +55,7 @@ const Sidebar = () => {
                
                <button className="flex items-center gap-3 px-3 py-2 rounded-lg text-purple-400/80 hover:bg-white/5 hover:text-purple-300 transition-all text-sm w-full text-left group mt-1">
                   <Plus size={16} className="min-w-[16px] animate-pulse" />
-                  <span className="truncate opacity-0 group-hover:opacity-100 transition-opacity duration-300">New Board</span>
+                  <span className={`truncate transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>New Board</span>
                </button>
             </div>
 
@@ -73,11 +75,11 @@ const Sidebar = () => {
                <div className="w-8 h-8 min-w-[32px] rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-xs font-bold">
                   RS
                </div>
-               <div className="flex-1 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+               <div className={`flex-1 overflow-hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
                   <p className="text-sm font-medium truncate">Rashid Shahriar</p>
                   <p className="text-xs text-zinc-500 truncate">Free Plan</p>
                </div>
-               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+               <div className={`transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
                   <UseAnimations animation={settings} size={20} strokeColor="#71717a" />
                </div>
             </div>
