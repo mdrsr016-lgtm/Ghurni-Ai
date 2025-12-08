@@ -6,8 +6,8 @@ import clsx from 'clsx';
 // Shared Spring Transition for professional smoothness (Card Sliding)
 const transitionSpring = {
   type: "spring",
-  stiffness: 70,
-  damping: 14,
+  stiffness: 85,
+  damping: 20, // Increased damping for less bounce, more glide
   mass: 1
 };
 
@@ -50,7 +50,7 @@ const BrandLogo = ({ isDarkMode }) => (
         src="/logo.svg" 
         alt="Ghurni Ai Logo" 
         className={clsx(
-          "w-full h-full object-contain animate-spin-slow transition-all duration-700",
+          "w-full h-full object-contain transition-all duration-700",
           !isDarkMode && "invert brightness-0" // Turn white logo to black in Light Mode
         )}
       />
@@ -63,6 +63,42 @@ const BrandLogo = ({ isDarkMode }) => (
     </span>
   </div>
 );
+
+const containerVariants = {
+  hidden: { opacity: 0, scale: 0.98, y: 15 }, // Less scale/y change for subtlety
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.8,
+      ease: [0.25, 0.1, 0.25, 1], // Cubic Bezier for "premium" ease
+      staggerChildren: 0.08,
+      when: "beforeChildren"
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
+
+const formVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.1,
+      delayChildren: 0.3 // Wait for card to appear
+    }
+  }
+};
+
 
 const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -93,18 +129,25 @@ const AuthPage = () => {
       </div>
 
       {/* Theme Toggle */}
-      <button 
+      <motion.button 
         onClick={() => setIsDarkMode(!isDarkMode)}
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8, type: "spring" }}
         className={clsx(
           "absolute top-4 right-4 p-3 rounded-full backdrop-blur-xl shadow-lg z-50 hover:scale-110 transition-all duration-700 border transform",
           isDarkMode ? "bg-black/20 border-white/10" : "bg-white/20 border-white/40"
         )}
       >
         {isDarkMode ? <Sun size={24} className="text-yellow-400 transition-colors duration-700" /> : <Moon size={24} className="text-gray-800 transition-colors duration-700" />}
-      </button>
+      </motion.button>
 
       {/* Main Glass Card Container */}
-      <div className={clsx(
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className={clsx(
         "relative rounded-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] overflow-hidden w-full max-w-[900px] min-h-[600px] flex z-10 transition-colors duration-1000 border backdrop-blur-xl", 
         isDarkMode 
           ? "bg-black/30 border-white/10"   // Dark Mode: Smoked Glass
@@ -122,30 +165,34 @@ const AuthPage = () => {
           }}
           transition={transitionSpring}
         >
-          <form className="w-full flex flex-col items-center h-full justify-center" onSubmit={(e) => e.preventDefault()}>
-            <BrandLogo isDarkMode={isDarkMode} />
-            <h1 className={clsx("font-bold text-3xl mb-6 tracking-tight drop-shadow-sm transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+          <motion.form 
+            variants={formVariants} 
+            className="w-full flex flex-col items-center h-full justify-center" 
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
+            <motion.h1 variants={itemVariants} className={clsx("font-bold text-3xl mb-6 tracking-tight drop-shadow-sm transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
               Create Account
-            </h1>
-            <div className="flex space-x-4 mb-6">
+            </motion.h1>
+            <motion.div variants={itemVariants} className="flex space-x-4 mb-6">
               {/* Old Type Social Buttons */}
               <SocialButton icon={Github} />
               <SocialButton icon={Facebook} />
               <SocialButton icon={Linkedin} />
-            </div>
-            <span className={clsx("text-sm mb-6 font-medium transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
+            </motion.div>
+            <motion.span variants={itemVariants} className={clsx("text-sm mb-6 font-medium transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
               or use your email for registration
-            </span>
+            </motion.span>
             
-            <InputField icon={User} type="text" placeholder="Name" isDarkMode={isDarkMode} />
-            <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} />
-            <InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} />
+            <motion.div variants={itemVariants} className="w-full"><InputField icon={User} type="text" placeholder="Name" isDarkMode={isDarkMode} /></motion.div>
+            <motion.div variants={itemVariants} className="w-full"><InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} /></motion.div>
+            <motion.div variants={itemVariants} className="w-full"><InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} /></motion.div>
             
             {/* Old Type Main Button */}
-            <button className="bg-purple-600 text-white font-bold py-3 px-10 rounded-full uppercase tracking-wider text-xs shadow-lg hover:bg-purple-700 active:scale-95 transition-transform mt-4">
+            <motion.button variants={itemVariants} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-purple-600 text-white font-bold py-3 px-10 rounded-full uppercase tracking-wider text-xs shadow-lg hover:bg-purple-700 active:scale-95 transition-transform mt-4">
               Sign Up
-            </button>
-            <div className="mt-8 flex flex-col items-center">
+            </motion.button>
+            <motion.div variants={itemVariants} className="mt-8 flex flex-col items-center">
                 <span className={clsx("text-sm mb-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
                   Already have an account?
                 </span>
@@ -157,8 +204,8 @@ const AuthPage = () => {
                 >
                   Sign In
                 </button>
-            </div>
-          </form>
+            </motion.div>
+          </motion.form>
         </motion.div>
 
         {/* Sign In Form Panel */}
@@ -172,32 +219,36 @@ const AuthPage = () => {
           }}
           transition={transitionSpring}
         >
-          <form className="w-full flex flex-col items-center h-full justify-center" onSubmit={(e) => e.preventDefault()}>
-            <BrandLogo isDarkMode={isDarkMode} />
-            <h1 className={clsx("font-bold text-3xl mb-6 tracking-tight drop-shadow-sm transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+          <motion.form 
+            variants={formVariants}
+            className="w-full flex flex-col items-center h-full justify-center" 
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
+            <motion.h1 variants={itemVariants} className={clsx("font-bold text-3xl mb-6 tracking-tight drop-shadow-sm transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
               Sign in
-            </h1>
-            <div className="flex space-x-4 mb-6">
+            </motion.h1>
+            <motion.div variants={itemVariants} className="flex space-x-4 mb-6">
               <SocialButton icon={Github} />
               <SocialButton icon={Facebook} />
               <SocialButton icon={Linkedin} />
-            </div>
-            <span className={clsx("text-sm mb-6 font-medium transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
+            </motion.div>
+            <motion.span variants={itemVariants} className={clsx("text-sm mb-6 font-medium transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
               or use your account
-            </span>
+            </motion.span>
             
-            <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} />
-            <InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} />
+            <motion.div variants={itemVariants} className="w-full"><InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} /></motion.div>
+            <motion.div variants={itemVariants} className="w-full"><InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} /></motion.div>
             
-            <a href="#" className={clsx("text-sm mb-8 mt-2 transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900")}>
+            <motion.a variants={itemVariants} href="#" className={clsx("text-sm mb-8 mt-2 transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900")}>
               Forgot your password?
-            </a>
+            </motion.a>
             
             {/* Old Type Main Button */}
-            <button className="bg-purple-600 text-white font-bold py-3 px-10 rounded-full uppercase tracking-wider text-xs shadow-lg hover:bg-purple-700 active:scale-95 transition-transform">
+            <motion.button variants={itemVariants} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-purple-600 text-white font-bold py-3 px-10 rounded-full uppercase tracking-wider text-xs shadow-lg hover:bg-purple-700 active:scale-95 transition-transform">
               Sign In
-            </button>
-            <div className="mt-8 flex flex-col items-center">
+            </motion.button>
+            <motion.div variants={itemVariants} className="mt-8 flex flex-col items-center">
                 <span className={clsx("text-sm mb-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
                   New here?
                 </span>
@@ -209,8 +260,8 @@ const AuthPage = () => {
                 >
                   Create Account
                 </button>
-            </div>
-          </form>
+            </motion.div>
+          </motion.form>
         </motion.div>
 
         {/* Overlay Container (Desktop Only) */}
@@ -238,7 +289,7 @@ const AuthPage = () => {
           />
         </motion.div>
 
-      </div>
+      </motion.div>
     </div>
   );
 };
