@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Github, Facebook, Moon, Sun, Twitter, Eye, EyeOff } from 'lucide-react';
 import clsx from 'clsx';
+import AnimatedCheckbox from './AnimatedCheckbox';
 
 // Shared Spring Transition for professional smoothness (Card Sliding)
 const transitionSpring = {
@@ -97,37 +98,6 @@ const BrandLogo = ({ isDarkMode }) => (
     </span>
   </div>
 );
-
-// Animated Checkbox Component
-const AnimatedCheckbox = ({ isDarkMode }) => {
-  const [checked, setChecked] = useState(false);
-  
-  return (
-    <label className="inline-flex items-center cursor-pointer">
-      <input 
-        type="checkbox" 
-        checked={checked}
-        onChange={(e) => setChecked(e.target.checked)}
-        className="hidden"
-      />
-      <svg width="24" height="24" viewBox="0 0 24 24" className="overflow-visible">
-        <path
-          d="M4 12.6111L8.92308 17.5L20 6.5"
-          fill="none"
-          stroke={isDarkMode ? "#2bd47a" : "#26a671"}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="transition-all duration-500 ease-in-out"
-          style={{
-            strokeDasharray: "70.5096664428711 9999999",
-            strokeDashoffset: checked ? -262.2723388671875 : 0
-          }}
-        />
-      </svg>
-    </label>
-  );
-};
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.98, y: 15 }, // Less scale/y change for subtlety
@@ -316,13 +286,11 @@ const AuthPage = () => {
               <InputField icon={Lock} type="password" placeholder="Password" isDarkMode={isDarkMode} />
             </motion.div>
             
-            {/* Remember Me Checkbox + Forgot Password */}
+            {/* Remember Me Checkbox */}
             <motion.div variants={itemVariants} className="w-full flex items-center justify-between mb-5">
-              <label className={clsx("flex items-center gap-2 text-sm cursor-pointer transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
-                <AnimatedCheckbox isDarkMode={isDarkMode} />
-                Remember me
-              </label>
-              <a href="#" className={clsx("text-sm transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
+              <AnimatedCheckbox label="Remember me" isDarkMode={isDarkMode} />
+              {/* Forgot Password */}
+              <a href="#" className={clsx("text-sm transition-colors duration-700 hover:underline font-medium whitespace-nowrap", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
                 Forgot Password ?
               </a>
             </motion.div>
