@@ -98,6 +98,37 @@ const BrandLogo = ({ isDarkMode }) => (
   </div>
 );
 
+// Animated Checkbox Component
+const AnimatedCheckbox = ({ isDarkMode }) => {
+  const [checked, setChecked] = useState(false);
+  
+  return (
+    <label className="inline-flex items-center cursor-pointer">
+      <input 
+        type="checkbox" 
+        checked={checked}
+        onChange={(e) => setChecked(e.target.checked)}
+        className="hidden"
+      />
+      <svg width="24" height="24" viewBox="0 0 24 24" className="overflow-visible">
+        <path
+          d="M4 12.6111L8.92308 17.5L20 6.5"
+          fill="none"
+          stroke={isDarkMode ? "#2bd47a" : "#26a671"}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="transition-all duration-500 ease-in-out"
+          style={{
+            strokeDasharray: "70.5096664428711 9999999",
+            strokeDashoffset: checked ? -262.2723388671875 : 0
+          }}
+        />
+      </svg>
+    </label>
+  );
+};
+
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.98, y: 15 }, // Less scale/y change for subtlety
   visible: { 
@@ -288,7 +319,7 @@ const AuthPage = () => {
             {/* Remember Me Checkbox + Forgot Password */}
             <motion.div variants={itemVariants} className="w-full flex items-center justify-between mb-5">
               <label className={clsx("flex items-center gap-2 text-sm cursor-pointer transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-700")}>
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-300" />
+                <AnimatedCheckbox isDarkMode={isDarkMode} />
                 Remember me
               </label>
               <a href="#" className={clsx("text-sm transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
