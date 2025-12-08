@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Github, Facebook, Linkedin, Moon, Sun, Twitter, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Github, Facebook, Moon, Sun, Twitter, Eye, EyeOff } from 'lucide-react';
 import clsx from 'clsx';
 
 // Shared Spring Transition for professional smoothness (Card Sliding)
@@ -43,7 +43,7 @@ const SocialLoginButton = ({ icon: Icon, label, onClick, isDarkMode, isGoogle = 
 );
 
 // Small Circular Social Icon Button
-const SocialIconButton = ({ icon: Icon, onClick, isDarkMode, isGoogle = false }) => (
+const SocialIconButton = ({ iconSrc, onClick, isDarkMode }) => (
   <button 
     type="button"
     onClick={onClick}
@@ -54,7 +54,7 @@ const SocialIconButton = ({ icon: Icon, onClick, isDarkMode, isGoogle = false })
         : "bg-white border border-gray-200 hover:bg-gray-50"
     )}
   >
-    {isGoogle ? <GoogleIcon /> : <Icon size={20} className={isDarkMode ? "text-white" : "text-gray-700"} />}
+    <img src={iconSrc} alt="Social Icon" className="w-5 h-5" />
   </button>
 );
 
@@ -70,10 +70,10 @@ const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
       type={type}
       placeholder={placeholder}
       className={clsx(
-        "w-full rounded-xl py-3.5 pl-12 pr-4 text-sm transition-all duration-300 outline-none",
+        "w-full rounded-full py-3.5 pl-12 pr-4 text-sm transition-all duration-300 outline-none",
         isDarkMode 
-          ? "bg-white/5 border-2 border-white/10 text-white placeholder-gray-500 focus:border-purple-500/50 focus:bg-white/10" 
-          : "bg-white/80 border-2 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:bg-white"
+          ? "bg-white/5 border-2 border-white/10 text-white placeholder-gray-500 focus:border-celadon-500/50 focus:bg-white/10" 
+          : "bg-white/80 border-2 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-celadon-600 focus:bg-white"
       )}
     />
   </div>
@@ -87,7 +87,6 @@ const BrandLogo = ({ isDarkMode }) => (
         src="/logo.svg" 
         alt="Ghurni Ai Logo" 
         className="w-full h-full object-contain transition-all duration-700"
-        style={{ filter: 'invert(13%) sepia(99%) saturate(4574%) hue-rotate(226deg) brightness(94%) contrast(115%)' }}
       />
     </div>
     <span className={clsx(
@@ -292,8 +291,8 @@ const AuthPage = () => {
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300" />
                 Remember me
               </label>
-              <a href="#" className={clsx("text-sm transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-purple-400 hover:text-purple-300" : "text-purple-600 hover:text-purple-700")}>
-                Forgot Password
+              <a href="#" className={clsx("text-sm transition-colors duration-700 hover:underline font-medium", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
+                Forgot Password ?
               </a>
             </motion.div>
             
@@ -302,7 +301,7 @@ const AuthPage = () => {
               variants={itemVariants} 
               whileHover={{ scale: 1.02 }} 
               whileTap={{ scale: 0.98 }} 
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3.5 rounded-xl text-base shadow-lg hover:shadow-xl transition-all duration-300 mb-4"
+              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-3.5 rounded-full text-base shadow-lg hover:shadow-xl transition-all duration-300 mb-4"
             >
               Login
             </motion.button>
@@ -315,7 +314,7 @@ const AuthPage = () => {
               <button 
                 type="button" 
                 onClick={() => setIsSignUp(true)} 
-                className="text-sm font-bold text-purple-600 hover:text-purple-700 transition-colors underline-offset-2 hover:underline"
+                className="text-sm font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
               >
                 Sign Up here
               </button>
@@ -332,9 +331,29 @@ const AuthPage = () => {
             
             {/* Social Buttons */}
             <motion.div variants={itemVariants} className="flex gap-4">
-              <SocialIconButton icon={Facebook} isDarkMode={isDarkMode} />
-              <SocialIconButton icon={GoogleIcon} isGoogle isDarkMode={isDarkMode} />
-              <SocialIconButton icon={Linkedin} isDarkMode={isDarkMode} />
+              <button 
+                type="button"
+                className={clsx(
+                  "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-sm",
+                  isDarkMode 
+                    ? "bg-white/10 border border-white/20 hover:bg-white/20" 
+                    : "bg-white border border-gray-200 hover:bg-gray-50"
+                )}
+              >
+                <img src="/facebook.svg" alt="Facebook Icon" className="w-6 h-6" />
+              </button>
+              <SocialIconButton iconSrc="/google.svg" isDarkMode={isDarkMode} />
+              <button 
+                type="button"
+                className={clsx(
+                  "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-sm",
+                  isDarkMode 
+                    ? "bg-white/10 border border-white/20 hover:bg-white/20" 
+                    : "bg-white border border-gray-200 hover:bg-gray-50"
+                )}
+              >
+                <img src="/X.svg" alt="X Icon" className="w-4 h-4" />
+              </button>
             </motion.div>
           </motion.form>
         </motion.div>

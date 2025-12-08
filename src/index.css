@@ -2,6 +2,67 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
+  
+  /* Custom Green Color Palette */
+  --color-turf-green-50: #eafaf4;
+  --color-turf-green-100: #d5f6e8;
+  --color-turf-green-200: #acecd1;
+  --color-turf-green-300: #82e3bb;
+  --color-turf-green-400: #59d9a4;
+  --color-turf-green-500: #2fd08d;
+  --color-turf-green-600: #26a671;
+  --color-turf-green-700: #1c7d55;
+  --color-turf-green-800: #135338;
+  --color-turf-green-900: #092a1c;
+  --color-turf-green-950: #071d14;
+
+  --color-celadon-50: #eafbf2;
+  --color-celadon-100: #d5f6e4;
+  --color-celadon-200: #aaeeca;
+  --color-celadon-300: #80e5af;
+  --color-celadon-400: #56dc95;
+  --color-celadon-500: #2bd47a;
+  --color-celadon-600: #23a962;
+  --color-celadon-700: #1a7f49;
+  --color-celadon-800: #115531;
+  --color-celadon-900: #092a18;
+  --color-celadon-950: #061e11;
+
+  --color-tea-green-50: #f3fbea;
+  --color-tea-green-100: #e6f7d4;
+  --color-tea-green-200: #cdefa9;
+  --color-tea-green-300: #b4e77e;
+  --color-tea-green-400: #9bde54;
+  --color-tea-green-500: #82d629;
+  --color-tea-green-600: #68ab21;
+  --color-tea-green-700: #4e8118;
+  --color-tea-green-800: #345610;
+  --color-tea-green-900: #1a2b08;
+  --color-tea-green-950: #121e06;
+
+  --color-dark-spruce-50: #ecf9f0;
+  --color-dark-spruce-100: #d9f2e1;
+  --color-dark-spruce-200: #b3e6c4;
+  --color-dark-spruce-300: #8cd9a6;
+  --color-dark-spruce-400: #66cc88;
+  --color-dark-spruce-500: #40bf6a;
+  --color-dark-spruce-600: #339955;
+  --color-dark-spruce-700: #267340;
+  --color-dark-spruce-800: #194d2b;
+  --color-dark-spruce-900: #0d2615;
+  --color-dark-spruce-950: #091b0f;
+
+  --color-yellow-green-50: #f5f9eb;
+  --color-yellow-green-100: #ecf3d8;
+  --color-yellow-green-200: #d9e8b0;
+  --color-yellow-green-300: #c6dc89;
+  --color-yellow-green-400: #b3d062;
+  --color-yellow-green-500: #a0c43b;
+  --color-yellow-green-600: #809d2f;
+  --color-yellow-green-700: #607623;
+  --color-yellow-green-800: #404f17;
+  --color-yellow-green-900: #20270c;
+  --color-yellow-green-950: #161b08;
 }
 
 body {
