@@ -9,9 +9,9 @@ import ForgotPasswordModal from './ForgotPasswordModal';
 // Shared Spring Transition for professional smoothness (Card Sliding)
 const transitionSpring = {
   type: "spring",
-  stiffness: 85,
-  damping: 20, // Increased damping for less bounce, more glide
-  mass: 1
+  stiffness: 120, // Increased for snappier, more professional feel
+  damping: 22,    // Optimized for smooth deceleration
+  mass: 0.8       // Reduced mass for lighter, more responsive movement
 };
 
 // Google Logo SVG
@@ -155,7 +155,12 @@ const itemVariants = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } // Smoother ease curve
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.3, ease: [0.4, 0, 1, 1] } // Fast fade out
   }
 };
 
@@ -164,8 +169,16 @@ const formVariants = {
   visible: { 
     opacity: 1,
     transition: { 
-      staggerChildren: 0.1,
-      delayChildren: 0.3 // Wait for card to appear
+      staggerChildren: 0.06, // Slightly faster stagger for snappier feel
+      delayChildren: 0.2     // Reduced delay for quicker appearance
+    }
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      staggerChildren: 0.03,
+      staggerDirection: -1,  // Reverse order on exit
+      when: "afterChildren"
     }
   }
 };
@@ -240,51 +253,45 @@ const AuthPage = () => {
           }}
           transition={transitionSpring}
         >
-          <motion.form 
-            variants={formVariants} 
-            className="w-full flex flex-col items-center justify-center max-w-sm py-2 sm:py-4" 
-            onSubmit={(e) => e.preventDefault()}
-          >
+              <motion.form 
+                variants={formVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="w-full flex flex-col items-center justify-center max-w-sm py-2 sm:py-4" 
+                onSubmit={(e) => e.preventDefault()}
+              >
             {/* Logo */}
             <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
             
-            {/* Title */}
-            <motion.h1 variants={itemVariants} className={clsx("font-bold text-lg sm:text-xl mb-1 tracking-tight transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
-              Create Account
-            </motion.h1>
-            
             {/* Welcome Message */}
-            <motion.p variants={itemVariants} className={clsx("text-center text-[10px] sm:text-xs leading-relaxed mb-2 sm:mb-3 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
-              Enter your details to create your account<br/>and start using our services.
+            <motion.p variants={itemVariants} className={clsx("text-center text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
+              {/* Mobile version - shorter text */}
+              <span className="block sm:hidden">
+                Create your account to get started.
+              </span>
+              {/* Desktop version - full text */}
+              <span className="hidden sm:block">
+                Create your account to get started<br/>with our services.
+              </span>
             </motion.p>
             
+            {/* Title */}
+            <motion.h1 variants={itemVariants} className={clsx("font-bold text-2xl sm:text-3xl mb-4 sm:mb-5 tracking-tight transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+              Sign Up
+            </motion.h1>
+            
             {/* Input Fields */}
-            <div className="w-full space-y-0">
+            <div className="w-full">
               <motion.div variants={itemVariants}><InputField icon={User} type="text" placeholder="Full name" isDarkMode={isDarkMode} /></motion.div>
+              <motion.div variants={itemVariants}><InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} /></motion.div>
               <motion.div variants={itemVariants}><InputField icon={User} type="text" placeholder="Username" isDarkMode={isDarkMode} /></motion.div>
-              <motion.div variants={itemVariants}><InputField icon={Phone} type="tel" placeholder="Phone" isDarkMode={isDarkMode} /></motion.div>
-              <motion.div variants={itemVariants}>
-                <PasswordInputField 
-                  placeholder="Password" 
-                  isDarkMode={isDarkMode} 
-                  showPassword={showSignUpPassword}
-                  onTogglePassword={() => setShowSignUpPassword(!showSignUpPassword)}
-                />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <PasswordInputField 
-                  placeholder="Confirm Password" 
-                  isDarkMode={isDarkMode} 
-                  showPassword={showConfirmPassword}
-                  onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
-                />
-              </motion.div>
             </div>
             
             {/* Create Account Button */}
             <motion.div 
               variants={itemVariants}
-              className="w-full mb-2 mt-1 sm:mt-2"
+              className="w-[85%] sm:w-full sm:max-w-[280px] mb-3 sm:mb-4 mx-auto"
             >
               <AnimatedButton type="submit">
                 Continue Submitting
@@ -292,23 +299,23 @@ const AuthPage = () => {
             </motion.div>
             
             {/* Already have an account */}
-            <motion.div variants={itemVariants} className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
-              <span className={clsx("text-[10px] sm:text-xs transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-600")}>
+            <motion.div variants={itemVariants} className="flex items-center gap-1 sm:gap-1.5 mb-4 sm:mb-5">
+              <span className={clsx("text-xs sm:text-sm transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-600")}>
                 Already have an account?
               </span>
               <button 
                 type="button" 
                 onClick={() => setIsSignUp(false)} 
-                className="text-[10px] sm:text-xs font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
+                className="text-xs sm:text-sm font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
               >
                 Sign In
               </button>
             </motion.div>
             
             {/* OR Divider */}
-            <motion.div variants={itemVariants} className="w-full flex items-center gap-2 sm:gap-4 mb-2 sm:mb-3">
+            <motion.div variants={itemVariants} className="w-full flex items-center gap-2 sm:gap-4 mb-4 sm:mb-5">
               <div className={clsx("flex-1 h-px transition-colors duration-700", isDarkMode ? "bg-white/10" : "bg-gray-200")}></div>
-              <span className={clsx("text-[10px] sm:text-xs font-medium transition-colors duration-700 whitespace-nowrap", isDarkMode ? "text-gray-400" : "text-gray-500")}>
+              <span className={clsx("text-xs sm:text-sm font-medium transition-colors duration-700 whitespace-nowrap", isDarkMode ? "text-gray-400" : "text-gray-500")}>
                 Or Continue With
               </span>
               <div className={clsx("flex-1 h-px transition-colors duration-700", isDarkMode ? "bg-white/10" : "bg-gray-200")}></div>
@@ -354,11 +361,14 @@ const AuthPage = () => {
           }}
           transition={transitionSpring}
         >
-          <motion.form 
-            variants={formVariants}
-            className="w-full flex flex-col items-center h-full justify-center max-w-sm" 
-            onSubmit={(e) => e.preventDefault()}
-          >
+              <motion.form 
+                variants={formVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="w-full flex flex-col items-center h-full justify-center max-w-sm" 
+                onSubmit={(e) => e.preventDefault()}
+              >
             {/* Logo + Text */}
             <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
             
@@ -413,7 +423,7 @@ const AuthPage = () => {
               variants={itemVariants} 
               whileHover={{ scale: 1.02 }} 
               whileTap={{ scale: 0.98 }} 
-              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-2.5 sm:py-3.5 rounded-full text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300 mb-3 sm:mb-4"
+              className="w-[85%] sm:w-full sm:max-w-[280px] mx-auto block bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-2.5 sm:py-3.5 rounded-full text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300 mb-3 sm:mb-4"
             >
               Login
             </motion.button>
