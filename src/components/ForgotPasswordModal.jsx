@@ -68,9 +68,16 @@ const ForgotPasswordModal = ({ isOpen, onClose, isDarkMode }) => {
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   )}
                 >
-                  Enter your email address to receive a reset link and
-                  <br />
-                  regain access to your account.
+                  {/* Mobile version - shorter text */}
+                  <span className="block sm:hidden">
+                    Enter your email address to receive a reset link.
+                  </span>
+                  {/* Desktop version - full text */}
+                  <span className="hidden sm:block">
+                    Enter your email address to receive a reset link and
+                    <br />
+                    regain access to your account.
+                  </span>
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">

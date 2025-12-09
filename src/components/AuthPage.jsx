@@ -364,7 +364,14 @@ const AuthPage = () => {
             
             {/* Welcome Message */}
             <motion.p variants={itemVariants} className={clsx("text-center text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
-              Enter your email and password to securely access<br/>your account and manage your services.
+              {/* Mobile version - shorter text */}
+              <span className="block sm:hidden">
+                Enter your email and password to securely access<br/>your account.
+              </span>
+              {/* Desktop version - full text */}
+              <span className="hidden sm:block">
+                Enter your email and password to securely access<br/>your account and manage your services.
+              </span>
             </motion.p>
             
             {/* Title */}
