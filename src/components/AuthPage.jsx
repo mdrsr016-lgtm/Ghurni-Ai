@@ -576,7 +576,7 @@ const AuthPage = () => {
               className="w-[85%] sm:w-full sm:max-w-[280px] mb-3 sm:mb-4 mx-auto"
             >
               <AnimatedButton type="button" onClick={handleSignUpSubmit}>
-                Create Account
+                Continue Submitting
               </AnimatedButton>
             </motion.div>
             
