@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Mail, Lock, User, Github, Facebook, Moon, Sun, Twitter, Eye, EyeOff, Phone } from 'lucide-react';
+import { Mail, Lock, User, Github, Facebook, Moon, Sun, Twitter, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 import AnimatedCheckbox from './AnimatedCheckbox';
 import AnimatedButton from './AnimatedButton';
@@ -64,58 +64,102 @@ const SocialIconButton = ({ iconSrc, onClick, isDarkMode }) => (
   </button>
 );
 
-const InputField = ({ icon: Icon, type, placeholder, isDarkMode, autoComplete = "off" }) => (
-  <div className="relative w-full mb-3 sm:mb-4">
-    <div className={clsx(
-      "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
-      isDarkMode ? "text-gray-400" : "text-gray-500"
-    )}>
-      <Icon size={16} className="sm:w-[18px] sm:h-[18px]" />
+const InputField = ({ icon: Icon, type, placeholder, isDarkMode, autoComplete = "off", value, onChange, error, success }) => (
+  <div className="w-full mb-3 sm:mb-4 group">
+    <div className="relative">
+      <div className={clsx(
+        "absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
+        error ? "text-red-500" : (success ? "text-green-500" : (isDarkMode ? "text-gray-400 group-focus-within:text-turf-green-300" : "text-gray-400 group-focus-within:text-turf-green-600"))
+      )}>
+        <Icon size={18} className="sm:w-[20px] sm:h-[20px]" />
+      </div>
+      <motion.input
+        whileFocus={{ scale: 1.01 }}
+        animate={error ? { x: [-5, 5, -5, 5, 0] } : {}} // Shake on error
+        transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={clsx(
+          "w-full rounded-2xl py-3 sm:py-4 pl-12 sm:pl-14 pr-4 sm:pr-5 text-sm transition-all duration-300 outline-none backdrop-blur-md border",
+          error 
+            ? (isDarkMode ? "bg-red-500/10 border-red-500 text-red-100 placeholder-red-300" : "bg-red-50 border-red-500 text-red-900 placeholder-red-300")
+            : success
+              ? (isDarkMode ? "bg-green-500/10 border-green-500 text-green-100" : "bg-green-50 border-green-500 text-green-900")
+              : (isDarkMode 
+                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-turf-green-500/50 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(47,208,141,0.1)]" 
+                  : "bg-white/60 border-white/60 text-gray-900 placeholder-gray-400 focus:border-turf-green-500 focus:bg-white/80 focus:shadow-[0_0_15px_rgba(47,208,141,0.15)]")
+        )}
+      />
     </div>
-    <input
-      type={type}
-      placeholder={placeholder}
-      autoComplete={autoComplete}
-      className={clsx(
-        "w-full rounded-full py-2.5 sm:py-3.5 pl-10 sm:pl-12 pr-3 sm:pr-4 text-xs sm:text-sm transition-all duration-300 outline-none backdrop-blur-md",
-        isDarkMode 
-          ? "bg-white/10 border-2 border-white/20 text-white placeholder-gray-500 focus:border-celadon-500/70 focus:bg-white/15 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
-          : "bg-white/50 border-2 border-white/60 text-gray-900 placeholder-gray-400 focus:border-celadon-600 focus:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
-      )}
-    />
+    {error && (
+      <div 
+        className="flex items-center gap-2 mt-2 px-3 py-2 rounded-lg bg-red-100 border border-red-200 shadow-sm"
+      >
+        <AlertCircle size={16} className="text-red-600 shrink-0" />
+        <p className="text-red-600 text-xs font-medium text-left">
+          {error}
+        </p>
+      </div>
+    )}
   </div>
 );
 
 // Password Input Field with Eye Toggle
-const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePassword, autoComplete = "off" }) => (
-  <div className="relative w-full mb-3 sm:mb-4">
-    <div className={clsx(
-      "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
-      isDarkMode ? "text-gray-400" : "text-gray-500"
-    )}>
-      <Lock size={16} className="sm:w-[18px] sm:h-[18px]" />
+const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePassword, autoComplete = "off", value, onChange, error, success }) => (
+  <div className="w-full mb-3 sm:mb-4 group">
+    <div className="relative">
+      <div className={clsx(
+        "absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
+        error ? "text-red-500" : (success ? "text-green-500" : (isDarkMode ? "text-gray-400 group-focus-within:text-turf-green-300" : "text-gray-400 group-focus-within:text-turf-green-600"))
+      )}>
+        <Lock size={18} className="sm:w-[20px] sm:h-[20px]" />
+      </div>
+      <motion.input
+        whileFocus={{ scale: 1.01 }}
+        animate={error ? { x: [-5, 5, -5, 5, 0] } : {}}
+        transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        type={showPassword ? "text" : "password"}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={clsx(
+          "w-full rounded-2xl py-3 sm:py-4 pl-12 sm:pl-14 pr-12 sm:pr-14 text-sm transition-all duration-300 outline-none backdrop-blur-md border",
+          error 
+            ? (isDarkMode ? "bg-red-500/10 border-red-500 text-red-100 placeholder-red-300" : "bg-red-50 border-red-500 text-red-900 placeholder-red-300")
+            : success
+              ? (isDarkMode ? "bg-green-500/10 border-green-500 text-green-100" : "bg-green-50 border-green-500 text-green-900")
+              : (isDarkMode 
+                  ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-turf-green-500/50 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(47,208,141,0.1)]" 
+                  : "bg-white/60 border-white/60 text-gray-900 placeholder-gray-400 focus:border-turf-green-500 focus:bg-white/80 focus:shadow-[0_0_15px_rgba(47,208,141,0.15)]")
+        )}
+      />
+      <button
+        type="button"
+        onClick={onTogglePassword}
+        className={clsx(
+          "absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 hover:scale-110 transform p-1",
+          isDarkMode 
+             ? "text-gray-400 hover:text-white" 
+             : "text-gray-400 hover:text-gray-600"
+        )}
+      >
+        {showPassword ? <EyeOff size={18} className="sm:w-[20px] sm:h-[20px]" /> : <Eye size={18} className="sm:w-[20px] sm:h-[20px]" />}
+      </button>
     </div>
-    <input
-      type={showPassword ? "text" : "password"}
-      placeholder={placeholder}
-      autoComplete={autoComplete}
-      className={clsx(
-        "w-full rounded-full py-2.5 sm:py-3.5 pl-10 sm:pl-12 pr-10 sm:pr-12 text-xs sm:text-sm transition-all duration-300 outline-none backdrop-blur-md",
-        isDarkMode 
-          ? "bg-white/10 border-2 border-white/20 text-white placeholder-gray-500 focus:border-celadon-500/70 focus:bg-white/15 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
-          : "bg-white/50 border-2 border-white/60 text-gray-900 placeholder-gray-400 focus:border-celadon-600 focus:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
-      )}
-    />
-    <button
-      type="button"
-      onClick={onTogglePassword}
-      className={clsx(
-        "absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 hover:scale-110 transform",
-        isDarkMode ? "text-gray-400 hover:text-gray-300" : "text-gray-500 hover:text-gray-700"
-      )}
-    >
-      {showPassword ? <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" /> : <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />}
-    </button>
+    {error && (
+      <div 
+        className="flex items-center gap-2 mt-2 px-3 py-2 rounded-lg bg-red-100 border border-red-200 shadow-sm"
+      >
+        <AlertCircle size={16} className="text-red-600 shrink-0" />
+        <p className="text-red-600 text-xs font-medium text-left">
+          {error}
+        </p>
+      </div>
+    )}
   </div>
 );
 
@@ -201,6 +245,101 @@ const AuthPage = () => {
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); 
+  
+  // --- Form State ---
+  const [signInData, setSignInData] = useState({ email: '', password: '', rememberMe: false });
+  const [signUpData, setSignUpData] = useState({ fullName: '', email: '', username: '' });
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState({}); 
+
+  // --- Validation Logic ---
+  // --- Validation Logic ---
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const validateField = (name, value, section = 'signUp') => {
+      let error = '';
+      let isSuccess = false;
+
+      // Email Validation
+      if (name === 'email' || name === 'signInEmail') {
+          if (!value) error = 'Email address is required';
+          else if (!value.includes('@')) error = 'Email must include "@" symbol';
+          else if (!validateEmail(value)) error = 'Invalid email domain or format';
+          else isSuccess = true;
+      }
+
+      // Password Validation
+      if (name === 'password' || name === 'signInPassword') {
+          if (!value) error = 'Password is required';
+          else if (value.length < 6) error = `Password must be at least 6 characters (${value.length}/6)`;
+          else isSuccess = true;
+      }
+
+      // Full Name (Sign Up only)
+      if (name === 'fullName') {
+          if (!value) error = 'Full name is required';
+          else if (value.trim().split(' ').length < 2) error = 'Please enter your full name (first & last)';
+          else isSuccess = true;
+      }
+
+      // Username (Sign Up only)
+      if (name === 'username') {
+          if (!value) error = 'Username is required';
+          else if (value.length < 3) error = 'Username must be 3+ characters';
+          else isSuccess = true;
+      }
+
+      // Update State
+      const prefix = section === 'signIn' ? 'signIn' : 'signUp';
+      const key = name === 'email' || name === 'password' ? `${prefix}${name.charAt(0).toUpperCase() + name.slice(1)}` : `${prefix}${name.charAt(0).toUpperCase() + name.slice(1)}`;
+      
+      let stateKey = '';
+      if (section === 'signIn') {
+          if (name === 'email') stateKey = 'signInEmail';
+          if (name === 'password') stateKey = 'signInPassword';
+      } else {
+          if (name === 'fullName') stateKey = 'signUpFullName';
+          if (name === 'email') stateKey = 'signUpEmail';
+          if (name === 'username') stateKey = 'signUpUsername';
+          if (name === 'password') stateKey = 'signUpPassword';
+      }
+      
+      setErrors(prev => ({ ...prev, [stateKey]: error }));
+      setSuccess(prev => ({ ...prev, [stateKey]: isSuccess }));
+      
+      return !error;
+  };
+
+  const handleSignInChange = (field, value) => {
+      setSignInData(prev => ({ ...prev, [field]: value }));
+      validateField(field, value, 'signIn');
+  };
+
+  const handleSignUpChange = (field, value) => {
+      setSignUpData(prev => ({ ...prev, [field]: value }));
+      validateField(field, value, 'signUp');
+  };
+
+  const handleSignInSubmit = (e) => {
+    e.preventDefault();
+    const isEmailValid = validateField('email', signInData.email, 'signIn');
+    const isPasswordValid = validateField('password', signInData.password, 'signIn');
+
+    if (isEmailValid && isPasswordValid) {
+      alert("Sign In Successful!");
+      // Proceed with actual login logic
+    }
+  };
+
+  const handleSignUpSubmit = () => {
+    const isNameValid = validateField('fullName', signUpData.fullName, 'signUp');
+    const isEmailValid = validateField('email', signUpData.email, 'signUp');
+    const isUserValid = validateField('username', signUpData.username, 'signUp');
+
+    if (isNameValid && isEmailValid && isUserValid) {
+      setIsSubmitted(true);
+    }
+  }; 
 
   // --- Parallax Logic ---
   const x = useMotionValue(0);
@@ -392,11 +531,43 @@ const AuthPage = () => {
               Sign Up
             </motion.h1>
             
-            {/* Input Fields */}
             <div className="w-full">
-              <motion.div variants={itemVariants}><InputField icon={User} type="text" placeholder="Full name" isDarkMode={isDarkMode} /></motion.div>
-              <motion.div variants={itemVariants}><InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} /></motion.div>
-              <motion.div variants={itemVariants}><InputField icon={User} type="text" placeholder="Username" isDarkMode={isDarkMode} /></motion.div>
+              <motion.div variants={itemVariants}>
+                <InputField 
+                  icon={User} 
+                  type="text" 
+                  placeholder="Full name" 
+                  isDarkMode={isDarkMode}
+                  value={signUpData.fullName}
+                  onChange={(e) => handleSignUpChange('fullName', e.target.value)}
+                  error={errors.signUpFullName}
+                  success={success.signUpFullName}
+                />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <InputField 
+                  icon={Mail} 
+                  type="email" 
+                  placeholder="Email" 
+                  isDarkMode={isDarkMode}
+                  value={signUpData.email}
+                  onChange={(e) => handleSignUpChange('email', e.target.value)}
+                  error={errors.signUpEmail}
+                  success={success.signUpEmail}
+                />
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <InputField 
+                  icon={User} 
+                  type="text" 
+                  placeholder="Username" 
+                  isDarkMode={isDarkMode}
+                  value={signUpData.username}
+                  onChange={(e) => handleSignUpChange('username', e.target.value)}
+                  error={errors.signUpUsername}
+                  success={success.signUpUsername}
+                />
+              </motion.div>
             </div>
             
             {/* Create Account Button */}
@@ -404,8 +575,8 @@ const AuthPage = () => {
               variants={itemVariants}
               className="w-[85%] sm:w-full sm:max-w-[280px] mb-3 sm:mb-4 mx-auto"
             >
-              <AnimatedButton type="button" onClick={() => setIsSubmitted(true)}>
-                Continue Submitting
+              <AnimatedButton type="button" onClick={handleSignUpSubmit}>
+                Create Account
               </AnimatedButton>
             </motion.div>
             
@@ -503,7 +674,17 @@ const AuthPage = () => {
             
             {/* Email Input */}
             <motion.div variants={itemVariants} className="w-full">
-              <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} autoComplete="email" />
+              <InputField 
+                icon={Mail} 
+                type="email" 
+                placeholder="Email" 
+                isDarkMode={isDarkMode} 
+                autoComplete="email" 
+                value={signInData.email}
+                onChange={(e) => handleSignInChange('email', e.target.value)}
+                error={errors.signInEmail}
+                success={success.signInEmail}
+              />
             </motion.div>
             
             {/* Password Input with Eye Icon */}
@@ -514,6 +695,10 @@ const AuthPage = () => {
                 showPassword={showPassword}
                 onTogglePassword={() => setShowPassword(!showPassword)}
                 autoComplete="current-password"
+                value={signInData.password}
+                onChange={(e) => handleSignInChange('password', e.target.value)}
+                error={errors.signInPassword}
+                success={success.signInPassword}
               />
             </motion.div>
             
@@ -532,6 +717,8 @@ const AuthPage = () => {
             
             {/* Login Button */}
             <motion.button 
+              type="submit"
+              onClick={handleSignInSubmit}
               variants={itemVariants} 
               whileHover={{ scale: 1.02 }} 
               whileTap={{ scale: 0.98 }} 
