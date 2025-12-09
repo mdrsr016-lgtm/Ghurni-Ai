@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Github, Facebook, Moon, Sun, Twitter, Eye, EyeOff, Phone } from 'lucide-react';
 import clsx from 'clsx';
 import AnimatedCheckbox from './AnimatedCheckbox';
+import AnimatedButton from './AnimatedButton';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 // Shared Spring Transition for professional smoothness (Card Sliding)
 const transitionSpring = {
@@ -59,7 +61,7 @@ const SocialIconButton = ({ iconSrc, onClick, isDarkMode }) => (
   </button>
 );
 
-const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
+const InputField = ({ icon: Icon, type, placeholder, isDarkMode, autoComplete = "off" }) => (
   <div className="relative w-full mb-3 sm:mb-4">
     <div className={clsx(
       "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
@@ -70,6 +72,7 @@ const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
     <input
       type={type}
       placeholder={placeholder}
+      autoComplete={autoComplete}
       className={clsx(
         "w-full rounded-full py-2.5 sm:py-3.5 pl-10 sm:pl-12 pr-3 sm:pr-4 text-xs sm:text-sm transition-all duration-300 outline-none backdrop-blur-md",
         isDarkMode 
@@ -81,7 +84,7 @@ const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
 );
 
 // Password Input Field with Eye Toggle
-const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePassword }) => (
+const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePassword, autoComplete = "off" }) => (
   <div className="relative w-full mb-3 sm:mb-4">
     <div className={clsx(
       "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
@@ -92,6 +95,7 @@ const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePas
     <input
       type={showPassword ? "text" : "password"}
       placeholder={placeholder}
+      autoComplete={autoComplete}
       className={clsx(
         "w-full rounded-full py-2.5 sm:py-3.5 pl-10 sm:pl-12 pr-10 sm:pr-12 text-xs sm:text-sm transition-all duration-300 outline-none backdrop-blur-md",
         isDarkMode 
@@ -173,7 +177,8 @@ const AuthPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); 
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -277,14 +282,14 @@ const AuthPage = () => {
             </div>
             
             {/* Create Account Button */}
-            <motion.button 
-              variants={itemVariants} 
-              whileHover={{ scale: 1.02 }} 
-              whileTap={{ scale: 0.98 }} 
-              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-2 sm:py-2.5 rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all duration-300 mb-2 mt-1 sm:mt-2"
+            <motion.div 
+              variants={itemVariants}
+              className="w-full mb-2 mt-1 sm:mt-2"
             >
-              Create Account
-            </motion.button>
+              <AnimatedButton type="submit">
+                Continue Submitting
+              </AnimatedButton>
+            </motion.div>
             
             {/* Already have an account */}
             <motion.div variants={itemVariants} className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
@@ -369,7 +374,7 @@ const AuthPage = () => {
             
             {/* Email Input */}
             <motion.div variants={itemVariants} className="w-full">
-              <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} />
+              <InputField icon={Mail} type="email" placeholder="Email" isDarkMode={isDarkMode} autoComplete="email" />
             </motion.div>
             
             {/* Password Input with Eye Icon */}
@@ -379,6 +384,7 @@ const AuthPage = () => {
                 isDarkMode={isDarkMode} 
                 showPassword={showPassword}
                 onTogglePassword={() => setShowPassword(!showPassword)}
+                autoComplete="current-password"
               />
             </motion.div>
             
@@ -386,9 +392,13 @@ const AuthPage = () => {
             <motion.div variants={itemVariants} className="w-full flex items-center justify-between mb-4 sm:mb-5">
               <AnimatedCheckbox label="Remember me" isDarkMode={isDarkMode} />
               {/* Forgot Password */}
-              <a href="#" className={clsx("text-xs sm:text-sm transition-colors duration-700 hover:underline font-medium whitespace-nowrap", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
+              <button
+                type="button"
+                onClick={() => setShowForgotPasswordModal(true)}
+                className={clsx("text-xs sm:text-sm transition-colors duration-700 hover:underline font-medium whitespace-nowrap", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}
+              >
                 Forgot Password ?
-              </a>
+              </button>
             </motion.div>
             
             {/* Login Button */}
@@ -479,6 +489,13 @@ const AuthPage = () => {
         </motion.div>
 
       </motion.div>
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal 
+        isOpen={showForgotPasswordModal}
+        onClose={() => setShowForgotPasswordModal(false)}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 };
