@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Mail, Lock, User, Github, Facebook, Moon, Sun, Twitter, Eye, EyeOff, Phone } from 'lucide-react';
 import clsx from 'clsx';
 import AnimatedCheckbox from './AnimatedCheckbox';
 import AnimatedButton from './AnimatedButton';
 import ForgotPasswordModal from './ForgotPasswordModal';
 
-// Shared Spring Transition for professional smoothness (Card Sliding)
-const transitionSpring = {
+// Unified Professional Transition Configuration
+const professionalTransition = {
   type: "spring",
-  stiffness: 120, // Increased for snappier, more professional feel
-  damping: 22,    // Optimized for smooth deceleration
-  mass: 0.8       // Reduced mass for lighter, more responsive movement
+  stiffness: 100,
+  damping: 20,
+  mass: 0.8,
+  // Fallback for tween-based properties if needed, though spring handles most well
+  duration: 0.6, 
+  ease: [0.22, 1, 0.36, 1] // Custom refined cubic-bezier
 };
 
 // Google Logo SVG
@@ -117,8 +120,12 @@ const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePas
 );
 
 // Brand Logo Component
-const BrandLogo = ({ isDarkMode }) => (
-  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+// Brand Logo Component - Updated for Shared Layout Transition
+const BrandLogo = ({ isDarkMode, layoutId, className }) => (
+  <motion.div 
+    layoutId={layoutId} 
+    className={clsx("flex items-center gap-2 sm:gap-3", className)}
+  >
     <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center">
       <img 
         src="/logo.svg" 
@@ -132,18 +139,17 @@ const BrandLogo = ({ isDarkMode }) => (
     )}>
       Ghurni Ai
     </span>
-  </div>
+  </motion.div>
 );
 
 const containerVariants = {
-  hidden: { opacity: 0, scale: 0.98, y: 15 }, // Less scale/y change for subtlety
+  hidden: { opacity: 0, scale: 0.98, y: 15 },
   visible: { 
     opacity: 1, 
     scale: 1, 
     y: 0,
     transition: { 
-      duration: 0.8,
-      ease: [0.25, 0.1, 0.25, 1], // Cubic Bezier for "premium" ease
+      ...professionalTransition,
       staggerChildren: 0.08,
       when: "beforeChildren"
     }
@@ -155,12 +161,12 @@ const itemVariants = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } // Smoother ease curve
+    transition: professionalTransition
   },
   exit: {
     opacity: 0,
     y: -10,
-    transition: { duration: 0.3, ease: [0.4, 0, 1, 1] } // Fast fade out
+    transition: { duration: 0.3, ease: "easeIn" } // Keep exit fast
   }
 };
 
@@ -169,15 +175,17 @@ const formVariants = {
   visible: { 
     opacity: 1,
     transition: { 
-      staggerChildren: 0.06, // Slightly faster stagger for snappier feel
-      delayChildren: 0.2     // Reduced delay for quicker appearance
+      ...professionalTransition,
+      staggerChildren: 0.06,
+      delayChildren: 0.2
     }
   },
   exit: {
     opacity: 0,
     transition: {
+      ...professionalTransition,
       staggerChildren: 0.03,
-      staggerDirection: -1,  // Reverse order on exit
+      staggerDirection: -1,
       when: "afterChildren"
     }
   }
@@ -186,12 +194,43 @@ const formVariants = {
 
 const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); 
+
+  // --- Parallax Logic ---
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  // Smooth out the mouse movement
+  const mouseX = useSpring(x, { stiffness: 50, damping: 15 });
+  const mouseY = useSpring(y, { stiffness: 50, damping: 15 });
+
+  // Parallax for Background Elements only - Removed 3D Tilt for Card
+  const moveX1 = useTransform(mouseX, [-0.5, 0.5], [-30, 30]);
+  const moveY1 = useTransform(mouseY, [-0.5, 0.5], [-30, 30]);
+  
+  const moveX2 = useTransform(mouseX, [-0.5, 0.5], [40, -40]); // Opposite direction
+  const moveY2 = useTransform(mouseY, [-0.5, 0.5], [40, -40]);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Normalize mouse position from -0.5 to 0.5 center
+      const { innerWidth, innerHeight } = window;
+      const normalizedX = (e.clientX / innerWidth) - 0.5;
+      const normalizedY = (e.clientY / innerHeight) - 0.5;
+      
+      x.set(normalizedX);
+      y.set(normalizedY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [x, y]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -216,12 +255,35 @@ const AuthPage = () => {
          />
       </div>
 
+       {/* Floating Parallax Elements (Orbs/Shapes) */}
+       <motion.div 
+         style={{ x: moveX1, y: moveY1 }}
+         className={clsx(
+           "absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full blur-[100px] opacity-40 mix-blend-overlay transition-colors duration-1000 pointer-events-none",
+           isDarkMode ? "bg-celadon-800" : "bg-turf-green-300"
+         )}
+       />
+       <motion.div 
+         style={{ x: moveX2, y: moveY2 }}
+         className={clsx(
+           "absolute bottom-[-10%] right-[-10%] w-[30rem] h-[30rem] rounded-full blur-[120px] opacity-40 mix-blend-overlay transition-colors duration-1000 pointer-events-none",
+           isDarkMode ? "bg-blue-900" : "bg-blue-300"
+         )}
+       />
+        <motion.div 
+         style={{ x: moveX1, y: moveY2 }}
+         className={clsx(
+           "absolute top-[40%] right-[20%] w-64 h-64 rounded-full blur-[80px] opacity-30 mix-blend-screen transition-colors duration-1000 pointer-events-none",
+           isDarkMode ? "bg-purple-800" : "bg-purple-300"
+         )}
+       />
+
       {/* Theme Toggle */}
       <motion.button 
         onClick={() => setIsDarkMode(!isDarkMode)}
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, type: "spring" }}
+        transition={professionalTransition}
         className={clsx(
           "absolute top-4 right-4 p-3 rounded-full backdrop-blur-xl shadow-lg z-50 hover:scale-110 transition-all duration-700 border transform",
           isDarkMode ? "bg-black/20 border-white/10" : "bg-white/20 border-white/40"
@@ -230,17 +292,61 @@ const AuthPage = () => {
         {isDarkMode ? <Sun size={24} className="text-yellow-400 transition-colors duration-700" /> : <Moon size={24} className="text-gray-800 transition-colors duration-700" />}
       </motion.button>
 
-      {/* Main Glass Card Container */}
+      {/* Main Glass Card Container - No 3D Tilt */}
       <motion.div 
         variants={containerVariants}
         initial="hidden"
-        animate="visible"
+        animate={{ 
+          ...containerVariants.visible
+        }}
+        transition={professionalTransition}
+        layout
         className={clsx(
-        "relative rounded-[20px] sm:rounded-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] overflow-hidden w-full max-w-[900px] min-h-[500px] sm:min-h-[600px] flex z-10 transition-colors duration-1000 border backdrop-blur-xl", 
+        "relative rounded-[20px] sm:rounded-[30px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden w-full max-w-[900px] min-h-[500px] sm:min-h-[600px] flex z-10 transition-colors duration-1000 border backdrop-blur-xl", 
         isDarkMode 
-          ? "bg-black/30 border-white/10"   // Dark Mode: Smoked Glass
-          : "bg-white/30 border-white/40"   // Light Mode: Frosted Ice
+          ? "bg-black/40 border-white/10"   // Dark Mode: Smoked Glass
+          : "bg-white/40 border-white/40"   // Light Mode: Frosted Ice
       )}>
+        
+        {/* Header Logo Position (Top Left) - Appears on Submit */}
+        {/* Removed AnimatePresence to allow immediate layout transfer */}
+        {isSubmitted && (
+            <div className="absolute top-6 left-8 z-[60]">
+            <BrandLogo isDarkMode={isDarkMode} layoutId="brand-logo" />
+            </div>
+        )}
+
+        {/* Step 2 Panel (Left Side - Visible on Submit) */}
+        <motion.div
+            className="absolute top-0 left-0 h-full w-full flex flex-col p-8 sm:p-12 md:p-16"
+            initial={false}
+            animate={{
+                opacity: isSubmitted ? 1 : 0,
+                zIndex: isSubmitted ? 10 : 0,
+                pointerEvents: isSubmitted ? 'auto' : 'none'
+            }}
+            transition={{ duration: 0.4, delay: isSubmitted ? 0.3 : 0 }} 
+        >
+             {/* Content Container - Pushed to bottom right */}
+             <div className="flex-1 relative w-full h-full flex flex-col justify-end items-end">
+                 
+                 {/* Buttons Bottom Right */}
+                 <div className="flex items-center gap-6">
+                     <button 
+                        type="button"
+                        onClick={() => setIsSubmitted(false)}
+                        className={clsx("text-sm font-semibold transition-colors hover:underline", isDarkMode ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-black")}
+                     >
+                        Back
+                     </button>
+                     <div className="w-48">
+                        <AnimatedButton type="button" onClick={() => alert("Account Created Successfully!")}>
+                            Finish Account
+                        </AnimatedButton>
+                     </div>
+                 </div>
+             </div>
+        </motion.div>
         
         {/* Sign Up Form Panel */}
         <motion.div 
@@ -249,20 +355,25 @@ const AuthPage = () => {
           animate={{ 
             x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
             zIndex: isSignUp ? 5 : 1,
-            opacity: isSignUp ? 1 : 0
+            opacity: isSubmitted ? 0 : (isSignUp ? 1 : 0),
+            pointerEvents: isSubmitted ? 'none' : (isSignUp ? 'auto' : 'none')
           }}
-          transition={transitionSpring}
+          transition={professionalTransition}
         >
               <motion.form 
                 variants={formVariants}
                 initial="hidden"
-                animate="visible"
+                animate={isSubmitted ? "exit" : "visible"}
                 exit="exit"
                 className="w-full flex flex-col items-center justify-center max-w-sm py-2 sm:py-4" 
                 onSubmit={(e) => e.preventDefault()}
               >
-            {/* Logo */}
-            <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
+            {/* Logo - Handle removal for layout transition - Removed variants to avoid opacity conflict during layout slide */}
+            {!isSubmitted && (
+               <motion.div className="mb-3 sm:mb-4">
+                 <BrandLogo isDarkMode={isDarkMode} layoutId="brand-logo" />
+               </motion.div>
+            )}
             
             {/* Welcome Message */}
             <motion.p variants={itemVariants} className={clsx("text-center text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
@@ -293,7 +404,7 @@ const AuthPage = () => {
               variants={itemVariants}
               className="w-[85%] sm:w-full sm:max-w-[280px] mb-3 sm:mb-4 mx-auto"
             >
-              <AnimatedButton type="submit">
+              <AnimatedButton type="button" onClick={() => setIsSubmitted(true)}>
                 Continue Submitting
               </AnimatedButton>
             </motion.div>
@@ -357,20 +468,21 @@ const AuthPage = () => {
           animate={{ 
             x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
             zIndex: isSignUp ? 1 : 5,
-            opacity: isSignUp ? 0 : 1
+            opacity: isSubmitted ? 0 : (isSignUp ? 0 : 1),
+            pointerEvents: isSubmitted ? 'none' : (isSignUp ? 'none' : 'auto')
           }}
-          transition={transitionSpring}
+          transition={professionalTransition}
         >
               <motion.form 
                 variants={formVariants}
                 initial="hidden"
-                animate="visible"
+                animate={isSubmitted ? "exit" : "visible"}
                 exit="exit"
                 className="w-full flex flex-col items-center h-full justify-center max-w-sm" 
                 onSubmit={(e) => e.preventDefault()}
               >
-            {/* Logo + Text */}
-            <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
+            {/* Logo + Text - Removed variants here too */}
+            <motion.div className="mb-3 sm:mb-4"><BrandLogo isDarkMode={isDarkMode} layoutId="brand-logo" /></motion.div>
             
             {/* Welcome Message */}
             <motion.p variants={itemVariants} className={clsx("text-center text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
@@ -485,9 +597,9 @@ const AuthPage = () => {
           className="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-[100] hidden md:block"
           initial={false}
           animate={{ 
-            x: isSignUp ? "-100%" : "0%" 
+            x: isSubmitted ? "100%" : (isSignUp ? "-100%" : "0%") // isSubmitted: 100% moves it completely to the right (offscreen)
           }}
-          transition={transitionSpring}
+          transition={professionalTransition}
         >
           {/* Inner Image Container */}
           <motion.div 
@@ -496,7 +608,7 @@ const AuthPage = () => {
              animate={{ 
                x: isSignUp ? "50%" : "0%"
              }}
-             transition={transitionSpring} 
+             transition={professionalTransition} 
              style={{
                backgroundImage: "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2675&auto=format&fit=crop')",
                backgroundSize: 'cover',
