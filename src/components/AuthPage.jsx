@@ -49,29 +49,29 @@ const SocialIconButton = ({ iconSrc, onClick, isDarkMode }) => (
     type="button"
     onClick={onClick}
     className={clsx(
-      "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
+      "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
       isDarkMode 
         ? "bg-white/10 border border-white/20 hover:bg-white/20 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
         : "bg-white/50 border border-white/60 hover:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
     )}
   >
-    <img src={iconSrc} alt="Social Icon" className="w-5 h-5" />
+    <img src={iconSrc} alt="Social Icon" className="w-4 h-4 sm:w-5 sm:h-5" />
   </button>
 );
 
 const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
-  <div className="relative w-full mb-4">
+  <div className="relative w-full mb-3 sm:mb-4">
     <div className={clsx(
-      "absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
+      "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
       isDarkMode ? "text-gray-400" : "text-gray-500"
     )}>
-      <Icon size={18} />
+      <Icon size={16} className="sm:w-[18px] sm:h-[18px]" />
     </div>
     <input
       type={type}
       placeholder={placeholder}
       className={clsx(
-        "w-full rounded-full py-3.5 pl-12 pr-4 text-sm transition-all duration-300 outline-none backdrop-blur-md",
+        "w-full rounded-full py-2.5 sm:py-3.5 pl-10 sm:pl-12 pr-3 sm:pr-4 text-xs sm:text-sm transition-all duration-300 outline-none backdrop-blur-md",
         isDarkMode 
           ? "bg-white/10 border-2 border-white/20 text-white placeholder-gray-500 focus:border-celadon-500/70 focus:bg-white/15 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
           : "bg-white/50 border-2 border-white/60 text-gray-900 placeholder-gray-400 focus:border-celadon-600 focus:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
@@ -82,18 +82,18 @@ const InputField = ({ icon: Icon, type, placeholder, isDarkMode }) => (
 
 // Password Input Field with Eye Toggle
 const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePassword }) => (
-  <div className="relative w-full mb-4">
+  <div className="relative w-full mb-3 sm:mb-4">
     <div className={clsx(
-      "absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
+      "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors duration-300",
       isDarkMode ? "text-gray-400" : "text-gray-500"
     )}>
-      <Lock size={18} />
+      <Lock size={16} className="sm:w-[18px] sm:h-[18px]" />
     </div>
     <input
       type={showPassword ? "text" : "password"}
       placeholder={placeholder}
       className={clsx(
-        "w-full rounded-full py-3.5 pl-12 pr-12 text-sm transition-all duration-300 outline-none backdrop-blur-md",
+        "w-full rounded-full py-2.5 sm:py-3.5 pl-10 sm:pl-12 pr-10 sm:pr-12 text-xs sm:text-sm transition-all duration-300 outline-none backdrop-blur-md",
         isDarkMode 
           ? "bg-white/10 border-2 border-white/20 text-white placeholder-gray-500 focus:border-celadon-500/70 focus:bg-white/15 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
           : "bg-white/50 border-2 border-white/60 text-gray-900 placeholder-gray-400 focus:border-celadon-600 focus:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
@@ -103,19 +103,19 @@ const PasswordInputField = ({ placeholder, isDarkMode, showPassword, onTogglePas
       type="button"
       onClick={onTogglePassword}
       className={clsx(
-        "absolute right-4 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 hover:scale-110 transform",
+        "absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 hover:scale-110 transform",
         isDarkMode ? "text-gray-400 hover:text-gray-300" : "text-gray-500 hover:text-gray-700"
       )}
     >
-      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+      {showPassword ? <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" /> : <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />}
     </button>
   </div>
 );
 
 // Brand Logo Component
 const BrandLogo = ({ isDarkMode }) => (
-  <div className="flex items-center gap-3 mb-4">
-    <div className="relative w-10 h-10 flex items-center justify-center">
+  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+    <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center">
       <img 
         src="/logo.svg" 
         alt="Ghurni Ai Logo" 
@@ -123,7 +123,7 @@ const BrandLogo = ({ isDarkMode }) => (
       />
     </div>
     <span className={clsx(
-        "text-2xl font-bold tracking-wide transition-colors duration-700 font-caviler", 
+        "text-xl sm:text-2xl font-bold tracking-wide transition-colors duration-700 font-caviler", 
         isDarkMode ? "text-white" : "text-gray-900"
     )}>
       Ghurni Ai
@@ -183,7 +183,7 @@ const AuthPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 font-sans relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center p-3 sm:p-4 md:p-6 font-sans relative overflow-hidden">
       
       {/* 
           SMOOTH BACKGROUND SYSTEM: CROSS-FADE 
@@ -218,7 +218,7 @@ const AuthPage = () => {
         initial="hidden"
         animate="visible"
         className={clsx(
-        "relative rounded-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] overflow-hidden w-full max-w-[900px] min-h-[600px] flex z-10 transition-colors duration-1000 border backdrop-blur-xl", 
+        "relative rounded-[20px] sm:rounded-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] overflow-hidden w-full max-w-[900px] min-h-[500px] sm:min-h-[600px] flex z-10 transition-colors duration-1000 border backdrop-blur-xl", 
         isDarkMode 
           ? "bg-black/30 border-white/10"   // Dark Mode: Smoked Glass
           : "bg-white/30 border-white/40"   // Light Mode: Frosted Ice
@@ -226,7 +226,7 @@ const AuthPage = () => {
         
         {/* Sign Up Form Panel */}
         <motion.div 
-          className="absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-6 md:p-8 text-center"
+          className="absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center"
           initial={false}
           animate={{ 
             x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
@@ -237,19 +237,19 @@ const AuthPage = () => {
         >
           <motion.form 
             variants={formVariants} 
-            className="w-full flex flex-col items-center justify-center max-w-sm py-4" 
+            className="w-full flex flex-col items-center justify-center max-w-sm py-2 sm:py-4" 
             onSubmit={(e) => e.preventDefault()}
           >
             {/* Logo */}
             <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
             
             {/* Title */}
-            <motion.h1 variants={itemVariants} className={clsx("font-bold text-xl mb-1 tracking-tight transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+            <motion.h1 variants={itemVariants} className={clsx("font-bold text-lg sm:text-xl mb-1 tracking-tight transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
               Create Account
             </motion.h1>
             
             {/* Welcome Message */}
-            <motion.p variants={itemVariants} className={clsx("text-center text-xs leading-relaxed mb-3 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
+            <motion.p variants={itemVariants} className={clsx("text-center text-[10px] sm:text-xs leading-relaxed mb-2 sm:mb-3 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
               Enter your details to create your account<br/>and start using our services.
             </motion.p>
             
@@ -281,58 +281,58 @@ const AuthPage = () => {
               variants={itemVariants} 
               whileHover={{ scale: 1.02 }} 
               whileTap={{ scale: 0.98 }} 
-              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-2.5 rounded-full text-sm shadow-lg hover:shadow-xl transition-all duration-300 mb-2 mt-2"
+              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-2 sm:py-2.5 rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all duration-300 mb-2 mt-1 sm:mt-2"
             >
               Create Account
             </motion.button>
             
             {/* Already have an account */}
-            <motion.div variants={itemVariants} className="flex items-center gap-1.5 mb-3">
-              <span className={clsx("text-xs transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-600")}>
+            <motion.div variants={itemVariants} className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
+              <span className={clsx("text-[10px] sm:text-xs transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-600")}>
                 Already have an account?
               </span>
               <button 
                 type="button" 
                 onClick={() => setIsSignUp(false)} 
-                className="text-xs font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
+                className="text-[10px] sm:text-xs font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
               >
                 Sign In
               </button>
             </motion.div>
             
             {/* OR Divider */}
-            <motion.div variants={itemVariants} className="w-full flex items-center gap-4 mb-3">
+            <motion.div variants={itemVariants} className="w-full flex items-center gap-2 sm:gap-4 mb-2 sm:mb-3">
               <div className={clsx("flex-1 h-px transition-colors duration-700", isDarkMode ? "bg-white/10" : "bg-gray-200")}></div>
-              <span className={clsx("text-xs font-medium transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-500")}>
+              <span className={clsx("text-[10px] sm:text-xs font-medium transition-colors duration-700 whitespace-nowrap", isDarkMode ? "text-gray-400" : "text-gray-500")}>
                 Or Continue With
               </span>
               <div className={clsx("flex-1 h-px transition-colors duration-700", isDarkMode ? "bg-white/10" : "bg-gray-200")}></div>
             </motion.div>
             
             {/* Social Buttons */}
-            <motion.div variants={itemVariants} className="flex gap-4">
+            <motion.div variants={itemVariants} className="flex gap-3 sm:gap-4">
               <button 
                 type="button"
                 className={clsx(
-                  "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
+                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
                   isDarkMode 
                     ? "bg-white/10 border border-white/20 hover:bg-white/20 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
                     : "bg-white/50 border border-white/60 hover:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
                 )}
               >
-                <img src="/facebook.svg" alt="Facebook Icon" className="w-6 h-6" />
+                <img src="/facebook.svg" alt="Facebook Icon" className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               <SocialIconButton iconSrc="/google.svg" isDarkMode={isDarkMode} />
               <button 
                 type="button"
                 className={clsx(
-                  "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
+                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
                   isDarkMode 
                     ? "bg-white/10 border border-white/20 hover:bg-white/20 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
                     : "bg-white/50 border border-white/60 hover:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
                 )}
               >
-                <img src="/X.svg" alt="X Icon" className="w-4 h-4" />
+                <img src="/X.svg" alt="X Icon" className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </motion.div>
           </motion.form>
@@ -340,7 +340,7 @@ const AuthPage = () => {
 
         {/* Sign In Form Panel */}
         <motion.div 
-          className="absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-6 md:p-8 text-center"
+          className="absolute top-0 left-0 h-full w-full md:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center"
           initial={false}
           animate={{ 
             x: isMobile ? "0%" : (isSignUp ? "100%" : "0%"),
@@ -358,12 +358,12 @@ const AuthPage = () => {
             <motion.div variants={itemVariants}><BrandLogo isDarkMode={isDarkMode} /></motion.div>
             
             {/* Welcome Message */}
-            <motion.p variants={itemVariants} className={clsx("text-center text-sm leading-relaxed mb-4 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
+            <motion.p variants={itemVariants} className={clsx("text-center text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 px-2 transition-colors duration-700", isDarkMode ? "text-gray-300" : "text-gray-600")}>
               Enter your email and password to securely access<br/>your account and manage your services.
             </motion.p>
             
             {/* Title */}
-            <motion.h1 variants={itemVariants} className={clsx("font-bold text-3xl mb-5 tracking-tight transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
+            <motion.h1 variants={itemVariants} className={clsx("font-bold text-2xl sm:text-3xl mb-4 sm:mb-5 tracking-tight transition-colors duration-700", isDarkMode ? "text-white" : "text-gray-900")}>
               Sign In
             </motion.h1>
             
@@ -383,10 +383,10 @@ const AuthPage = () => {
             </motion.div>
             
             {/* Remember Me Checkbox */}
-            <motion.div variants={itemVariants} className="w-full flex items-center justify-between mb-5">
+            <motion.div variants={itemVariants} className="w-full flex items-center justify-between mb-4 sm:mb-5">
               <AnimatedCheckbox label="Remember me" isDarkMode={isDarkMode} />
               {/* Forgot Password */}
-              <a href="#" className={clsx("text-sm transition-colors duration-700 hover:underline font-medium whitespace-nowrap", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
+              <a href="#" className={clsx("text-xs sm:text-sm transition-colors duration-700 hover:underline font-medium whitespace-nowrap", isDarkMode ? "text-celadon-400 hover:text-celadon-300" : "text-turf-green-600 hover:text-turf-green-700")}>
                 Forgot Password ?
               </a>
             </motion.div>
@@ -396,58 +396,58 @@ const AuthPage = () => {
               variants={itemVariants} 
               whileHover={{ scale: 1.02 }} 
               whileTap={{ scale: 0.98 }} 
-              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-3.5 rounded-full text-base shadow-lg hover:shadow-xl transition-all duration-300 mb-4"
+              className="w-full bg-gradient-to-r from-turf-green-600 to-celadon-600 text-white font-semibold py-2.5 sm:py-3.5 rounded-full text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300 mb-3 sm:mb-4"
             >
               Login
             </motion.button>
             
             {/* Don't have an account */}
-            <motion.div variants={itemVariants} className="flex items-center gap-1.5 mb-5">
-              <span className={clsx("text-sm transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-600")}>
+            <motion.div variants={itemVariants} className="flex items-center gap-1 sm:gap-1.5 mb-4 sm:mb-5">
+              <span className={clsx("text-xs sm:text-sm transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-600")}>
                 Don't have an account?
               </span>
               <button 
                 type="button" 
                 onClick={() => setIsSignUp(true)} 
-                className="text-sm font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
+                className="text-xs sm:text-sm font-bold text-turf-green-600 hover:text-turf-green-700 transition-colors underline-offset-2 hover:underline"
               >
                 Sign Up here
               </button>
             </motion.div>
             
             {/* OR Divider */}
-            <motion.div variants={itemVariants} className="w-full flex items-center gap-4 mb-5">
+            <motion.div variants={itemVariants} className="w-full flex items-center gap-2 sm:gap-4 mb-4 sm:mb-5">
               <div className={clsx("flex-1 h-px transition-colors duration-700", isDarkMode ? "bg-white/10" : "bg-gray-200")}></div>
-              <span className={clsx("text-sm font-medium transition-colors duration-700", isDarkMode ? "text-gray-400" : "text-gray-500")}>
+              <span className={clsx("text-xs sm:text-sm font-medium transition-colors duration-700 whitespace-nowrap", isDarkMode ? "text-gray-400" : "text-gray-500")}>
                 Or Continue With
               </span>
               <div className={clsx("flex-1 h-px transition-colors duration-700", isDarkMode ? "bg-white/10" : "bg-gray-200")}></div>
             </motion.div>
             
             {/* Social Buttons */}
-            <motion.div variants={itemVariants} className="flex gap-4">
+            <motion.div variants={itemVariants} className="flex gap-3 sm:gap-4">
               <button 
                 type="button"
                 className={clsx(
-                  "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
+                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
                   isDarkMode 
                     ? "bg-white/10 border border-white/20 hover:bg-white/20 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
                     : "bg-white/50 border border-white/60 hover:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
                 )}
               >
-                <img src="/facebook.svg" alt="Facebook Icon" className="w-6 h-6" />
+                <img src="/facebook.svg" alt="Facebook Icon" className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               <SocialIconButton iconSrc="/google.svg" isDarkMode={isDarkMode} />
               <button 
                 type="button"
                 className={clsx(
-                  "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
+                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 backdrop-blur-md",
                   isDarkMode 
                     ? "bg-white/10 border border-white/20 hover:bg-white/20 shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]" 
                     : "bg-white/50 border border-white/60 hover:bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
                 )}
               >
-                <img src="/X.svg" alt="X Icon" className="w-4 h-4" />
+                <img src="/X.svg" alt="X Icon" className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </motion.div>
           </motion.form>

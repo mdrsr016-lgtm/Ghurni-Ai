@@ -18,8 +18,15 @@
 
 .checkbox-container svg {
   overflow: visible;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (min-width: 640px) {
+  .checkbox-container svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 }
 
 .path {
@@ -44,10 +51,16 @@
 }
 
 .checkbox-label {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   user-select: none;
   transition: color 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .checkbox-label {
+    font-size: 0.875rem;
+  }
 }
 
 .checkbox-label.dark {
