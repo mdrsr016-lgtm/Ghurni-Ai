@@ -33,6 +33,13 @@ const Header = () => {
       if (isOutsideDesktop && isOutsideMobile) {
         setIsProfileOpen(false);
       }
+
+      // Blur tooltip triggers if clicking outside
+      if (!event.target.closest('.tooltip-trigger')) {
+        if (document.activeElement?.classList.contains('tooltip-trigger')) {
+          document.activeElement.blur();
+        }
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -99,7 +106,8 @@ const Header = () => {
            <div ref={profileRefDesktop} className="relative hidden md:block">
              <div 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="group relative w-8 h-8 rounded-full bg-gradient-to-tr from-turf-green-500 to-emerald-500 p-0.5 cursor-pointer hover:scale-105 transition-transform"
+                tabIndex={0}
+                className="group tooltip-trigger outline-none relative w-8 h-8 rounded-full bg-gradient-to-tr from-turf-green-500 to-emerald-500 p-0.5 cursor-pointer hover:scale-105 transition-transform"
              >
                 <div className="w-full h-full rounded-full bg-white dark:bg-black flex items-center justify-center overflow-hidden">
                    <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />
@@ -108,7 +116,7 @@ const Header = () => {
                 {!isProfileOpen && <Tooltip text="Account" />} 
              </div>
              
-              {isProfileOpen && <ProfileMenu onLogout={handleLogout} />}
+              {isProfileOpen && <ProfileMenu onLogout={handleLogout} onClose={() => setIsProfileOpen(false)} />}
            </div>
         </div>
       </div>
@@ -175,21 +183,26 @@ const MobileNavTab = ({ icon: Icon, active, onClick }) => (
 );
 
 const IconButton = ({ icon: Icon, tooltip, className = "" }) => (
-  <button className={`group relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-300 transition-colors ${className}`}>
+  <button 
+    className={`group tooltip-trigger outline-none relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-300 transition-colors ${className}`}
+    tabIndex={0}
+  >
     <Icon className="w-5 h-5" />
     {tooltip && <Tooltip text={tooltip} />}
   </button>
 );
 
 const Tooltip = ({ text }) => (
-  <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl text-gray-900 dark:text-zinc-100 text-[10px] md:text-xs px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 shadow-2xl border border-white/50 dark:border-white/10 font-bold tracking-wide ring-1 ring-black/5 dark:ring-white/5">
-    {text}
+  <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 group-active:opacity-0 translate-y-2 group-hover:translate-y-0 group-focus-within:translate-y-0 scale-90 group-hover:scale-100 group-focus-within:scale-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-[60] bg-white/40 dark:bg-black/40 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] ring-1 ring-black/5 dark:ring-white/5 flex flex-col items-center">
+    {/* Beak/Arrow - Perfectly matched to global card style */}
+    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 bg-white/40 dark:bg-black/40 backdrop-blur-2xl border-t border-l border-white/50 dark:border-white/10"></div>
+    <span className="relative z-10 text-gray-900 dark:text-zinc-100 font-bold tracking-tight text-[11px] md:text-xs">{text}</span>
   </div>
 );
 
-const ProfileMenu = ({ onLogout, isMobile }) => {
+const ProfileMenu = ({ onLogout, onClose, isMobile }) => {
   return (
-    <div className={`absolute ${isMobile ? 'bottom-16 right-0 left-0 mx-auto w-[95vw] max-w-[360px]' : 'top-12 right-0 w-[360px]'} bg-white/80 dark:bg-zinc-900/80 backdrop-blur-3xl text-gray-900 dark:text-zinc-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-4 z-[100] border border-white/60 dark:border-white/10 animate-in fade-in slide-in-from-bottom-2 md:slide-in-from-top-2 duration-300 ring-1 ring-black/5 dark:ring-white/5`}>
+    <div className={`absolute ${isMobile ? 'bottom-16 right-0 left-0 mx-auto w-[95vw] max-w-[360px]' : 'top-12 right-0 w-[360px]'} bg-white/40 dark:bg-black/40 backdrop-blur-2xl text-gray-900 dark:text-zinc-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-4 z-[100] border border-white/50 dark:border-white/10 animate-in fade-in slide-in-from-bottom-2 md:slide-in-from-top-2 duration-300 ring-1 ring-black/5 dark:ring-white/5`}>
       
       {/* Current Profile */}
       <div className="rounded-xl overflow-hidden mb-4">
@@ -211,11 +224,11 @@ const ProfileMenu = ({ onLogout, isMobile }) => {
 
       {/* Menu Options */}
       <div className="space-y-1">
-        <MenuItem icon={Settings} label="Settings & privacy" hasSubmenu />
-        <MenuItem icon={HelpCircle} label="Help & support" hasSubmenu />
-        <MenuItem icon={Moon} label="Display & accessibility" hasSubmenu />
-        <MenuItem icon={MessageSquareWarning} label="Give feedback" subtext="CTRL B" />
-        <MenuItem icon={LogOut} label="Log out" onClick={onLogout} />
+        <MenuItem icon={Settings} label="Settings & privacy" hasSubmenu onClick={onClose} />
+        <MenuItem icon={HelpCircle} label="Help & support" hasSubmenu onClick={onClose} />
+        <MenuItem icon={Moon} label="Display & accessibility" hasSubmenu onClick={onClose} />
+        <MenuItem icon={MessageSquareWarning} label="Give feedback" subtext="CTRL B" onClick={onClose} />
+        <MenuItem icon={LogOut} label="Log out" onClick={() => { onLogout(); onClose(); }} />
       </div>
 
       {/* Footer */}

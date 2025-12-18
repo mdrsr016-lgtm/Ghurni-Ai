@@ -26,7 +26,7 @@
 
   /* Glassmorphism Presets */
   .glass-card {
-    @apply bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-xl;
+    @apply bg-white/40 dark:bg-black/40 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-xl;
   }
 }
 
