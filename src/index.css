@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Caviler";
+  src: url("/fonts/caviler.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer utilities {
+  .antialiased {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .gradient-light {
+    background: linear-gradient(
+      to right,
+      #eafaf4 0%,
+      #def7e9 25%,
+      #d0f4de 50%,
+      #def7e9 75%,
+      #eafaf4 100%
+    );
+  }
+
+  .gradient-dark {
+    background: linear-gradient(
+      to right,
+      #092a1c 0%,
+      #0c3324 25%,
+      #103e2c 50%,
+      #0c3324 75%,
+      #092a1c 100%
+    );
+  }
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  @apply antialiased;
+}
+
+/* Custom Checkbox Styles */
+.checkbox-container {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container input {
+  display: none;
+}
+
+.checkbox-container svg {
+  overflow: visible;
+}
+
+.checkbox-path {
+  fill: none;
+  stroke: #26a671; /* User requested color */
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-dasharray 0.5s ease;
+  stroke-dasharray: 0 0 240 9999999;
+  stroke-dashoffset: 1;
+  scale: -1 1;
+  transform-origin: center;
+  animation: checkbox-unchecked 0.5s;
+}
+
+.checkbox-container input:checked ~ svg .checkbox-path {
+  stroke-dasharray: 0 262 70 9999999;
+  transition-delay: 0s;
+  scale: 1 1;
+  animation: none;
+}
+
+@keyframes checkbox-unchecked {
+  0% {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 1;
+  }
+}
