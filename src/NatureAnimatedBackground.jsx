@@ -27,7 +27,7 @@ const darkGradients = [
     'linear-gradient(135deg, #101c13 0%, #0d1712 25%, #060b06 50%, #040905 75%, #020704 100%)'
 ];
 
-export default function NatureAnimatedBackground({ children }) {
+export default function NatureAnimatedBackground({ children, showHero, hideToggles }) {
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
     const [isFaqOpen, setIsFaqOpen] = useState(false);
     const { language } = useLanguage();
@@ -92,7 +92,7 @@ export default function NatureAnimatedBackground({ children }) {
     };
 
     return (
-        <div className="nature-bg-container flex flex-col md:justify-center md:items-center" style={containerStyle}>
+        <div className={`nature-bg-container flex flex-col ${showHero ? 'md:justify-center md:items-center' : ''}`} style={containerStyle}>
              <div className="gradient-container" style={gradientContainerStyle}>
                 {gradients.map((_, index) => (
                     <div 
@@ -109,41 +109,48 @@ export default function NatureAnimatedBackground({ children }) {
                 <div className="floating-orb orb-3" style={orb3Style}></div>
             </div>
 
-            {/* Mobile Hero Image */}
-            <div 
-                className="absolute top-0 left-0 w-full h-[55vh] md:hidden z-[5]"
-                style={{
-                    maskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)'
-                }}
-            >
-                <img 
-                    src="/nature-sidebar.png" 
-                    alt="Nature Background" 
-                    className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-[14%] sm:bottom-[16%] left-6 right-6 sm:left-8 sm:right-8 z-20 text-white">
-                    <div className="w-6 sm:w-8 h-0.5 bg-turf-green-500 mb-2 sm:mb-4 rounded-full"></div>
-                    <p className="text-sm sm:text-lg font-light italic leading-relaxed opacity-90">{t.quote}</p>
-                    <p className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-3 tracking-widest uppercase opacity-75">{t.quoteAuthor}</p>
-                </div>
-            </div>
-
-            <div className="relative z-10 w-full flex justify-center items-start md:items-center px-0 md:px-4 pt-[50vh] md:pt-0 pb-0 md:pb-0">
-            {children || (
-                <>
-                    <div className="content">
-                        <h1>Nature's Harmony</h1>
-                        <p>Experience the seamless flow of professional design, anchored in deep, fluid gradients that constantly adapt to the environment.</p>
+            {/* Mobile Hero Image - Only show in landing mode */}
+            {showHero && (
+                <div 
+                    className="absolute top-0 left-0 w-full h-[55vh] md:hidden z-[5]"
+                    style={{
+                        maskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)'
+                    }}
+                >
+                    <img 
+                        src="/nature-sidebar.png" 
+                        alt="Nature Background" 
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute bottom-[14%] sm:bottom-[16%] left-6 right-6 sm:left-8 sm:right-8 z-20 text-white">
+                        <div className="w-6 sm:w-8 h-0.5 bg-turf-green-500 mb-2 sm:mb-4 rounded-full"></div>
+                        <p className="text-sm sm:text-lg font-light italic leading-relaxed opacity-90">{t.quote}</p>
+                        <p className="text-[9px] sm:text-[10px] font-bold mt-2 sm:mt-3 tracking-widest uppercase opacity-75">{t.quoteAuthor}</p>
                     </div>
-                    <div className="accent-line" style={accentLineStyle}></div>
-                </>
+                </div>
             )}
+
+            {/* Main Content Area */}
+            <div className={`relative z-10 w-full flex flex-col ${!showHero ? 'items-stretch min-h-screen' : 'justify-center items-center pt-[50vh] md:pt-0'}`}>
+                {children || (
+                    <>
+                        <div className="content">
+                            <h1>Nature's Harmony</h1>
+                            <p>Experience the seamless flow of professional design, anchored in deep, fluid gradients that constantly adapt to the environment.</p>
+                        </div>
+                        {showHero && <div className="accent-line" style={accentLineStyle}></div>}
+                    </>
+                )}
             </div>
             
-            <ThemeToggle theme={theme} toggleTheme={setTheme} onFaqClick={() => setIsFaqOpen(true)} />
-            <FAQModal isOpen={isFaqOpen} onClose={() => setIsFaqOpen(false)} />
+            {!hideToggles && (
+                <>
+                    <ThemeToggle theme={theme} toggleTheme={setTheme} onFaqClick={() => setIsFaqOpen(true)} />
+                    <FAQModal isOpen={isFaqOpen} onClose={() => setIsFaqOpen(false)} />
+                </>
+            )}
         </div>
     );
 }

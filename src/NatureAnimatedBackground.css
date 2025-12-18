@@ -44,6 +44,7 @@
     background: linear-gradient(135deg, #020704 0%, #040905 33%, #060c07 66%, #081009 100%);
     filter: saturate(1.1) brightness(1.05); 
     transition: background 0.5s ease; /* For smooth theme transitions */
+    will-change: opacity;
 }
 
 /* Dark Mode Gradient States */
@@ -107,6 +108,7 @@
     pointer-events: none;
     filter: blur(150px);
     transition: background 0.5s ease;
+    will-change: transform;
 }
 .orb-1 {
     width: 700px;
